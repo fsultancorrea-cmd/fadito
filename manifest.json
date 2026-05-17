@@ -1,0 +1,20 @@
+{
+  "name": "Gestió de Temps · Basílica 2026",
+  "short_name": "GT Basílica",
+  "description": "Sistema de planificació de torns i gestió de temps del personal zelador — Hospital Germans Trias i Pujol",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#1e40af",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%238CC220'/%3E%3C/svg%3E",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "medical"],
+  "lang": "ca"
+}
