@@ -1548,6 +1548,7 @@ function editAgendaCell(sid, mes, dia, currentVal) {
   }
   renderAgenda();
   if(currentTab==="gt") renderGTPlan();
+  desarDelay();
   toast(`${sv.servei} dia ${dia}: ${n} zeladors`, "ok");
 }
 
@@ -1586,6 +1587,7 @@ function resetAgendaMes() {
   });
   renderAgenda();
   if(currentTab==="gt") renderGTPlan();
+  desarDelay();
   toast("Agenda reiniciada als valors per defecte", "ok");
 }
 
@@ -2674,6 +2676,7 @@ function editarSubstitucio(id, cell){
     if(tw) tw.notas = t.notas;
   });
   renderPlantilla();
+  desarDelay();
   toast(`Substitució actualitzada: ${t.notas||"esborrada"}`, "ok");
 }
 
@@ -3468,12 +3471,13 @@ function editServeiHores(id, camp, el){
   if(isNaN(val) || val <= 0){ toast("Valor no vàlid","err"); return; }
   sv[camp] = val;
   renderServeis();
+  desarDelay();
   toast(`${sv.nom}: ${camp==='hDia'?'hores/dia':'dies/any'} actualitzat a ${val}`, "ok");
 }
 
 function toggleServei(id){
   const sv = getServeisData().find(s=>s.id===id);
-  if(sv){ sv.actiu = !sv.actiu; renderServeis(); }
+  if(sv){ sv.actiu = !sv.actiu; renderServeis(); desarDelay(); }
 }
 
 function openModalServei(){
@@ -3484,6 +3488,7 @@ function openModalServei(){
   data.push({id:maxId+1, nom:nom.trim(), hDia:7, dies:365, actiu:true});
   UPS_LISTA.push(nom.trim());
   renderServeis();
+  desarDelay();
   toast(`Servei "${nom.trim()}" afegit`, "ok");
 }
 
@@ -4365,6 +4370,7 @@ function canviarGrupTreballador(id, nouCodi){
   });
   renderGestioGrups();
   renderQuadrant();
+  desarDelay();
   toast(`${t.nom}: ${vell} → ${t.rot}`, "ok");
 }
 
@@ -4527,6 +4533,7 @@ function editPatroDia(rotIdx, diaIdx){
   if(nou===null) return;
   rotacions[rotIdx].dies[diaIdx]=nou.trim();
   renderRotacio();
+  desarDelay();
   toast(`${r.codi} ${DIES_S[diaIdx]} → "${nou.trim()||`Treballant ${hDef}h`}"`, "ok");
 }
 
@@ -4538,6 +4545,7 @@ function onRotDayChange(rotIdx,diaIdx,valor){
   const torn=dominantTorn(r.codi);
   const hDef=torn==="nocturn"?HORES_DIA_NOCTURN:HORES_DIA_DIURN;
   const lbl=isNumVal(valor)?valor+"h":(valor||`treball ${hDef}h`);
+  desarDelay();
   toast(`${r.codi}: ${DIES_L[diaIdx]} → ${lbl}`,"ok");
 }
 
@@ -4558,6 +4566,7 @@ function onRotCellChange(codi,mes,dia,valor){
   const torn2=dominantTorn(codi);
   const hDef2=torn2==="nocturn"?HORES_DIA_NOCTURN:HORES_DIA_DIURN;
   const lbl=isNumVal(valor)?valor+"h":(valor||`treball ${hDef2}h`);
+  desarDelay();
   toast(`${codi}: ${dia}/${mes+1} → ${lbl}`,"ok");
 }
 
@@ -4570,6 +4579,7 @@ function resetRotOverrides(codi,mes){
     if(rotOverrides[k]!==undefined){delete rotOverrides[k];n++;}
   }
   renderRotacio();
+  desarDelay();
   toast(`${codi}: ${n} override${n!==1?'s':''} esborrat${n!==1?'s':''} a ${MESOS[mes]}`,"ok");
 }
 
@@ -4623,6 +4633,7 @@ function toggleVac(id,mes){
     vacances[k]=extra;
   }
   renderVacances();
+  desarDelay();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -5040,7 +5051,7 @@ function toggleActiu(id){
   const t=treballadors.find(x=>x.id===id);if(!t)return;
   t.actiu=!t.actiu;
   toast(`${t.nom}: ${t.actiu?"Activat":"Desactivat"}`,"ok");
-  renderAll();
+  renderAll();desarDelay();
 }
 function eliminarTreb(id){
   const t=treballadors.find(x=>x.id===id);
@@ -5105,7 +5116,7 @@ function desarRotacio(){
     rotacions.push(obj);
     toast(`Rotació ${codi} creada`,"ok");
   }
-  closeModal("ovRot");actualizaSelRot();renderAll();
+  closeModal("ovRot");actualizaSelRot();renderAll();desarDelay();
 }
 function eliminarRotacio(idx){
   const r=rotacions[idx];
@@ -5113,7 +5124,7 @@ function eliminarRotacio(idx){
   if(uses>0){toast(`No es pot eliminar: ${uses} treballadors l'utilitzen`,"err");return;}
   if(!confirm(`Eliminar rotació ${r.codi}?`))return;
   rotacions.splice(idx,1);
-  toast(`Rotació ${r.codi} eliminada`,"ok");renderAll();
+  toast(`Rotació ${r.codi} eliminada`,"ok");renderAll();desarDelay();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -5131,6 +5142,7 @@ function netejarFS(){
     r.dies = r.dies.map((v,i)=> (v==="FS"||v==="FA") ? "" : v);
   });
   renderRotacio();
+  desarDelay();
   toast("FS i FA eliminades de tots els patrons","ok");
 }
 
@@ -5151,6 +5163,7 @@ function afegirCadencia(){
     });
   });
   renderRotacio();
+  desarDelay();
   toast(`Cadència aplicada: ${n} dies FS/FA carregats de la Matriu ${YEAR}`,"ok");
 }
 
@@ -5163,7 +5176,7 @@ function emplenarFS(){
       if(!getT(mes,t.id,d)&&pat[d-1]){setT(mes,t.id,d,pat[d-1]);n++;}
     }
   });
-  renderAll();toast(`Patró FS aplicat a ${n} cel·les buides`,"ok");
+  renderAll();desarDelay();toast(`Patró FS aplicat a ${n} cel·les buides`,"ok");
 }
 function netejarMes(){
   if(!confirm(`Netejar tots els torns de ${MESOS[currentMes]}?`))return;
