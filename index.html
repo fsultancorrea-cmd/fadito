@@ -5003,6 +5003,14 @@ function desarTreballador(){
     TORNS_LIST.forEach(id=>{ unitats[id].treballadors.forEach(t=>{ if(t.id>maxId) maxId=t.id; }); });
     const nouTreb = {id:maxId+1,...obj,canvisContracte:[]};
     u.treballadors.push(nouTreb);
+    // Aplicar automàticament el patró FS del codi als 12 mesos
+    for(let mes=0;mes<12;mes++){
+      const nD=dM(mes);
+      const pat=patronFS(nouTreb.rot,nD,mes);
+      for(let d=1;d<=nD;d++){
+        if(pat[d-1]) setT(mes,nouTreb.id,d,pat[d-1]);
+      }
+    }
     toast(`${nom} afegit a ${TORNS_TREBALL[currentTornTreball].nom}`,"ok");
   }
   // Re-ordenar sempre per grup de rotació (ordre stable: manté l'ordre intern de cada grup)
