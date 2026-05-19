@@ -5003,12 +5003,14 @@ function desarTreballador(){
     TORNS_LIST.forEach(id=>{ unitats[id].treballadors.forEach(t=>{ if(t.id>maxId) maxId=t.id; }); });
     const nouTreb = {id:maxId+1,...obj,canvisContracte:[]};
     u.treballadors.push(nouTreb);
-    // Aplicar automàticament el patró FS del codi als 12 mesos
+    // Aplicar automàticament les FS/FA del codi als 12 mesos
+    // Usem matriu + overrides manuals (no el patró setmanal, que inclou dies laborables)
     for(let mes=0;mes<12;mes++){
       const nD=dM(mes);
-      const pat=patronFS(nouTreb.rot,nD,mes);
       for(let d=1;d<=nD;d++){
-        if(pat[d-1]) setT(mes,nouTreb.id,d,pat[d-1]);
+        const ovr = rotOverrides[kRO(nouTreb.rot,mes,d)];
+        const v = (ovr!==undefined && ovr!=="") ? ovr : getMatriuFS(YEAR, nouTreb.rot, mes, d);
+        if(v) setT(mes,nouTreb.id,d,v);
       }
     }
     toast(`${nom} afegit a ${TORNS_TREBALL[currentTornTreball].nom}`,"ok");
