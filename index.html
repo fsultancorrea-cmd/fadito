@@ -3886,6 +3886,7 @@ function onCell(sel,id,d){
     renderQuadrant();
   }
   renderKPIs();renderSidebar();
+  desarDelay();
 }
 
 // ── Modal Reducció de Jornada ─────────────────────────────────────────────
@@ -4997,7 +4998,7 @@ function desarTreballador(){
   const _rotIdxS={};rotacions.forEach((r,i)=>_rotIdxS[r.codi]=i);
   u.treballadors.sort((a,b)=>(_rotIdxS[a.rot]??9999)-(_rotIdxS[b.rot]??9999));
   treballadors = u.treballadors;
-  closeModal("ovTreb");renderAll();
+  closeModal("ovTreb");renderAll();desarDelay();
 }
 function toggleSelTreb(id, cb){
   if(cb.checked) selTrebs.add(id); else selTrebs.delete(id);
@@ -5168,7 +5169,7 @@ function netejarMes(){
   if(!confirm(`Netejar tots els torns de ${MESOS[currentMes]}?`))return;
   const nD=dM(currentMes);
   treballadors.forEach(t=>{for(let d=1;d<=nD;d++) delete torns[kT(currentMes,t.id,d)];});
-  renderAll();toast("Mes netejat","ok");
+  renderAll();desarDelay();toast("Mes netejat","ok");
 }
 function desar(){
   // Estat per torn (les variables actives ja estan vinculades a la unitat actual,
