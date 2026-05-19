@@ -5049,7 +5049,7 @@ function eliminarTreb(id){
   const u = unitats[currentTornTreball];
   u.treballadors.splice(0, u.treballadors.length, ...u.treballadors.filter(x=>x.id!==id));
   treballadors = u.treballadors;
-  toast("Treballador eliminat","ok");renderAll();
+  toast("Treballador eliminat","ok");renderAll();desarDelay();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
