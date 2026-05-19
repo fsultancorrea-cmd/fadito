@@ -428,12 +428,12 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   </div>
   <div class="h-sep"></div>
   <div class="h-torn">
-    <span class="h-torn-lbl">🕐 Torn:</span>
+    <span class="h-torn-lbl">Torn:</span>
     <select id="selTornTreball" class="h-torn-sel" onchange="canviTornTreball(this.value)">
-      <option value="mati">☀️ Matí</option>
-      <option value="tarda">🌇 Tarda</option>
-      <option value="nit1">🌙 Nit 1</option>
-      <option value="nit2">🌙 Nit 2</option>
+      <option value="mati">Matí</option>
+      <option value="tarda">Tarda</option>
+      <option value="nit1">Nit 1</option>
+      <option value="nit2">Nit 2</option>
     </select>
   </div>
   <div class="h-sep"></div>
@@ -712,7 +712,7 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
         <div class="frow"><label>UPS / Destí *</label><select id="fUPS"></select></div>
         <div class="frow"><label>Codi Rotació FS *</label><select id="fRot"></select></div>
         <div class="frow"><label>Tipus Contracte</label><select id="fCont"><option>estatutari</option><option>interí</option><option>interí 28h</option><option>interí 21h</option><option>programa</option><option>programa 28h</option><option>substitució directa</option></select></div>
-        <div class="frow"><label>Torn (hores contractades)</label><select id="fTorn"><option value="diurn">☀️ Diürn</option><option value="nocturn">🌙 Nocturn</option></select></div>
+        <div class="frow"><label>Torn (hores contractades)</label><select id="fTorn"><option value="diurn">Diürn</option><option value="nocturn">Nocturn</option></select></div>
         <div class="frow"><label>Actiu</label><select id="fActiu"><option value="1">Sí</option><option value="0">No</option></select></div>
         <div class="frow" style="grid-column:span 2"><label>Correu Corporatiu</label><input id="fCorreu" type="email" placeholder="nom.cognoms@germanstrias.gencat.cat" style="font-size:.78rem"></div>
       </div>
@@ -735,10 +735,10 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
           </div>
           <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;border-bottom:1px solid var(--line);background:#f8fafc;flex-shrink:0;flex-wrap:wrap">
             <span style="font-size:.68rem;font-weight:700;color:#475569;white-space:nowrap">Torn:</span>
-            <button class="cc-torn-btn sel" data-torn="mati" onclick="ccSelTorn(this)">☀️ Matí</button>
-            <button class="cc-torn-btn" data-torn="tarda" onclick="ccSelTorn(this)">🌆 Tarda</button>
-            <button class="cc-torn-btn" data-torn="nit1" onclick="ccSelTorn(this)">🌙 Nit 1</button>
-            <button class="cc-torn-btn" data-torn="nit2" onclick="ccSelTorn(this)">🌑 Nit 2</button>
+            <button class="cc-torn-btn sel" data-torn="mati" onclick="ccSelTorn(this)">Matí</button>
+            <button class="cc-torn-btn" data-torn="tarda" onclick="ccSelTorn(this)">Tarda</button>
+            <button class="cc-torn-btn" data-torn="nit1" onclick="ccSelTorn(this)">Nit 1</button>
+            <button class="cc-torn-btn" data-torn="nit2" onclick="ccSelTorn(this)">Nit 2</button>
           </div>
                     <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:8px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;flex-wrap:wrap;gap:10px">
             <span style="font-size:.7rem;font-weight:800;color:#dc2626;white-space:nowrap">🚫 Periode de NO activitat:</span>
@@ -990,10 +990,10 @@ const TREBALLADORS_NIT2=[]
 // ─── ESTAT MULTI-TORN ───────────────────────────────────────────────────────
 // Configuració dels 4 torns de treball
 const TORNS_TREBALL = {
-  mati:  { id:"mati",  nom:"Matí",  icona:"☀️",  defaultTorn:"diurn"   },
-  tarda: { id:"tarda", nom:"Tarda", icona:"🌇",  defaultTorn:"diurn"   },
-  nit1:  { id:"nit1",  nom:"Nit 1", icona:"🌙",  defaultTorn:"nocturn" },
-  nit2:  { id:"nit2",  nom:"Nit 2", icona:"🌙",  defaultTorn:"nocturn" },
+  mati:  { id:"mati",  nom:"Matí",  icona:"",  defaultTorn:"diurn"   },
+  tarda: { id:"tarda", nom:"Tarda", icona:"",  defaultTorn:"diurn"   },
+  nit1:  { id:"nit1",  nom:"Nit 1", icona:"",  defaultTorn:"nocturn" },
+  nit2:  { id:"nit2",  nom:"Nit 2", icona:"",  defaultTorn:"nocturn" },
 };
 const TORNS_LIST = ["mati","tarda","nit1","nit2"];
 
@@ -1772,7 +1772,7 @@ function canviTornTreball(tornId){
   filterUPS = "TOTES"; filterUPSSet.clear();
   updateSelUPSLabel();
   renderAll();
-  toast(`Torn actiu: ${TORNS_TREBALL[tornId].icona} ${TORNS_TREBALL[tornId].nom}`,"ok");
+  toast(`Torn actiu: ${TORNS_TREBALL[tornId].nom}`,"ok");
 }
 
 // Canvi d'exercici (any fiscal)
@@ -2620,7 +2620,7 @@ function obreFitxa(id){
   const t = treballadors.find(x=>x.id===id);
   if(!t) return;
   document.getElementById("fitxaNom").textContent = t.nom;
-  const TORN_NAMES = {mati:"☀️ Matí", tarda:"🌆 Tarda", nit1:"🌙 Nit 1", nit2:"🌑 Nit 2"};
+  const TORN_NAMES = {mati:"Matí", tarda:"Tarda", nit1:"Nit 1", nit2:"Nit 2"};
   const tornKey = TORNS_LIST.find(tornId => unitats[tornId].treballadors.some(x=>x.id===id));
   const c = CC_CONT_COLORS[t.cont]||{bg:"#f1f5f9",fg:"#64748b"};
   const row = (icon, label, value, href) =>
@@ -2639,7 +2639,7 @@ function obreFitxa(id){
         <div style="display:flex;gap:6px;margin-top:3px">
           <span style="background:${c.bg};color:${c.fg};border:1px solid ${c.fg}44;padding:1px 8px;border-radius:9px;font-size:.66rem;font-weight:700">${t.cont}</span>
           ${tornKey ? `<span style="font-size:.66rem;color:var(--ink3)">${TORN_NAMES[tornKey]||tornKey}</span>` : ""}
-          <span style="font-size:.66rem;color:var(--ink3)">${t.torn==="nocturn"?"🌙 Nocturn":"☀️ Diürn"}</span>
+          <span style="font-size:.66rem;color:var(--ink3)">${t.torn==="nocturn"?"Nocturn":"Diürn"}</span>
         </div>
       </div>
     </div>
@@ -2953,8 +2953,8 @@ function renderDirectori(){
 
       // Torn jornada badge
       const tornBadge = t.torn==="nocturn"
-        ? `<span style="background:#1e293b;color:#e2e8f0;padding:1px 6px;border-radius:9px;font-size:.63rem;font-weight:700">🌙 Noct.</span>`
-        : `<span style="background:#fef9c3;color:#854d0e;padding:1px 6px;border-radius:9px;font-size:.63rem;font-weight:700">☀️ Diürn</span>`;
+        ? `<span style="background:#1e293b;color:#e2e8f0;padding:1px 6px;border-radius:9px;font-size:.63rem;font-weight:700">Noct.</span>`
+        : `<span style="background:#fef9c3;color:#854d0e;padding:1px 6px;border-radius:9px;font-size:.63rem;font-weight:700">Diürn</span>`;
 
       // Periode i Contracte — resum compacte
       const trams = (t.canvisContracte||[]).slice().sort((a,b)=>a.inici.localeCompare(b.inici));
@@ -3016,7 +3016,7 @@ function renderDirectori(){
 
       rowsHtml += `<tr>
         <td style="color:var(--ink3);font-family:var(--mono);font-size:.66rem;text-align:center">${globalIdx++}</td>
-        <td style="font-weight:600;color:var(--ink)">${t.torn==="nocturn"?"🌙 ":""}${t.nom}</td>
+        <td style="font-weight:600;color:var(--ink)">${t.nom}</td>
         <td>${contBadge}</td>
         <td>${tornBadge}</td>
         <td><span class="badge ${t.actiu?"b-ok":"b-in"}" style="font-size:.63rem">${t.actiu?"Actiu":"Inactiu"}</span></td>
@@ -3068,7 +3068,7 @@ function renderDashboard(){
   const body = document.getElementById("dirBody");
   const TORN_ORDER  = ["mati","tarda","nit1","nit2"];
   const TORN_COLORS = {mati:"#f59e0b",tarda:"#3b82f6",nit1:"#8b5cf6",nit2:"#6d28d9"};
-  const TORN_NAMES  = {mati:"☀️ Matí",tarda:"🌆 Tarda",nit1:"🌙 Nit 1",nit2:"🌑 Nit 2"};
+  const TORN_NAMES  = {mati:"Matí",tarda:"Tarda",nit1:"Nit 1",nit2:"Nit 2"};
   const CONT_ORDER  = ["estatutari","interí","interí 28h","interí 21h","programa","programa 28h","substitució directa"];
   const CONT_COLORS = {
     estatutari:             {bg:"#dbeafe",fg:"#1e40af",bar:"#3b82f6"},
@@ -3127,7 +3127,7 @@ function renderDashboard(){
         <td style="font-weight:600;font-size:.72rem">${t.nom}</td>
         <td><span style="background:${c.bg};color:${c.fg};padding:1px 8px;border-radius:9px;font-size:.64rem;font-weight:700">${t.cont}</span></td>
         <td><span style="background:${tc}22;color:${tc};padding:1px 8px;border-radius:9px;font-size:.64rem;font-weight:700;border:1px solid ${tc}55">${TORN_NAMES[tornId]}</span></td>
-        <td style="font-size:.64rem;color:var(--ink3)">${t.torn==="nocturn"?"🌙 Nocturn":"☀️ Diürn"}</td>
+        <td style="font-size:.64rem;color:var(--ink3)">${t.torn==="nocturn"?"Nocturn":"Diürn"}</td>
         <td><span class="badge ${t.actiu?"b-ok":"b-in"}" style="font-size:.6rem">${t.actiu?"Actiu":"Inactiu"}</span></td>
       </tr>`;
     });
@@ -3721,7 +3721,7 @@ function renderQuadrant(){
     const isPinned=pinnedWorkers.has(t.id);
     h+=`<tr class="${ti%2?'even':''}" style="${isPinned?'background:#ede9fe':hasNoAct?'background:#fff5f5':''}">
       <td class="c-rot" style="background:${rotBg} !important;color:${rotFg};border-radius:3px;text-align:center;font-weight:700;letter-spacing:.03em">${t.rot}</td>
-      <td class="c-nom" title="${t.ups} · ${t.nom}${t.torn==='nocturn'?' · Torn nocturn (10h/dia)':' · Torn diürn (7h/dia)'}" onclick="if(!pinWorkerClick(${t.id}))obreDP(${t.id})" style="${isPinned?'color:#6d28d9;font-weight:800':hasNoAct?'color:#dc2626;font-weight:700':''}">${isPinned?'<span style="color:#7c3aed;font-size:.75rem">📌</span> ':''}${t.torn==='nocturn'?'<span style="color:#1e293b;font-size:.8rem">🌙 </span>':''}${t.nom}${hasNoAct?'<span style="font-size:.58rem;color:#dc2626;margin-left:3px">🚫</span>':''}</td>
+      <td class="c-nom" title="${t.ups} · ${t.nom}${t.torn==='nocturn'?' · Torn nocturn (10h/dia)':' · Torn diürn (7h/dia)'}" onclick="if(!pinWorkerClick(${t.id}))obreDP(${t.id})" style="${isPinned?'color:#6d28d9;font-weight:800':hasNoAct?'color:#dc2626;font-weight:700':''}">${isPinned?'<span style="color:#7c3aed;font-size:.75rem">📌</span> ':''}${t.nom}${hasNoAct?'<span style="font-size:.58rem;color:#dc2626;margin-left:3px">🚫</span>':''}</td>
 `;
     for(let d=1;d<=nD;d++){
       const dw=dow(mes,d);const we=dw>=5;
@@ -4010,7 +4010,7 @@ function renderPlantilla(){
     </tr></thead>
     <tbody>${list.map((t,i)=>{
       const isNoc = t.torn==="nocturn";
-      const tornBadge = `<span style="background:${isNoc?'#1e293b':'#fef3c7'};color:${isNoc?'#fff':'#92400e'};padding:1px 6px;border-radius:9px;font-size:.62rem;font-weight:700">${isNoc?'🌙 N':'☀️ D'}</span>`;
+      const tornBadge = `<span style="background:${isNoc?'#1e293b':'#fef3c7'};color:${isNoc?'#fff':'#92400e'};padding:1px 6px;border-radius:9px;font-size:.62rem;font-weight:700">${isNoc?'N':'D'}</span>`;
       return `
     <tr>
       <td style="text-align:center"><input type="checkbox" class="chkTreb" data-id="${t.id}" onchange="toggleSelTreb(${t.id},this)"></td>
@@ -4020,7 +4020,7 @@ function renderPlantilla(){
         <button class="btn btn-o btn-sm" onclick="toggleActiu(${t.id})">${t.actiu?"⏸":"▶"}</button>
         <button class="btn btn-o btn-sm" onclick="eliminarTreb(${t.id})" style="color:var(--red)">🗑</button>
       </td>
-      <td class="c-nom-pt" style="font-weight:600"><button onclick="obreFitxa(${t.id})" title="Fitxa professional de ${t.nom}" style="background:none;border:1px solid var(--line);border-radius:5px;cursor:pointer;padding:2px 5px;font-size:.68rem;color:var(--ink2);margin-right:5px;vertical-align:middle">🗂</button>${isNoc?'<span style="color:#1e293b">🌙 </span>':''}${t.nom}</td>
+      <td class="c-nom-pt" style="font-weight:600"><button onclick="obreFitxa(${t.id})" title="Fitxa professional de ${t.nom}" style="background:none;border:1px solid var(--line);border-radius:5px;cursor:pointer;padding:2px 5px;font-size:.68rem;color:var(--ink2);margin-right:5px;vertical-align:middle">🗂</button>${t.nom}</td>
       <td style="font-size:.7rem;padding:4px 8px;min-width:160px">
         ${(()=>{
           const svc = t.ups && t.ups.trim() ? t.ups.trim() : null;
@@ -4776,7 +4776,7 @@ function renderResum(){
 
     const saldo = getSaldoTreb(t);
     const rot=getRot(t.rot);
-    const tornLbl = t.torn==="nocturn" ? "🌙 N" : "☀️ D";
+    const tornLbl = t.torn==="nocturn" ? "N" : "D";
     const tornFg  = t.torn==="nocturn" ? "#1e293b" : "#92400e";
 
     // Permís sense colors — blanc amb text net
@@ -4844,7 +4844,7 @@ function obreDP(id){
   const saldo = getSaldoTreb(t);
 
   const rot=getRot(t.rot);
-  const tornLbl = t.torn==="nocturn" ? "🌙 Nocturn" : "☀️ Diürn";
+  const tornLbl = t.torn==="nocturn" ? "Nocturn" : "Diürn";
   const tornBg  = t.torn==="nocturn" ? "#1e293b" : "#fef3c7";
   const tornFg  = t.torn==="nocturn" ? "#fff" : "#92400e";
 
@@ -4941,7 +4941,7 @@ function tancarDP(){document.getElementById("dp").classList.remove("open")}
 function openModalTreballador(){
   editingTrebId=null;
   delete window._calTmpStart; delete window._calTmpEnd;
-  document.getElementById("mTrebTitol").textContent=`Nou Treballador · ${TORNS_TREBALL[currentTornTreball].icona} ${TORNS_TREBALL[currentTornTreball].nom}`;
+  document.getElementById("mTrebTitol").textContent=`Nou Treballador · ${TORNS_TREBALL[currentTornTreball].nom}`;
   document.getElementById("fNom").value="";
   document.getElementById("fUPS").value=UPS_LISTA[0];
   document.getElementById("fRot").value=rotacions[0]?.codi||"F1TF";
@@ -6743,7 +6743,7 @@ function renderGT(){
       <th style="padding:6px 8px;text-align:center;min-width:60px">AP anual</th>
       </tr></thead><tbody>`;
 
-  const TORN_LABELS = {mati:"🌅 Matí",tarda:"🌇 Tarda",nit1:"🌙 Nit 1",nit2:"🌑 Nit 2"};
+  const TORN_LABELS = {mati:"Matí",tarda:"Tarda",nit1:"Nit 1",nit2:"Nit 2"};
   const CONT_COLORS = {
     "estatutari":      {bg:"#dbeafe",fg:"#1e40af"},
     "interí":          {bg:"#fef9c3",fg:"#854d0e"},
@@ -6795,7 +6795,7 @@ function renderGTDetall(id){
   const t = allWorkers.find(w=>w.id===id);
   if(!t){ document.getElementById("gtDetallContent").innerHTML="<p>Treballador no trobat</p>"; return; }
 
-  const TORN_LABELS = {mati:"🌅 Matí",tarda:"🌇 Tarda",nit1:"🌙 Nit 1",nit2:"🌑 Nit 2"};
+  const TORN_LABELS = {mati:"Matí",tarda:"Tarda",nit1:"Nit 1",nit2:"Nit 2"};
   const MESOS_NOM = ["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
   const totals = gtComptaCodis(id, -1);
   const hDia = (t._torn==="nit1"||t._torn==="nit2") ? GT_H_NOCT : GT_H_DIURN;
