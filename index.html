@@ -376,6 +376,8 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
 ::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -1607,6 +1609,59 @@ function exportAgendaCSV() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// FIREBASE SYNC
+// ═══════════════════════════════════════════════════════════════════════════
+firebase.initializeApp({
+  apiKey: "AIzaSyD_0vu-Ad5fp_BcaUOvYoGdhoreM9Qcx_o",
+  authDomain: "basilica-of-sant-pietro.firebaseapp.com",
+  projectId: "basilica-of-sant-pietro",
+  storageBucket: "basilica-of-sant-pietro.firebasestorage.app",
+  messagingSenderId: "237681342630",
+  appId: "1:237681342630:web:63cc737e7f871c3e1f5c67",
+  databaseURL: "https://basilica-of-sant-pietro-default-rtdb.europe-west1.firebasedatabase.app"
+});
+const _db = firebase.database();
+let _fbApplying = false;
+
+function fbSave(){
+  if(_fbApplying) return;
+  try{
+    _db.ref('/data').set({
+      unitats: JSON.parse(JSON.stringify(unitats)),
+      rot: rotacions
+    });
+  }catch(e){ console.warn('Firebase save error:',e); }
+}
+
+function fbListen(){
+  _db.ref('/data').on('value', snap=>{
+    const d = snap.val();
+    if(!d) return;
+    _fbApplying = true;
+    try{
+      if(d.unitats){
+        TORNS_LIST.forEach(tid=>{
+          if(!d.unitats[tid]) return;
+          const u = d.unitats[tid];
+          unitats[tid].treballadors         = u.treballadors || [];
+          unitats[tid].torns                = u.torns || {};
+          unitats[tid].vacances             = u.vacances || {};
+          unitats[tid].rotOverrides         = u.rotOverrides || {};
+          unitats[tid].agendaServeis        = u.agendaServeis || [];
+          unitats[tid].agendaOverrides      = u.agendaOverrides || {};
+          unitats[tid].agendaMonthOverrides = u.agendaMonthOverrides || {};
+        });
+        bindUnitat(currentTornTreball);
+      }
+      if(d.rot) rotacions = d.rot;
+      localStorage.setItem("gt_b_unitats", JSON.stringify(unitats));
+      if(d.rot) localStorage.setItem("gt_b_rot", JSON.stringify(rotacions));
+      renderAll();
+    }finally{ _fbApplying = false; }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════════════════
 function init(){
@@ -1704,6 +1759,7 @@ function init(){
   updateSelUPSLabel();
   loadHistorial();
   renderAll();
+  fbListen();
   toast(`Basílica · Exercici ${YEAR}`,"ok");
 }
 
@@ -5124,6 +5180,7 @@ function desar(){
   // Neteja claus antigues (migració one-shot)
   ["gt_b_torns","gt_b_treb","gt_b_vac","gt_b_agenda_ovr","gt_b_agenda_sv","gt_b_rot_ovr"]
     .forEach(k => localStorage.removeItem(k));
+  fbSave();
   toast(`Dades desades (${TORNS_LIST.map(id=>TORNS_TREBALL[id].nom+': '+unitats[id].treballadors.length).join(' · ')})`,"ok");
 }
 
