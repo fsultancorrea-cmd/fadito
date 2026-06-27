@@ -926,6 +926,27 @@ let upsCustom=[];
 try{ upsCustom = JSON.parse(localStorage.getItem("gt_b_ups_custom")||"[]"); }catch(e){}
 upsCustom.forEach(u=>{ if(!UPS_LISTA.includes(u)) UPS_LISTA.push(u); });
 
+// Ordre personalitzat de les UPS (arrossegar i deixar a la barra lateral)
+let upsOrderCustom=[];
+try{ upsOrderCustom = JSON.parse(localStorage.getItem("gt_b_ups_order")||"[]"); }catch(e){}
+
+let _sbDragUP=null;
+function sbUPDragStart(up){ _sbDragUP=up; }
+function sbUPDrop(targetUP){
+  if(!_sbDragUP || _sbDragUP===targetUP) return;
+  const ordre = getServeisOrdenats();
+  const from = ordre.indexOf(_sbDragUP);
+  const to   = ordre.indexOf(targetUP);
+  if(from<0||to<0) return;
+  ordre.splice(from,1);
+  ordre.splice(to,0,_sbDragUP);
+  upsOrderCustom = ordre;
+  localStorage.setItem("gt_b_ups_order", JSON.stringify(upsOrderCustom));
+  fbSave();
+  _sbDragUP=null;
+  renderSidebar();
+}
+
 function crearServeiUP(){
   const nom=(prompt("Nom de la nova UP / servei:")||"").trim();
   if(!nom) return;
@@ -1705,7 +1726,8 @@ function fbSave(){
     _db.ref('/data').set({
       unitats: JSON.parse(JSON.stringify(unitats)),
       rot: rotacions,
-      upsCustom: upsCustom
+      upsCustom: upsCustom,
+      upsOrderCustom: upsOrderCustom
     });
   }catch(e){ console.warn('Firebase save error:',e); }
 }
@@ -1735,6 +1757,10 @@ function fbListen(){
         upsCustom = d.upsCustom;
         upsCustom.forEach(u=>{ if(!UPS_LISTA.includes(u)) UPS_LISTA.push(u); });
         localStorage.setItem("gt_b_ups_custom", JSON.stringify(upsCustom));
+      }
+      if(d.upsOrderCustom){
+        upsOrderCustom = d.upsOrderCustom;
+        localStorage.setItem("gt_b_ups_order", JSON.stringify(upsOrderCustom));
       }
       localStorage.setItem("gt_b_unitats", JSON.stringify(unitats));
       if(d.rot) localStorage.setItem("gt_b_rot", JSON.stringify(rotacions));
@@ -2409,7 +2435,8 @@ function renderSidebar(){
       const checked=filterUPSSet.has(u);
       const safe=u.replace(/'/g,"\\'");
       const cnt=treballadors.filter(t=>t.actiu&&getTrebUPs(t).includes(u)).length;
-      return `<label class="sb-item" style="cursor:pointer;${checked?'background:var(--blue-xl)':''}">
+      return `<label class="sb-item" draggable="true" ondragstart="sbUPDragStart('${safe}')" ondragover="event.preventDefault()" ondrop="event.preventDefault();sbUPDrop('${safe}')" style="cursor:grab;${checked?'background:var(--blue-xl)':''}">
+        <span style="color:var(--ink3);font-size:.7rem;margin-right:1px;cursor:grab">⠿</span>
         <input type="checkbox" ${checked?'checked':''} onchange="toggleSelUPS('${safe}',this.checked)" style="accent-color:#1d4ed8;width:13px;height:13px;margin-right:2px">
         <div class="sb-dot" style="background:${upsColor(u)}"></div>
         <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:105px;font-weight:${checked?700:400};color:${checked?'#1e40af':'inherit'}">${u}</span>
@@ -3372,6 +3399,11 @@ function reciAddServei(tId, servei){
 }
 
 function getServeisOrdenats(){
+  if(upsOrderCustom && upsOrderCustom.length){
+    const ordre = upsOrderCustom.filter(u=>UPS_LISTA.includes(u));
+    UPS_LISTA.forEach(u=>{ if(!ordre.includes(u)) ordre.push(u); });
+    return ordre;
+  }
   const agendaOrder = agendaServeis.map(s=>s.servei.toLowerCase());
   return [...UPS_LISTA].sort((a,b)=>{
     const ia=agendaOrder.indexOf(a.toLowerCase());
