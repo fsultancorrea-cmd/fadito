@@ -453,7 +453,6 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   <div class="h-mesos" id="headerMesos"></div>
   <div class="h-gap"></div>
   <button class="h-save" style="background:#fff;color:#111;border:1.5px solid #111;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="openDirectori()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72" width="22" height="20" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="40" y1="2" x2="40" y2="8"/><polygon points="37,8 40,2 43,8" fill="#111" stroke="#111" stroke-width="1"/><path d="M28,20 Q40,8 52,20"/><path d="M31,22 Q40,13 49,22" stroke-dasharray="2,2"/><line x1="26" y1="21" x2="54" y2="21"/><path d="M14,24 Q18,18 22,24"/><rect x="14" y="24" width="8" height="12"/><path d="M58,24 Q62,18 66,24"/><rect x="58" y="24" width="8" height="12"/><rect x="10" y="36" width="60" height="26"/><path d="M34,62 L34,50 Q40,44 46,50 L46,62"/><rect x="15" y="40" width="6" height="8" rx="1"/><rect x="24" y="40" width="6" height="8" rx="1"/><rect x="50" y="40" width="6" height="8" rx="1"/><rect x="59" y="40" width="6" height="8" rx="1"/><line x1="10" y1="50" x2="33" y2="50"/><line x1="47" y1="50" x2="70" y2="50"/><line x1="7" y1="63" x2="73" y2="63"/><line x1="4" y1="66" x2="76" y2="66"/></svg><span>Bas&iacute;lica Sant Pietro</span></button>
-  <button class="h-save" style="background:#fff;color:#c0202a;border:1.5px solid #c0202a;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="switchTab('gt')" title="Gestió de Temps"><svg width="16" height="18" viewBox="0 0 48 52" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="28" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="1" y="5" width="44" height="44" rx="5" fill="#e0e0e0"/><rect x="1" y="5" width="44" height="16" rx="5" fill="#c0202a"/><rect x="1" y="14" width="44" height="7" fill="#c0202a"/><text x="23" y="17" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="6.5" font-weight="700">GT</text><text x="23" y="42" text-anchor="middle" fill="#2a2a2a" font-family="Arial Black,sans-serif" font-size="23" font-weight="900">GT</text></svg> <span style="font-weight:700;font-size:.68rem">Gestió de Temps</span></button>
   <button class="h-save" id="btnFbLogout" style="background:#fff;color:#475569;border:1.5px solid #cbd5e1;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="_fbLogout()" title="Tancar sessió compartida">⏻ <span style="font-weight:700;font-size:.68rem">Sortir</span></button>
 
 </header>
@@ -464,7 +463,7 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   <div class="tab active" data-tab="quadrant" onclick="switchTab('quadrant')">Planificador d'Unitat<span id="tabDateInfo" style="margin-left:7px;font-size:.68rem;font-weight:600;color:#1d4ed8;background:#dbeafe;border-radius:6px;padding:1px 7px;letter-spacing:.01em"></span></div>
   <div class="tab" data-tab="rotacio" onclick="switchTab('rotacio')">Codis i Calendaris</div>
   <div class="tab" data-tab="serveis" onclick="switchTab('serveis')">Reciclatge de personal i serveis</div>
-  <div class="tab" data-tab="resum" onclick="switchTab('resum')">Resum anual d'hores</div>
+  <div class="tab" data-tab="resum" onclick="switchTab('resum')">GT Gestió de Temps</div>
   <div style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:0 10px">
     <button onclick="toggleDashAnual()" id="btnDashAnual" title="Directori de contractació" style="background:#eff6ff;color:#1e40af;border:1.5px solid #bfdbfe;border-radius:7px;padding:4px 12px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap">Directori contractació</button>
     <button onclick="exportExcel()" title="Exportar a Excel" style="background:#bbf7d0;color:#000;border:1.5px solid #86efac;border-radius:7px;padding:4px 12px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap">Excel</button>
@@ -665,19 +664,8 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
     <!-- TAB: VERIFICACIÓ GT -->
     
 
-    <!-- TAB: RESUM ANUAL -->
+    <!-- TAB: GT GESTIÓ DE TEMPS -->
     <div id="tab-resum" style="display:none">
-      <div class="kpi-row" id="kpiResum" style="margin-bottom:0"></div>
-      <div class="card" style="margin-top:11px">
-        <div class="card-hdr">📊 Resum Anual per Treballador — <span id="resumYearLbl">2026</span></div>
-        <div style="overflow:auto;max-height:calc(100vh - 290px)">
-          <table class="ra" id="tblRA"></table>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB: GESTIÓ DE TEMPS -->
-    <div id="tab-gt" style="display:none">
       <!-- Hidden selectors kept for JS compatibility -->
       <select id="gtTorn" style="display:none"><option value="mati" selected>Matí</option></select>
       <select id="gtCont" style="display:none"><option value="tots" selected>Tots</option></select>
@@ -1569,7 +1557,7 @@ function editAgendaCell(sid, mes, dia, currentVal) {
     agendaOverrides[k] = n;
   }
   renderAgenda();
-  if(currentTab==="gt") renderGTPlan();
+  if(currentTab==="resum") renderGTPlan();
   desarDelay();
   toast(`${sv.servei} dia ${dia}: ${n} zeladors`, "ok");
 }
@@ -1595,7 +1583,7 @@ function editAgendaStdFest(sid, field, currentVal) {
   }
   desar();
   renderAgenda();
-  if (currentTab === "gt") renderGTPlan();
+  if (currentTab === "resum") renderGTPlan();
   toast(`${sv.servei} — ${mesNom} ${label}: ${n} zeladors`, "ok");
 }
 
@@ -1608,7 +1596,7 @@ function resetAgendaMes() {
     delete agendaMonthOverrides[sv.id + '|' + mes];
   });
   renderAgenda();
-  if(currentTab==="gt") renderGTPlan();
+  if(currentTab==="resum") renderGTPlan();
   desarDelay();
   toast("Agenda reiniciada als valors per defecte", "ok");
 }
@@ -1890,7 +1878,7 @@ function gtSearchJumpQ(){
 function switchTab(tab){
   currentTab=tab;
   document.querySelectorAll(".tab").forEach(el=>el.classList.toggle("active",el.dataset.tab===tab));
-  ["quadrant","plantilla","serveis","rotacio","vacances","agenda","resum","gt"].forEach(t=>{
+  ["quadrant","plantilla","serveis","rotacio","vacances","agenda","resum"].forEach(t=>{
     const el=document.getElementById("tab-"+t);
     if(el) el.style.display=t===tab?"block":"none";
     const tb=document.getElementById("tb-"+t);
@@ -1915,7 +1903,7 @@ function setMes(m){
   else if(currentTab==="rotacio")  renderRotacio();
   else if(currentTab==="serveis")  renderServeis();
   else if(currentTab==="agenda")   renderAgenda();
-  else if(currentTab==="resum")    renderResum();
+  else if(currentTab==="resum")    gtRenderView();
 }
 
 function toggleSelUPS(u, on){
@@ -1957,7 +1945,7 @@ function renderAll(){
   else if(currentTab==="rotacio") renderRotacio();
   else if(currentTab==="serveis") renderServeis();
   else if(currentTab==="agenda") renderAgenda();
-  else if(currentTab==="resum") renderResum();
+  else if(currentTab==="resum") gtRenderView();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -2463,7 +2451,7 @@ function renderKPIs(){
   const kpiRow = document.getElementById("kpiRow");
   if(!kpiRow) return;
 
-  if(currentTab === "gt"){
+  if(currentTab === "resum"){
     // ── GT tab: show sub-navigation in kpiRow ──
     const gtMes = typeof gtPlanWeekOffset !== "undefined"
       ? (parseInt((document.getElementById("gtPlanMes")||{}).value||0))
@@ -2482,10 +2470,18 @@ function renderKPIs(){
           <input id="gtPoolSearch" type="text" placeholder="🔍 Cercar zelador..." oninput="gtRenderView()"
             style="font-size:.72rem;padding:3px 9px;border:1px solid #cbd5e1;border-radius:5px;width:150px"/>
           <div class="tb-sep"></div>
-          <button id="gtVBtnP" onclick="switchGTView('plan')" style="padding:6px 14px;font-size:.75rem;font-weight:700;border:none;border-bottom:2px solid var(--blue-m);color:var(--blue-m);background:transparent;cursor:pointer">📋 Planificador d'unitat</button>
-          <button id="gtVBtn0" onclick="switchGTView(0)" style="padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-bottom:2px solid transparent;color:var(--ink3);background:transparent;cursor:pointer">📅 Vista Anual</button>
-          <button id="gtVBtn1" onclick="switchGTView(1)" style="padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-bottom:2px solid transparent;color:var(--ink3);background:transparent;cursor:pointer">👤 Detall Treballador</button>
-          <button id="gtVBtn2" onclick="switchGTView(2)" style="padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-bottom:2px solid transparent;color:var(--ink3);background:transparent;cursor:pointer">📊 Balanç d'Hores</button>
+          <button id="gtVBtnP" onclick="switchGTView('plan')" class="kpi bl" style="cursor:pointer;text-align:left;font-family:inherit;min-width:130px">
+            <div class="kpi-l">📋 Planificador d'unitat</div>
+          </button>
+          <button id="gtVBtn0" onclick="switchGTView(0)" class="kpi gn" style="cursor:pointer;text-align:left;font-family:inherit;min-width:110px">
+            <div class="kpi-l">📅 Vista Anual</div>
+          </button>
+          <button id="gtVBtn1" onclick="switchGTView(1)" class="kpi or" style="cursor:pointer;text-align:left;font-family:inherit;min-width:120px">
+            <div class="kpi-l">👤 Detall Treballador</div>
+          </button>
+          <button id="gtVBtn2" onclick="switchGTView(2)" class="kpi cy" style="cursor:pointer;text-align:left;font-family:inherit;min-width:120px">
+            <div class="kpi-l">📊 Balanç d'Hores</div>
+          </button>
         </div>
         <!-- DRETA: actualitzar + mes + navegació setmana -->
         <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;margin-left:12px">
@@ -2503,17 +2499,7 @@ function renderKPIs(){
       </div>
     `;
     // Re-apply active state for current view
-    if(typeof gtCurrentView !== "undefined"){
-      const buttons = {plan:'gtVBtnP', 0:'gtVBtn0', 1:'gtVBtn1', 2:'gtVBtn2'};
-      Object.entries(buttons).forEach(([k,bid])=>{
-        const btn=document.getElementById(bid);
-        if(!btn) return;
-        const active = String(k)===String(gtCurrentView);
-        btn.style.borderBottomColor = active ? "var(--blue-m)" : "transparent";
-        btn.style.color             = active ? "var(--blue-m)" : "var(--ink3)";
-        btn.style.fontWeight        = active ? "700" : "600";
-      });
-    }
+    if(typeof gtCurrentView !== "undefined") gtSetActiveViewBtn(gtCurrentView);
   } else {
     // ── Other tabs: empty kpiRow ──
     kpiRow.innerHTML = "";
@@ -4716,120 +4702,6 @@ function horesMesTreb(treb, mes){
   return h;
 }
 
-function renderResum(){
-  const list=treballadors;
-  let totBE=0,totVA=0,totAP=0,tot3A=0,totHoresPlan=0,totHoresContr=0,totHoresPerm=0;
-
-  list.forEach(t=>{
-    const hDef = horesDiaTreb(t);
-    let hPlan=0;
-    for(let m=0;m<12;m++){
-      const nD=dM(m);
-      for(let d=1;d<=nD;d++){
-        const v=getT(m,t.id,d);
-        if(v==="BE") totBE++;
-        if(v==="VA") totVA++;
-        if(v==="AP") totAP++;
-        if(v==="3A") tot3A++;
-        hPlan += horesDeVal(v, hDef);
-      }
-    }
-    totHoresPlan  += hPlan;
-    totHoresContr += getHoresContr(t);
-    totHoresPerm  += getHoresPermisos(t);
-  });
-  const fmtH = h => h>=10000 ? `${(h/1000).toFixed(1)}k` : (h%1===0?h:h.toFixed(1));
-
-  document.getElementById("kpiResum").innerHTML=`
-    <div class="kpi bl"><div class="kpi-v">${list.length}</div><div class="kpi-l">Total zeladors actius</div><div class="kpi-s">2026</div></div>
-    <div class="kpi gn"><div class="kpi-v">${totVA}</div><div class="kpi-l">Dies VA usats</div><div class="kpi-s">vacances anuals</div></div>
-    <div class="kpi or"><div class="kpi-v">${totAP}</div><div class="kpi-l">Dies AP usats</div><div class="kpi-s">assumptes personals</div></div>
-    <div class="kpi cy"><div class="kpi-v">${tot3A}</div><div class="kpi-l">Dies 3A usats</div><div class="kpi-s">3r acord</div></div>
-    <div class="kpi rd"><div class="kpi-v">${fmtH(totHoresPlan)}</div><div class="kpi-l">Hores planificades</div><div class="kpi-s">suma plantilla · 2026</div></div>
-  `;
-
-  const mShort=MESOS.map(m=>m.slice(0,3));
-  // Header: Treballador | Calendari | Torn | 12 mesos | VA | AP | 3A | H.Planif. | H.Treball | H.Permís
-  let h=`<thead><tr style="background:#1e293b;color:#fff">
-    <th style="text-align:left;min-width:170px;padding:5px 10px" rowspan="2">Treballador</th>
-    <th style="min-width:55px;padding:5px 8px" rowspan="2">Calendari</th>
-    <th style="min-width:50px;padding:5px 8px" rowspan="2">Torn</th>
-    <th colspan="12" style="background:#1e293b;padding:5px 8px">Hores planificades / mes</th>
-    <th colspan="3" style="background:#1e293b;padding:5px 8px">Saldo permisos (usats / total)</th>
-    <th colspan="3" style="background:#1e293b;padding:5px 8px">Hores anuals</th>
-  </tr><tr style="background:#334155;color:#fff">
-    ${mShort.map(m=>`<th style="background:#334155;font-size:.62rem;padding:4px 5px">${m}</th>`).join("")}
-    <th style="background:#334155;color:#fff;padding:4px 6px" title="Vacances anuals">VA</th>
-    <th style="background:#334155;color:#fff;padding:4px 6px" title="Assumptes personals">AP</th>
-    <th style="background:#334155;color:#fff;padding:4px 6px" title="3r acord">3A</th>
-    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Suma de totes les hores planificades">H. Planif.</th>
-    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Hores de treball contractades">H. Treball</th>
-    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Hores de permisos">H. Permís</th>
-  </tr></thead><tbody>`;
-
-  let sumPlan=0,sumContr=0,sumPerm=0;
-  list.forEach(t=>{
-    const hDef = horesDiaTreb(t);
-    const mesHores=[];
-    for(let m=0;m<12;m++){
-      const nD=dM(m);
-      let hMes=0;
-      for(let d=1;d<=nD;d++){
-        const v=getT(m,t.id,d);
-        hMes+=horesDeVal(v, hDef);
-      }
-      mesHores.push(hMes);
-    }
-    const horesPlan  = mesHores.reduce((a,b)=>a+b,0);
-    const horesContr = getHoresContr(t);
-    const horesPerm  = getHoresPermisos(t);
-    sumPlan += horesPlan; sumContr += horesContr; sumPerm += horesPerm;
-
-    const saldo = getSaldoTreb(t);
-    const rot=getRot(t.rot);
-    const tornLbl = t.torn==="nocturn" ? "N" : "D";
-    const tornFg  = t.torn==="nocturn" ? "#1e293b" : "#92400e";
-
-    // Permís sense colors — blanc amb text net
-    const cellPerm = (codi) => {
-      const s = saldo[codi];
-      const overflow = s.usats > s.total;
-      const tip = overflow
-        ? `⚠️ ${codi}: ${s.usats}/${s.total} (sobre el saldo)`
-        : `${codi}: ${s.usats}/${s.total} usats · queden ${s.resta}`;
-      return `<td style="font-size:.7rem;color:${overflow?"#dc2626":"#374151"};font-weight:${overflow?"700":"500"};text-align:center" title="${tip}">${s.usats}/${s.total}${overflow?" ⚠":""}</td>`;
-    };
-
-    h+=`<tr style="border-bottom:1px solid #f1f5f9">
-      <td style="font-weight:500;padding:3px 8px">${t.nom}</td>
-      <td style="text-align:center;padding:3px 5px"><span style="background:${rot.color}22;color:${rot.color};padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:.66rem;font-weight:700">${t.rot}</span></td>
-      <td style="text-align:center;padding:3px 5px;font-size:.62rem;font-weight:600;color:${tornFg}">${tornLbl}</td>
-      ${mesHores.map(v=>{
-        const fmt = v%1===0 ? v : v.toFixed(1);
-        return `<td style="color:#374151;font-size:.66rem;text-align:center;padding:2px 3px">${v>0?fmt:""}</td>`;
-      }).join("")}
-      ${cellPerm("VA")}
-      ${cellPerm("AP")}
-      ${cellPerm("3A")}
-      <td style="font-weight:700;font-size:.75rem;text-align:center;color:#0369a1;padding:3px 8px">${horesPlan%1===0?horesPlan:horesPlan.toFixed(1)}h</td>
-      <td style="font-weight:700;font-size:.75rem;text-align:center;color:#15803d;padding:3px 8px">${horesContr}h</td>
-      <td style="font-weight:700;font-size:.74rem;text-align:center;color:#0f766e;padding:3px 8px">${horesPerm}h</td>
-    </tr>`;
-  });
-
-  // Fila totals — blanc amb text en negre
-  const mCols=mShort.length;
-  h+=`<tr style="background:#f8fafc;font-weight:700;border-top:2px solid #1e293b">
-    <td colspan="3" style="padding:4px 8px;font-size:.72rem">TOTAL PLANTILLA</td>
-    <td colspan="${mCols+3}"></td>
-    <td style="font-size:.78rem;text-align:center;color:#0369a1;padding:3px 8px">${fmtH(sumPlan)}h</td>
-    <td style="font-size:.78rem;text-align:center;color:#15803d;padding:3px 8px">${fmtH(sumContr)}h</td>
-    <td style="font-size:.74rem;text-align:center;color:#0f766e;padding:3px 8px">${fmtH(sumPerm)}h</td>
-  </tr>`;
-
-  h+="</tbody>";
-  document.getElementById("tblRA").innerHTML=h;
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DETALL PANEL
@@ -5770,15 +5642,7 @@ switchGTView = function(v){
     const el = document.getElementById(i==='plan'?"gtViewPlan":"gtView"+i);
     if(el) el.style.display = i===v ? "block" : "none";
   });
-  const buttons = {plan:'gtVBtnP', 0:'gtVBtn0', 1:'gtVBtn1', 2:'gtVBtn2'};
-  Object.entries(buttons).forEach(([k,bid])=>{
-    const btn=document.getElementById(bid);
-    if(!btn) return;
-    const active = String(k)===String(v);
-    btn.style.borderBottomColor = active ? "var(--blue-m)" : "transparent";
-    btn.style.color             = active ? "var(--blue-m)" : "var(--ink3)";
-    btn.style.fontWeight        = active ? "700" : "600";
-  });
+  gtSetActiveViewBtn(v);
   gtCurrentView = v;
   if(v==='plan')  { renderGTPlan(); }
   if(v===1 && gtSelectedId) renderGTDetall(gtSelectedId);
@@ -6693,17 +6557,26 @@ const GT_DIES_ANY = 365;
 let gtCurrentView = 'plan';
 let gtSelectedId  = null;
 
+function gtSetActiveViewBtn(v){
+  const buttons = {plan:'gtVBtnP', 0:'gtVBtn0', 1:'gtVBtn1', 2:'gtVBtn2'};
+  Object.entries(buttons).forEach(([k,bid])=>{
+    const btn=document.getElementById(bid);
+    if(!btn) return;
+    const active = String(k)===String(v);
+    btn.style.background  = active ? "#eff6ff" : "var(--white)";
+    btn.style.boxShadow   = active ? "0 0 0 2px var(--blue-m) inset" : "none";
+    btn.querySelector(".kpi-l").style.color = active ? "var(--blue-m)" : "var(--ink3)";
+  });
+}
+
 function switchGTView(v){
   gtCurrentView = v;
   [0,1,2].forEach(i=>{
     const view = document.getElementById("gtView"+i);
-    const btn  = document.getElementById("gtVBtn"+i);
-    if(!view||!btn) return;
+    if(!view) return;
     view.style.display = i===v ? "block" : "none";
-    btn.style.borderBottomColor = i===v ? "var(--blue-m)" : "transparent";
-    btn.style.color             = i===v ? "var(--blue-m)" : "var(--ink3)";
-    btn.style.fontWeight        = i===v ? "700" : "600";
   });
+  gtSetActiveViewBtn(v);
   if(v===1 && gtSelectedId) renderGTDetall(gtSelectedId);
   if(v===2) renderGTBalanc();
 }
@@ -6761,7 +6634,7 @@ function gtHoresTeoriques(t){
 
 // ── RENDER VISTA ANUAL ────────────────────────────────────────────────────
 function renderGT(){
-  if(currentTab!=="gt") return;
+  if(currentTab!=="resum") return;
   const workers = getGTWorkers();
   renderGTKpis(workers);
 
