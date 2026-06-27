@@ -32,9 +32,10 @@ header{background:var(--blue);color:#fff;display:flex;align-items:center;gap:10p
 .h-sub{font-size:.72rem;opacity:.75}
 .h-gap{flex:1}
 .h-mesos{display:flex;align-items:center;gap:3px}
-.h-mesos button{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:var(--r);padding:3px 7px;cursor:pointer;font-family:var(--font);font-size:.68rem;font-weight:600;transition:background .12s}
+.h-mesos button{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:var(--r);padding:3px 8px;cursor:pointer;font-family:var(--font);font-size:.68rem;font-weight:600;transition:background .12s;white-space:nowrap}
 .h-mesos button:hover{background:rgba(255,255,255,.28)}
 .h-mesos button.active{background:#fff;color:#1d4ed8}
+.h-mesos button.h-mesos-arrow{padding:3px 6px;font-weight:700}
 .h-save{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:var(--r);padding:4px 11px;cursor:pointer;font-family:var(--font);font-size:.72rem;font-weight:600;transition:all .12s}
 .h-save:hover{background:rgba(255,255,255,.3)}
 .h-torn{display:flex;align-items:center;gap:6px}
@@ -2414,9 +2415,12 @@ function anarACelda(mes, dia, trebId){
   }, 280);
 }
 
+function canviMes(d){setMes((currentMes+d+12)%12)}
+
 function renderHeaderMesos(){
   const mes=currentMes;
-  document.getElementById("headerMesos").innerHTML=MESOS.map((m,i)=>`<button class="${i===mes?"active":""}" onclick="setMes(${i})">${m.slice(0,3)}</button>`).join("");
+  const botons=MESOS.map((m,i)=>`<button class="${i===mes?"active":""}" onclick="setMes(${i})">${m}</button>`).join("");
+  document.getElementById("headerMesos").innerHTML=`<button class="h-mesos-arrow" onclick="canviMes(-1)" title="Mes anterior">◀</button>${botons}<button class="h-mesos-arrow" onclick="canviMes(1)" title="Mes seguent">▶</button>`;
 }
 
 function renderSidebar(){
