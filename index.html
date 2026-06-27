@@ -31,10 +31,10 @@ header{background:var(--blue);color:#fff;display:flex;align-items:center;gap:10p
 .h-sep{width:1px;height:18px;background:rgba(255,255,255,.2)}
 .h-sub{font-size:.72rem;opacity:.75}
 .h-gap{flex:1}
-.h-nav{display:flex;align-items:center;gap:5px}
-.h-nav button{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:var(--r);padding:3px 9px;cursor:pointer;font-family:var(--font);font-size:.72rem;font-weight:600;transition:background .12s}
-.h-nav button:hover{background:rgba(255,255,255,.28)}
-.h-nav .mes-lbl{font-size:.82rem;font-weight:700;min-width:100px;text-align:center}
+.h-mesos{display:flex;align-items:center;gap:3px}
+.h-mesos button{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:var(--r);padding:3px 7px;cursor:pointer;font-family:var(--font);font-size:.68rem;font-weight:600;transition:background .12s}
+.h-mesos button:hover{background:rgba(255,255,255,.28)}
+.h-mesos button.active{background:#fff;color:#1d4ed8}
 .h-save{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:var(--r);padding:4px 11px;cursor:pointer;font-family:var(--font);font-size:.72rem;font-weight:600;transition:all .12s}
 .h-save:hover{background:rgba(255,255,255,.3)}
 .h-torn{display:flex;align-items:center;gap:6px}
@@ -449,11 +449,7 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
     </select>
   </div>
   <div class="h-sep"></div>
-  <div class="h-nav">
-    <button onclick="canviMes(-1)">◀</button>
-    <span class="mes-lbl" id="mesLbl"></span>
-    <button onclick="canviMes(1)">▶</button>
-  </div>
+  <div class="h-mesos" id="headerMesos"></div>
   <div class="h-gap"></div>
   <button class="h-save" style="background:#fff;color:#111;border:1.5px solid #111;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="openDirectori()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72" width="22" height="20" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="40" y1="2" x2="40" y2="8"/><polygon points="37,8 40,2 43,8" fill="#111" stroke="#111" stroke-width="1"/><path d="M28,20 Q40,8 52,20"/><path d="M31,22 Q40,13 49,22" stroke-dasharray="2,2"/><line x1="26" y1="21" x2="54" y2="21"/><path d="M14,24 Q18,18 22,24"/><rect x="14" y="24" width="8" height="12"/><path d="M58,24 Q62,18 66,24"/><rect x="58" y="24" width="8" height="12"/><rect x="10" y="36" width="60" height="26"/><path d="M34,62 L34,50 Q40,44 46,50 L46,62"/><rect x="15" y="40" width="6" height="8" rx="1"/><rect x="24" y="40" width="6" height="8" rx="1"/><rect x="50" y="40" width="6" height="8" rx="1"/><rect x="59" y="40" width="6" height="8" rx="1"/><line x1="10" y1="50" x2="33" y2="50"/><line x1="47" y1="50" x2="70" y2="50"/><line x1="7" y1="63" x2="73" y2="63"/><line x1="4" y1="66" x2="76" y2="66"/></svg><span>Bas&iacute;lica Sant Pietro</span></button>
   <button class="h-save" style="background:#fff;color:#c0202a;border:1.5px solid #c0202a;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="switchTab('gt')" title="Gestió de Temps"><svg width="16" height="18" viewBox="0 0 48 52" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="28" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="1" y="5" width="44" height="44" rx="5" fill="#e0e0e0"/><rect x="1" y="5" width="44" height="16" rx="5" fill="#c0202a"/><rect x="1" y="14" width="44" height="7" fill="#c0202a"/><text x="23" y="17" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="6.5" font-weight="700">GT</text><text x="23" y="42" text-anchor="middle" fill="#2a2a2a" font-family="Arial Black,sans-serif" font-size="23" font-weight="900">GT</text></svg> <span style="font-weight:700;font-size:.68rem">Gestió de Temps</span></button>
@@ -1909,7 +1905,6 @@ function toggleSbMesos(){
 }
 function setMes(m){
   currentMes=m;
-  document.getElementById("mesLbl").textContent=MESOS[m]+" "+YEAR;
   renderSidebar();renderKPIs();
   if(currentTab==="quadrant")  renderQuadrant();
   else if(currentTab==="rotacio")  renderRotacio();
@@ -1917,7 +1912,6 @@ function setMes(m){
   else if(currentTab==="agenda")   renderAgenda();
   else if(currentTab==="resum")    renderResum();
 }
-function canviMes(d){setMes((currentMes+d+12)%12)}
 
 function setUPS(u){
   // Legacy single-select path (sidebar clicks)
@@ -2420,6 +2414,11 @@ function anarACelda(mes, dia, trebId){
   }, 280);
 }
 
+function renderHeaderMesos(){
+  const mes=currentMes;
+  document.getElementById("headerMesos").innerHTML=MESOS.map((m,i)=>`<button class="${i===mes?"active":""}" onclick="setMes(${i})">${m.slice(0,3)}</button>`).join("");
+}
+
 function renderSidebar(){
   const mes=currentMes;
   const nD=dM(mes);
@@ -2428,6 +2427,7 @@ function renderSidebar(){
   const sbUPS=document.getElementById("sbUPS");
   document.getElementById("sbMesosHdr").textContent = `Mesos ${YEAR}`;
   document.getElementById("sbMesos").innerHTML=MESOS.map((m,i)=>`<div class="sb-item ${i===mes?"active":""}" onclick="setMes(${i})">${m}</div>`).join("");
+  renderHeaderMesos();
   // UPS
   if(sbUPS){
   sbUPS.innerHTML=`<div class="sb-item ${filterUPSSet.size===0?"active":""}" onclick="setUPS('TOTES')"><div class="sb-dot" style="background:#64748b"></div><span>Totes</span><span class="sb-count">${treballadors.length}</span></div>`
@@ -2816,7 +2816,6 @@ function ccConfirmar(){
     const [y,m] = tramOrdenat[0].inici.split("-").map(Number);
     if(y===YEAR){
       currentMes = m-1;
-      document.getElementById("mesLbl").textContent=`${MESOS[currentMes]} ${YEAR}`;
       currentTab = "quadrant";
       switchTab("quadrant");
     }
