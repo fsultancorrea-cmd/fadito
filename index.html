@@ -621,13 +621,12 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
       <!-- RECICLATGE: HISTORIAL DE SERVEIS PER CELADOR -->
       <div class="card" style="margin-top:14px">
         <div class="card-hdr">
-          🔁 Reciclatge de personal i serveis
-          <div class="card-hdr-gap"></div>
           <input id="reciSearchCel" type="text" placeholder="Buscar celador..." oninput="renderReciclatge()"
             style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;width:170px;font-family:var(--font);margin-right:8px">
           <select id="reciFiltreServei" onchange="renderReciclatge()" style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;font-family:var(--font)">
             <option value="">Filtrar per servei...</option>
           </select>
+          <div class="card-hdr-gap"></div>
         </div>
         <div id="reciclatgeContent" style="padding:10px 14px;overflow-x:auto"></div>
       </div>
