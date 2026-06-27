@@ -1242,14 +1242,10 @@ function getRotDay(codi,mes,dia){
   // 1) Override manual (té màxima prioritat)
   const k=kRO(codi,mes,dia);
   if(rotOverrides[k]!==undefined) return rotOverrides[k];
-  // 2) Patró setmanal (si està definit, es repeteix cada setmana del mes)
+  // 2) Patró setmanal (es repeteix cada setmana del mes; buit = treballant)
   const rot=getRot(codi);
   const dw=dow(mes,dia);
-  if(rot.dies[dw]) return rot.dies[dw];
-  // 3) Matriu real de l'exercici (fallback quan el patró setmanal no té valor)
-  const m = getMatriuFS(YEAR, codi, mes, dia);
-  if(m !== null) return m;
-  return "";
+  return rot.dies[dw]||"";
 }
 
 // Genera patró del mes (respectant overrides si n'hi ha)
