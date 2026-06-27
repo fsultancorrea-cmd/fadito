@@ -3360,6 +3360,18 @@ function reciAddServei(tId, servei){
   renderReciclatge();
 }
 
+function getServeisOrdenats(){
+  const agendaOrder = agendaServeis.map(s=>s.servei.toLowerCase());
+  return [...UPS_LISTA].sort((a,b)=>{
+    const ia=agendaOrder.indexOf(a.toLowerCase());
+    const ib=agendaOrder.indexOf(b.toLowerCase());
+    if(ia>=0&&ib>=0) return ia-ib;
+    if(ia>=0) return -1;
+    if(ib>=0) return 1;
+    return UPS_LISTA.indexOf(a)-UPS_LISTA.indexOf(b);
+  });
+}
+
 function reciRemoveServei(tId, servei){
   const t = treballadors.find(x=>x.id===tId);
   if(!t) return;
@@ -3375,7 +3387,7 @@ function renderReciclatge(){
   const selServei = document.getElementById("reciFiltreServei");
   if(selServei && !selServei.dataset.filled){
     selServei.innerHTML = '<option value="">Filtrar per servei...</option>'
-      + UPS_LISTA.map(u=>`<option value="${u}">${u}</option>`).join("");
+      + getServeisOrdenats().map(u=>`<option value="${u}">${u}</option>`).join("");
     selServei.dataset.filled = "1";
   }
 
@@ -3404,7 +3416,7 @@ function renderReciclatge(){
       <td style="padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap">
         <select onchange="reciAddServei(${t.id},this.value);this.value=''" style="padding:2px 6px;border:1px solid var(--line);border-radius:5px;font-size:.7rem;font-family:var(--font)">
           <option value="">＋ Afegir...</option>
-          ${UPS_LISTA.map(u=>`<option value="${u}">${u}</option>`).join("")}
+          ${getServeisOrdenats().map(u=>`<option value="${u}">${u}</option>`).join("")}
         </select>
       </td>
     </tr>`;
