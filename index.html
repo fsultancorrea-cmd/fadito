@@ -3413,23 +3413,30 @@ function renderReciclatge(){
       const c = upColor(s);
       return `<span style="display:inline-flex;align-items:center;gap:4px;background:${c.bg};color:${c.fg};border-radius:10px;padding:2px 8px 2px 10px;font-size:.7rem;font-weight:600;margin:2px">${s}<button onclick="reciRemoveServei(${t.id},'${s.replace(/'/g,"\\'")}')" style="border:none;background:none;color:${c.fg};cursor:pointer;font-weight:700;font-size:.78rem;line-height:1;padding:0 1px" title="Treure de l'historial">✕</button></span>`;
     }).join("") || '<span style="font-size:.7rem;color:var(--ink3)">Sense serveis registrats</span>';
+    const assignats = getTrebUPs(t);
+    const assignatTags = assignats.map(s=>{
+      const c = upColor(s);
+      return `<span style="display:inline-block;background:${c.bg};color:${c.fg};border-radius:10px;padding:2px 9px;font-size:.7rem;font-weight:600;margin:2px">${s}</span>`;
+    }).join("") || '<span style="font-size:.7rem;color:var(--ink3)">Sense assignar</span>';
     return `<tr>
       <td style="padding:7px 10px;font-weight:600;white-space:nowrap;border-bottom:1px solid var(--line)">${t.nom}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid var(--line)">${tags}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--line)">${assignatTags}</td>
       <td style="padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap">
         <select onchange="reciAddServei(${t.id},this.value);this.value=''" style="padding:2px 6px;border:1px solid var(--line);border-radius:5px;font-size:.7rem;font-family:var(--font)">
           <option value="">＋ Afegir...</option>
           ${getServeisOrdenats().map(u=>`<option value="${u}">${u}</option>`).join("")}
         </select>
       </td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--line)">${tags}</td>
     </tr>`;
   }).join("");
 
   el.innerHTML = `<table style="border-collapse:collapse;width:100%">
     <thead><tr style="background:#f8fafc">
       <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2);white-space:nowrap">Celador</th>
-      <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2)">Serveis on ha estat</th>
+      <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2)">Servei assignat</th>
       <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2)"></th>
+      <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2)">Serveis on ha estat</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
