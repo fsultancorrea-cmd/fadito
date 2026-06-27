@@ -2389,7 +2389,10 @@ function renderSidebar(){
   // UPS
   if(sbUPS){
   const sbHdr=`<div class="sb-item" onclick="clearSelUPS()" style="cursor:pointer;font-weight:${filterUPSSet.size===0?700:400}"><span style="flex:1">— Totes —</span><span class="sb-count">${treballadors.length}</span></div>`;
-  sbUPS.innerHTML=sbHdr+getServeisOrdenats().map(u=>{
+  const sbServeisOrdenats=getServeisOrdenats();
+  const sbEncarregatIdx=sbServeisOrdenats.findIndex(u=>/encarreg/i.test(u));
+  if(sbEncarregatIdx>0) sbServeisOrdenats.unshift(sbServeisOrdenats.splice(sbEncarregatIdx,1)[0]);
+  sbUPS.innerHTML=sbHdr+sbServeisOrdenats.map(u=>{
       const checked=filterUPSSet.has(u);
       const safe=u.replace(/'/g,"\\'");
       const cnt=treballadors.filter(t=>t.actiu&&getTrebUPs(t).includes(u)).length;
