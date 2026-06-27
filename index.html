@@ -2389,7 +2389,7 @@ function renderSidebar(){
   // UPS
   if(sbUPS){
   const sbHdr=`<div class="sb-item" onclick="clearSelUPS()" style="cursor:pointer;font-weight:${filterUPSSet.size===0?700:400}"><span style="flex:1">— Totes —</span><span class="sb-count">${treballadors.length}</span></div>`;
-  sbUPS.innerHTML=sbHdr+UPS_LISTA.map(u=>{
+  sbUPS.innerHTML=sbHdr+getServeisOrdenats().map(u=>{
       const checked=filterUPSSet.has(u);
       const safe=u.replace(/'/g,"\\'");
       const cnt=TORNS_LIST.flatMap(tid=>(unitats[tid]?.treballadors||[])).filter(t=>t.actiu&&getTrebUPs(t).includes(u)).length;
