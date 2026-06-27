@@ -5885,6 +5885,32 @@ function gtRenderView(){
 
 // ─── Auto-assign zeladors des de Plantilla → Necessitat GT ────────────
 // Zeladors amb UP fixa (no Pool) que treballin aquell dia → slot auto
+// Alguns serveis de l'Agenda tenen un nom lleugerament diferent del nom de la UP
+// assignada al treballador a Plantilla (errors tipogràfics, abreviatures, etc).
+// Aquest mapa permet que l'aparellament de recomanacions funcioni igualment.
+const UPS_SERVEI_ALIAS = {
+  "encarregat torn": ["encarregat de torn"],
+  "hospital modular": ["moduls"],
+  "uce": ["unitat curta estada uce","unitat curta estada"],
+  "urgencies obstetricia parts": ["urgencies obstretricia parts"],
+  "urgencies pediatria": ["urgencies pediatriques"],
+};
+function _normSvName(s){
+  let out="";
+  for(const ch of (s||"").toLowerCase().normalize("NFD")){
+    const cp=ch.codePointAt(0);
+    if(cp<0x0300||cp>0x036f) out+=ch;
+  }
+  return out.replace(/\(.*?\)/g,"").replace(/[^a-z0-9]+/g," ").trim();
+}
+function upMatchesServei(upName, sveiName){
+  const a=_normSvName(upName), b=_normSvName(sveiName);
+  if(a===b) return true;
+  if((UPS_SERVEI_ALIAS[a]||[]).includes(b)) return true;
+  if((UPS_SERVEI_ALIAS[b]||[]).includes(a)) return true;
+  return false;
+}
+
 function gtAutoAssignFromUPS(mes, serveis){
   // 1. Esborra les assignacions automàtiques anteriors
   Object.keys(gtPlanData).forEach(k=>{
@@ -5899,7 +5925,7 @@ function gtAutoAssignFromUPS(mes, serveis){
     // Zeladors assignats a aquest servei (suporta múltiples UPs via getTrebUPs)
     const assignats = allTrebs.filter(t=>
       t.actiu &&
-      getTrebUPs(t).some(u => u.toLowerCase() === sv.servei.toLowerCase().trim())
+      getTrebUPs(t).some(u => upMatchesServei(u, sv.servei))
     );
     if(!assignats.length) return;
 
@@ -5920,7 +5946,7 @@ function gtAutoAssignFromUPS(mes, serveis){
         // Salta si aquest treballador ja té una assignació (manual o auto) en qualsevol slot avui
         if(jaAssignats.has(t.id)) continue;
         const codi = getT(mes, t.id, d);
-        const isWorking = !codi || codi==="";
+        const isWorking = codi==="" || isNumVal(codi) || isRJC(codi);
         if(!isWorking) continue;
 
         // Busca el primer slot buit per aquest dia
