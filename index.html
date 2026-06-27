@@ -592,7 +592,6 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
       <div class="card">
         <div class="card-hdr">
           <button class="btn btn-o btn-sm" onclick="switchTab('agenda')" title="Obrir l'agenda de serveis del mes actual">Agenda de serveis</button>
-          <span id="agendaTotalMes" style="font-size:.7rem;color:var(--ink2);font-weight:700;margin-left:8px"></span>
           <div class="card-hdr-gap"></div>
           <span id="qInfo" style="font-size:.66rem;color:var(--ink3)"></span>
         </div>
@@ -3564,11 +3563,6 @@ function renderQuadrant(){
   const qTitleText = `Quadrant — ${MESOS[mes]} ${YEAR}${filterUPSSet.size>0?" · "+[...filterUPSSet].join(", "):""}${pinnedUPS.size>0?" 📌 "+[...pinnedUPS].join(", "):""}`;
   document.getElementById("qInfo").textContent=`${treb.length} zeladors · ${nD} dies`;
 
-  let totalAgendaMes=0;
-  for(let d=1;d<=nD;d++) totalAgendaMes+=totalNecessariDia(mes,d);
-  const agendaTotalEl=document.getElementById("agendaTotalMes");
-  if(agendaTotalEl) agendaTotalEl.textContent=`Total ${MESOS[mes]}: ${totalAgendaMes}`;
-
   // Buidem el contenidor de cobertura separat (ja no s'usa)
   const cobQ=document.getElementById("cobQuadrant");
   if(cobQ) cobQ.innerHTML="";
@@ -3631,7 +3625,14 @@ function renderQuadrant(){
   }
   cobBal+=`<td colspan="${COB_COLS}" style="border-bottom:2px dashed #94a3b8"></td></tr>`;
 
+  let necRow_q=`<tr style="background:#312e81"><td colspan="2" style="padding:3px 8px;border-bottom:2px dashed #94a3b8;font-size:.6rem;color:#fff;font-weight:700;white-space:nowrap">TOTAL NECESSARI/DIA</td>`;
+  for(let d=1;d<=nD;d++){
+    necRow_q+=`<td style="color:#fff;font-family:var(--mono);font-size:.76rem;font-weight:800;text-align:center;border-bottom:2px dashed #94a3b8">${necArr[d-1]}</td>`;
+  }
+  necRow_q+=`<td colspan="${COB_COLS}" style="background:#312e81;border-bottom:2px dashed #94a3b8"></td></tr>`;
+
   let h=`<thead>
+  ${necRow_q}
   ${cobBal}
   <tr>
     <th class="ci ci-title" colspan="2" style="text-align:left;padding:4px 10px;background:#dbeafe;border-bottom:none">
