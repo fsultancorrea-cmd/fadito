@@ -947,6 +947,21 @@ function sbUPDrop(targetUP){
   renderSidebar();
 }
 
+function populateUPSSelects(){
+  ["selUPS","fUPS"].forEach(id=>{
+    const sel=document.getElementById(id);
+    if(!sel)return;
+    const prevVal = sel.value;
+    if(id==="selUPS") sel.innerHTML=`<option value="TOTES">— Totes —</option>`;
+    else sel.innerHTML="";
+    UPS_LISTA.forEach(u=>{
+      const o=document.createElement("option");
+      o.value=u;o.textContent=u;sel.appendChild(o);
+    });
+    if(prevVal && [...sel.options].some(o=>o.value===prevVal)) sel.value=prevVal;
+  });
+}
+
 function crearServeiUP(){
   const nom=(prompt("Nom de la nova UP / servei:")||"").trim();
   if(!nom) return;
@@ -959,6 +974,7 @@ function crearServeiUP(){
   localStorage.setItem("gt_b_ups_custom", JSON.stringify(upsCustom));
   fbSave();
   toast(nom+' creada','ok');
+  populateUPSSelects();
   renderSidebar();
   renderAll();
 }
@@ -1757,6 +1773,7 @@ function fbListen(){
         upsCustom = d.upsCustom;
         upsCustom.forEach(u=>{ if(!UPS_LISTA.includes(u)) UPS_LISTA.push(u); });
         localStorage.setItem("gt_b_ups_custom", JSON.stringify(upsCustom));
+        populateUPSSelects();
       }
       if(d.upsOrderCustom){
         upsOrderCustom = d.upsOrderCustom;
@@ -1847,16 +1864,7 @@ function init(){
   if(selT) selT.value = currentTornTreball;
 
   // ── 5) Pobla selects UPS ──
-  ["selUPS","fUPS"].forEach(id=>{
-    const sel=document.getElementById(id);
-    if(!sel)return;
-    if(id==="selUPS") sel.innerHTML=`<option value="TOTES">— Totes —</option>`;
-    else sel.innerHTML="";
-    UPS_LISTA.forEach(u=>{
-      const o=document.createElement("option");
-      o.value=u;o.textContent=u;sel.appendChild(o);
-    });
-  });
+  populateUPSSelects();
 
   actualizaSelRot();
   renderLlegenda();
