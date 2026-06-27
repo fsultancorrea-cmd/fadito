@@ -3625,11 +3625,11 @@ function renderQuadrant(){
   }
   cobBal+=`<td colspan="${COB_COLS}" style="border-bottom:2px dashed #94a3b8"></td></tr>`;
 
-  let necRow_q=`<tr style="background:#312e81"><td colspan="2" style="padding:3px 8px;border-bottom:2px dashed #94a3b8;font-size:.6rem;color:#fff;font-weight:700;white-space:nowrap">TOTAL NECESSARI/DIA</td>`;
+  let necRow_q=`<tr style="background:#dbeafe"><td colspan="2" style="padding:3px 8px;border-bottom:2px dashed #94a3b8;font-size:.6rem;color:#1e40af;font-weight:700;white-space:nowrap"></td>`;
   for(let d=1;d<=nD;d++){
-    necRow_q+=`<td style="color:#fff;font-family:var(--mono);font-size:.76rem;font-weight:800;text-align:center;border-bottom:2px dashed #94a3b8">${necArr[d-1]}</td>`;
+    necRow_q+=`<td style="color:#1e40af;font-family:var(--mono);font-size:.76rem;font-weight:800;text-align:center;border-bottom:2px dashed #94a3b8">${necArr[d-1]}</td>`;
   }
-  necRow_q+=`<td colspan="${COB_COLS}" style="background:#312e81;border-bottom:2px dashed #94a3b8"></td></tr>`;
+  necRow_q+=`<td colspan="${COB_COLS}" style="background:#dbeafe;border-bottom:2px dashed #94a3b8"></td></tr>`;
 
   let h=`<thead>
   ${necRow_q}
