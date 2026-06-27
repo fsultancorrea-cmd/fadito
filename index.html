@@ -628,10 +628,9 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
         <div class="card-hdr">
           <input id="gestioSearch" type="text" placeholder="Buscar treballador..." oninput="renderGestioGrups()"
             style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;width:180px;font-family:var(--font);margin-right:10px">
-          📋 Gestió de Grups de Calendari
+          <button class="btn btn-o btn-sm" onclick="openRotGridModal()" title="Obrir el generador de cadència de FS">📅 Generador de cadència de FS</button>
           <div class="card-hdr-gap"></div>
           <span id="gestioInfo" style="font-size:.66rem;color:var(--ink3);margin-left:6px"></span>
-          <button class="btn btn-o btn-sm" onclick="openRotGridModal()" title="Obrir el generador de codis FS de calendari" style="margin-left:8px">📅 Generador de FS de Calendari</button>
         </div>
         <div id="gestioGrups" style="padding:10px 12px;overflow-x:auto"></div>
       </div>
@@ -4514,7 +4513,11 @@ function renderRotacio(){
 
   grid.innerHTML=`<div class="card">
     <div class="card-hdr">
-      🔄 Codis de Rotació FS — <strong>${MESOS[mes]} ${YEAR}</strong>
+      🔄 Codis de Rotació FS —
+      <button class="btn btn-o btn-sm" style="padding:1px 7px;margin-left:6px" onclick="setMes((${mes}+11)%12)" title="Mes anterior">◀</button>
+      <strong style="margin:0 6px">${MESOS[mes]} ${YEAR}</strong>
+      <button class="btn btn-o btn-sm" style="padding:1px 7px" onclick="setMes((${mes}+1)%12)" title="Mes següent">▶</button>
+      <button class="btn btn-o btn-sm" style="padding:1px 6px;margin-left:10px" onclick="regenerarFSDesPatro()" title="Esborrar tots els conceptes manuals de tots els mesos i tornar a generar les FS segons el patró setmanal">🧹 Regenerar FS des del patró</button>
       <div class="card-hdr-gap"></div>
       <span style="font-size:.66rem;color:var(--ink3)">${rotacions.length} codis · Fes clic a qualsevol dia per editar</span>
       <button class="btn btn-p btn-sm" style="margin-left:8px" onclick="openModalRotacio()">＋ Nou codi</button>
@@ -5156,6 +5159,13 @@ function eliminarRotacio(idx){
 // AUTO FS / NETEJAR / DESAR / EXPORTAR
 // ═══════════════════════════════════════════════════════════════════════════
 // ─── NETEJAR FS/FA dels rotOverrides ─────────────────────────────────────
+function regenerarFSDesPatro(){
+  if(!confirm("Eliminar tots els conceptes manuals (overrides) de tots els codis i mesos?\nLes FS es tornaran a generar només a partir del patró setmanal (dl-dg).")) return;
+  Object.keys(rotOverrides).forEach(k=>delete rotOverrides[k]);
+  renderRotacio();
+  desarDelay();
+  toast("Conceptes manuals eliminats. FS regenerades des del patró","ok");
+}
 function netejarFS(){
   if(!confirm("Eliminar totes les FS i FA dels patrons de rotació?\n(S'eliminaran els overrides manuals de tots els mesos i es reinicialitzaran els patrons setmanals)")) return;
   // Eliminar tots els rotOverrides que siguin FS o FA
