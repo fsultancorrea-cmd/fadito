@@ -626,17 +626,15 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
       <!-- ── PANELL DE GESTIÓ DE GRUPS ── -->
       <div class="card" style="margin-bottom:10px">
         <div class="card-hdr">
+          <input id="gestioSearch" type="text" placeholder="Buscar treballador..." oninput="renderGestioGrups()"
+            style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;width:180px;font-family:var(--font);margin-right:10px">
           📋 Gestió de Grups de Calendari
           <div class="card-hdr-gap"></div>
-          <input id="gestioSearch" type="text" placeholder="Buscar treballador..." oninput="renderGestioGrups()"
-            style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;width:180px;font-family:var(--font)">
           <span id="gestioInfo" style="font-size:.66rem;color:var(--ink3);margin-left:6px"></span>
-          <button class="btn btn-o btn-sm" onclick="toggleRotGrid()" title="Obrir/tancar el generador de codis FS de calendari" style="margin-left:8px">📅 Generador de FS de Calendari</button>
+          <button class="btn btn-o btn-sm" onclick="openRotGridModal()" title="Obrir el generador de codis FS de calendari" style="margin-left:8px">📅 Generador de FS de Calendari</button>
         </div>
         <div id="gestioGrups" style="padding:10px 12px;overflow-x:auto"></div>
       </div>
-      <!-- ── TAULA FS MENSUAL ── -->
-      <div id="rotGrid" style="display:none"></div>
     </div>
 
     <!-- TAB: VACANCES -->
@@ -758,6 +756,16 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
         <span style="font-size:.68rem;color:#64748b;flex:1">1r clic = inici · 2n clic = fi → Afegir tram</span>
         <button class="btn btn-o btn-sm" id="ccAfegirBtn" onclick="ccAfegirTram()" disabled style="color:var(--green)">＋ Afegir tram</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TAULA FS MENSUAL -->
+<div class="overlay" id="ovRotGrid" onclick="if(event.target===this)closeModal('ovRotGrid')">
+  <div class="modal" style="max-width:1400px;width:96vw;max-height:94vh">
+    <div class="modal-hdr"><span style="flex:1">📅 Generador de FS de Calendari</span><button onclick="closeModal('ovRotGrid')" class="btn btn-o btn-sm" style="padding:2px 8px">✕</button></div>
+    <div class="modal-body" style="max-height:85vh;overflow:auto;padding:14px 16px">
+      <div id="rotGrid"></div>
     </div>
   </div>
 </div>
@@ -1235,13 +1243,14 @@ function getRotDay(codi,mes,dia){
   // 1) Override manual (té màxima prioritat)
   const k=kRO(codi,mes,dia);
   if(rotOverrides[k]!==undefined) return rotOverrides[k];
-  // 2) Matriu real de l'exercici (si està disponible)
-  const m = getMatriuFS(YEAR, codi, mes, dia);
-  if(m !== null) return m;
-  // 3) Fallback al patró setmanal genèric
+  // 2) Patró setmanal (si està definit, es repeteix cada setmana del mes)
   const rot=getRot(codi);
   const dw=dow(mes,dia);
-  return rot.dies[dw]||"";
+  if(rot.dies[dw]) return rot.dies[dw];
+  // 3) Matriu real de l'exercici (fallback quan el patró setmanal no té valor)
+  const m = getMatriuFS(YEAR, codi, mes, dia);
+  if(m !== null) return m;
+  return "";
 }
 
 // Genera patró del mes (respectant overrides si n'hi ha)
@@ -4375,12 +4384,9 @@ function canviarGrupTreballador(id, nouCodi){
   toast(`${t.nom}: ${vell} → ${t.rot}`, "ok");
 }
 
-function toggleRotGrid(){
-  const grid=document.getElementById("rotGrid");
-  if(!grid) return;
-  const show=grid.style.display==="none";
-  grid.style.display=show?"":"none";
-  if(show) renderRotacio();
+function openRotGridModal(){
+  renderRotacio();
+  openModal("ovRotGrid");
 }
 
 function renderRotacio(){
