@@ -463,7 +463,7 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   <div class="tab active" data-tab="quadrant" onclick="switchTab('quadrant')">Planificador d'Unitat<span id="tabDateInfo" style="margin-left:7px;font-size:.68rem;font-weight:600;color:#1d4ed8;background:#dbeafe;border-radius:6px;padding:1px 7px;letter-spacing:.01em"></span></div>
   <div class="tab" data-tab="rotacio" onclick="switchTab('rotacio')">Codis i Calendaris</div>
   <div class="tab" data-tab="serveis" onclick="switchTab('serveis')">Reciclatge de personal i serveis</div>
-  <div class="tab" data-tab="resum" onclick="switchTab('resum')">GT Gestió de Temps</div>
+  <div class="tab" data-tab="resum" onclick="switchTab('resum')" style="display:flex;align-items:center;gap:5px"><svg width="14" height="16" viewBox="0 0 48 52" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><rect x="14" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="28" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="1" y="5" width="44" height="44" rx="5" fill="#e0e0e0"/><rect x="1" y="5" width="44" height="16" rx="5" fill="#c0202a"/><rect x="1" y="14" width="44" height="7" fill="#c0202a"/><text x="23" y="17" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="6.5" font-weight="700">GT</text><text x="23" y="42" text-anchor="middle" fill="#2a2a2a" font-family="Arial Black,sans-serif" font-size="23" font-weight="900">GT</text></svg> Gestió de Temps</div>
   <div style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:0 10px">
     <button onclick="toggleDashAnual()" id="btnDashAnual" title="Directori de contractació" style="background:#eff6ff;color:#1e40af;border:1.5px solid #bfdbfe;border-radius:7px;padding:4px 12px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap">Directori contractació</button>
     <button onclick="exportExcel()" title="Exportar a Excel" style="background:#bbf7d0;color:#000;border:1.5px solid #86efac;border-radius:7px;padding:4px 12px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap">Excel</button>
@@ -681,10 +681,7 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
           <table id="tblGT" style="border-collapse:collapse;font-size:.68rem;min-width:max-content;width:100%"></table>
         </div>
         <div id="gtView1" style="display:none;overflow:auto;max-height:calc(100vh - 155px);padding:16px">
-          <div id="gtDetallContent"><p style="color:var(--ink3);font-size:.8rem;text-align:center;padding:40px 0">Selecciona un treballador a la Vista Anual per veure el seu detall</p></div>
-        </div>
-        <div id="gtView2" style="display:none;overflow:auto;max-height:calc(100vh - 155px);padding:16px">
-          <div id="gtBalancContent"></div>
+          <div id="gtDetallContent"><p style="color:var(--ink3);font-size:.8rem;text-align:center;padding:40px 0">Selecciona un treballador a la Vista de Permisos per veure el seu detall</p></div>
         </div>
       </div>
     </div>
@@ -2474,13 +2471,10 @@ function renderKPIs(){
             <div class="kpi-l">📋 Planificador d'unitat</div>
           </button>
           <button id="gtVBtn0" onclick="switchGTView(0)" class="kpi gn" style="cursor:pointer;text-align:left;font-family:inherit;min-width:110px">
-            <div class="kpi-l">📅 Vista Anual</div>
+            <div class="kpi-l">📅 Vista de Permisos</div>
           </button>
           <button id="gtVBtn1" onclick="switchGTView(1)" class="kpi or" style="cursor:pointer;text-align:left;font-family:inherit;min-width:120px">
             <div class="kpi-l">👤 Detall Treballador</div>
-          </button>
-          <button id="gtVBtn2" onclick="switchGTView(2)" class="kpi cy" style="cursor:pointer;text-align:left;font-family:inherit;min-width:120px">
-            <div class="kpi-l">📊 Balanç d'Hores</div>
           </button>
         </div>
         <!-- DRETA: actualitzar + mes + navegació setmana -->
@@ -5637,7 +5631,7 @@ function kGTP(mes,sid,slot,dia){ return `${mes}|${sid}|${slot}|${dia}`; }
 // Ampliem switchGTView per gestionar la vista 'plan'
 const _origSwitchGTView = switchGTView;
 switchGTView = function(v){
-  const views = ['plan',0,1,2];
+  const views = ['plan',0,1];
   views.forEach(i=>{
     const el = document.getElementById(i==='plan'?"gtViewPlan":"gtView"+i);
     if(el) el.style.display = i===v ? "block" : "none";
@@ -5646,7 +5640,6 @@ switchGTView = function(v){
   gtCurrentView = v;
   if(v==='plan')  { renderGTPlan(); }
   if(v===1 && gtSelectedId) renderGTDetall(gtSelectedId);
-  if(v===2) renderGTBalanc();
 };
 
 // Noms curts dels mesos
@@ -5819,7 +5812,6 @@ function gtRenderView(){
   if(v === "plan")       renderGTPlan();
   else if(v === 0)       renderGT();
   else if(v === 1 && typeof gtSelectedId !== "undefined" && gtSelectedId) renderGTDetall(gtSelectedId);
-  else if(v === 2)       renderGTBalanc();
   else                   renderGTPlan();
 }
 
@@ -6558,7 +6550,7 @@ let gtCurrentView = 'plan';
 let gtSelectedId  = null;
 
 function gtSetActiveViewBtn(v){
-  const buttons = {plan:'gtVBtnP', 0:'gtVBtn0', 1:'gtVBtn1', 2:'gtVBtn2'};
+  const buttons = {plan:'gtVBtnP', 0:'gtVBtn0', 1:'gtVBtn1'};
   Object.entries(buttons).forEach(([k,bid])=>{
     const btn=document.getElementById(bid);
     if(!btn) return;
@@ -6571,14 +6563,13 @@ function gtSetActiveViewBtn(v){
 
 function switchGTView(v){
   gtCurrentView = v;
-  [0,1,2].forEach(i=>{
+  [0,1].forEach(i=>{
     const view = document.getElementById("gtView"+i);
     if(!view) return;
     view.style.display = i===v ? "block" : "none";
   });
   gtSetActiveViewBtn(v);
   if(v===1 && gtSelectedId) renderGTDetall(gtSelectedId);
-  if(v===2) renderGTBalanc();
 }
 
 // Retorna tots els treballadors filtrats per torn/contracte/cerca
@@ -6942,65 +6933,6 @@ function gtKpiMini(label,bg,fg,val){
     <span style="font-size:1.1rem;font-weight:800;color:${fg}">${val}</span>
     <span style="font-size:.68rem;color:${fg};font-weight:600">${label}</span>
   </div>`;
-}
-
-// ── RENDER BALANÇ D'HORES ─────────────────────────────────────────────────
-function renderGTBalanc(){
-  const workers = getGTWorkers();
-  const TORN_H  = {mati:GT_H_DIURN,tarda:GT_H_DIURN,nit1:GT_H_NOCT,nit2:GT_H_NOCT};
-  const TORN_LABELS = {mati:"Matí",tarda:"Tarda",nit1:"Nit 1",nit2:"Nit 2"};
-  let h=`<table style="border-collapse:collapse;font-size:.71rem;width:100%">
-    <thead><tr style="background:#0f172a;color:#fff;position:sticky;top:0">
-      <th style="padding:7px 12px;text-align:left">Treballador</th>
-      <th style="padding:7px 8px;text-align:center">Torn</th>
-      <th style="padding:7px 8px;text-align:center">Contracte</th>
-      <th style="padding:7px 8px;text-align:center">Dies treball</th>
-      <th style="padding:7px 8px;text-align:center">Hores treballades</th>
-      <th style="padding:7px 8px;text-align:center">Dies IT</th>
-      <th style="padding:7px 8px;text-align:center">Dies VA</th>
-      <th style="padding:7px 8px;text-align:center">Dies AP</th>
-      <th style="padding:7px 8px;text-align:center">Balanç</th>
-    </tr></thead><tbody>`;
-
-  // Hores contractuals anuals estimades per tipus
-  const HORES_CONTRACTE = {
-    "estatutari":1651, "interí":1651, "interí 28h":1456, "interí 21h":1092,
-    "programa":1651, "programa 28h":1456, "substitució directa":1651, "substitució":1651
-  };
-  workers.forEach(t=>{
-    const hDef = t.torn==="nocturn" ? GT_H_NOCT : GT_H_DIURN;
-    const hContracte = HORES_CONTRACTE[t.cont] || 1651;
-    let diesTreball=0, hTreball=0, diesIT=0, diesVA=0, diesAP=0;
-    for(let m=0;m<12;m++){
-      const nD=dM(m);
-      for(let d=1;d<=nD;d++){
-        const v=getT(m,t.id,d);
-        if(v===""){diesTreball++;hTreball+=hDef;}
-        else if(isNumVal(v)){diesTreball++;hTreball+=parseFloat(v);}
-        else if(isRJC(v)){const dw=dow(m,d);diesTreball++;hTreball+=horesPerValorDia(v,m,d,hDef);}
-        else if(["IT","IG","AT"].includes(v)) diesIT++;
-        else if(["VA","PA","PV"].includes(v)) diesVA++;
-        else if(v==="AP") diesAP++;
-      }
-    }
-    const balanc = hTreball - hContracte;
-    const balColor = balanc>=0?"#16a34a":"#dc2626";
-    const balBg    = balanc>=0?"#dcfce7":"#fee2e2";
-    h+=`<tr style="border-bottom:1px solid #e2e8f0">
-      <td style="padding:5px 10px;font-weight:600;white-space:nowrap">${t.nom}</td>
-      <td style="padding:5px 8px;text-align:center"><span style="font-size:.62rem;background:${t.torn==="nocturn"?"#1e293b":"#fef3c7"};color:${t.torn==="nocturn"?"#fff":"#92400e"};padding:1px 6px;border-radius:9px;font-weight:700">${t.torn==="nocturn"?"N":"D"}</span></td>
-      <td style="padding:5px 8px;text-align:center;font-size:.68rem;color:#64748b">${t.cont||"—"}</td>
-      <td style="padding:5px 8px;text-align:center;font-weight:700">${diesTreball}</td>
-      <td style="padding:5px 8px;text-align:center;font-weight:700">${Math.round(hTreball)}h</td>
-      <td style="padding:5px 8px;text-align:center;color:#64748b">${diesIT||"—"}</td>
-      <td style="padding:5px 8px;text-align:center;color:#64748b">${diesVA||"—"}</td>
-      <td style="padding:5px 8px;text-align:center;color:#64748b">${diesAP||"—"}</td>
-      <td style="padding:5px 8px;text-align:center;background:${balBg};color:${balColor};font-weight:800">${balanc>=0?"+":""}${Math.round(balanc)}h</td>
-    </tr>`;
-  });
-  h+=`</tbody></table>`;
-  const el=document.getElementById("gtBalancWrap");
-  if(el) el.innerHTML=h;
 }
 
 function gtExportCSV(){
