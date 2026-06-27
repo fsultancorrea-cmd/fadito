@@ -570,8 +570,8 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   <button class="sb-toggle" id="sbToggleBtn" onclick="toggleSidebar()" title="Amaga/mostra el panell">◀</button>
   <div class="sidebar" id="mainSidebar">
     <div class="sb-sec">
-      <div class="sb-hdr" id="sbMesosHdr" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between" onclick="toggleSbMesos()"><span>Mesos 2026</span><span id="sbArrow" style="font-size:.65rem">▼</span></div>
-      <div id="sbMesos" style="display:none"></div>
+      <div class="sb-hdr"><span>UPS / Serveis</span></div>
+      <div id="sbUPS" style="max-height:420px;overflow-y:auto;scrollbar-width:thin"></div>
     </div>
     <div class="sb-sec" style="border-top:2px solid #e2e8f0">
       <div class="sb-hdr" style="display:flex;align-items:center;justify-content:space-between;gap:4px">
@@ -1897,13 +1897,6 @@ function toggleSidebar(){
   btn.textContent=col?"▶":"◀";
   btn.style.left=col?"0":"196px";
 }
-function toggleSbMesos(){
-  const el=document.getElementById("sbMesos");
-  const ar=document.getElementById("sbArrow");
-  const show=el.style.display==="none";
-  el.style.display=show?"":"none";
-  ar.textContent=show?"▲":"▼";
-}
 function setMes(m){
   currentMes=m;
   renderSidebar();renderKPIs();
@@ -2429,8 +2422,6 @@ function renderSidebar(){
   // UPS — usa cometes simples per evitar conflicte amb l'atribut HTML
   const upsPresents=[...new Set(treballadors.map(t=>t.ups))].sort();
   const sbUPS=document.getElementById("sbUPS");
-  document.getElementById("sbMesosHdr").textContent = `Mesos ${YEAR}`;
-  document.getElementById("sbMesos").innerHTML=MESOS.map((m,i)=>`<div class="sb-item ${i===mes?"active":""}" onclick="setMes(${i})">${m}</div>`).join("");
   renderHeaderMesos();
   // UPS
   if(sbUPS){
