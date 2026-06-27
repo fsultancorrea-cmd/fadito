@@ -1238,14 +1238,21 @@ function getMatriuFS(year, codi, mes, dia){
   return M[codi][mes][dia] || null;
 }
 
+// Cada mes té el seu propi patró setmanal independent (no es comparteix entre mesos)
+function getMesPattern(rot,mes){
+  if(!rot.diesMes) rot.diesMes={};
+  if(!rot.diesMes[mes]) rot.diesMes[mes]=[...(rot.dies||["","","","","","FS","FS"])];
+  return rot.diesMes[mes];
+}
+
 function getRotDay(codi,mes,dia){
   // 1) Override manual (té màxima prioritat)
   const k=kRO(codi,mes,dia);
   if(rotOverrides[k]!==undefined) return rotOverrides[k];
-  // 2) Patró setmanal (es repeteix cada setmana del mes; buit = treballant)
+  // 2) Patró setmanal del mes (es repeteix cada setmana d'aquest mes; buit = treballant)
   const rot=getRot(codi);
   const dw=dow(mes,dia);
-  return rot.dies[dw]||"";
+  return getMesPattern(rot,mes)[dw]||"";
 }
 
 // Genera patró del mes (respectant overrides si n'hi ha)
@@ -4460,13 +4467,14 @@ function renderRotacio(){
       </td>`;
     }
 
-    // Patró setmanal compacte (7 pastilles editables)
+    // Patró setmanal compacte (7 pastilles editables) — propi d'aquest mes
+    const mesPattern=getMesPattern(r,mes);
     const patroHTML=DIES_S.map((ds,i)=>{
-      const v=r.dies[i]||"";
+      const v=mesPattern[i]||"";
       const ll=LLEGENDA_CODIS[v];
       const bg=ll?ll.bg:(i>=5?"#ede9fe":"#f1f5f9");
       const fg=ll?ll.fg:(i>=5?"#6d28d9":"#64748b");
-      return `<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:3px;font-size:.58rem;font-weight:700;background:${bg};color:${fg};cursor:pointer;position:relative" title="${DIES_L[i]}: ${v||'Treballant'}" onclick="editPatroDia(${idx},${i})">
+      return `<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:3px;font-size:.58rem;font-weight:700;background:${bg};color:${fg};cursor:pointer;position:relative" title="${MESOS[mes]} · ${DIES_L[i]}: ${v||'Treballant'}" onclick="editPatroDia(${idx},${i},${mes})">
         ${v||ds}
       </span>`;
     }).join("");
@@ -4537,39 +4545,40 @@ function renderRotacio(){
   </div>`;
 }
 
-// Edita un dia del patró setmanal directament des de la taula apaisada
-function editPatroDia(rotIdx, diaIdx){
+// Edita un dia del patró setmanal d'un mes concret, directament des de la taula apaisada
+function editPatroDia(rotIdx, diaIdx, mes){
   const r = rotacions[rotIdx];
-  const actual = r.dies[diaIdx]||"";
+  const pat = getMesPattern(r,mes);
+  const actual = pat[diaIdx]||"";
   const torn = dominantTorn(r.codi);
   const hDef = torn === "nocturn" ? HORES_DIA_NOCTURN : HORES_DIA_DIURN;
-  const nou = prompt(`${r.codi} — ${DIES_L[diaIdx]}\nPatró per defecte (actual: "${actual||`Treballant ${hDef}h`}"):\nDeixa buit per treballar, o escriu: FS · FA · BE · VA · AP · 3A · o hores (ej: ${hDef})`, actual);
+  const nou = prompt(`${r.codi} — ${MESOS[mes]} · ${DIES_L[diaIdx]}\nPatró d'aquest mes (actual: "${actual||`Treballant ${hDef}h`}"):\nDeixa buit per treballar, o escriu: FS · FA · BE · VA · AP · 3A · o hores (ej: ${hDef})`, actual);
   if(nou===null) return;
-  rotacions[rotIdx].dies[diaIdx]=nou.trim();
+  pat[diaIdx]=nou.trim();
   renderRotacio();
   desarDelay();
-  toast(`${r.codi} ${DIES_S[diaIdx]} → "${nou.trim()||`Treballant ${hDef}h`}"`, "ok");
+  toast(`${r.codi} ${MESOS[mes]} ${DIES_S[diaIdx]} → "${nou.trim()||`Treballant ${hDef}h`}"`, "ok");
 }
 
-// Canvi al patró setmanal (afecta tot el mes a tots els dies d'aquell dia-de-setmana)
-function onRotDayChange(rotIdx,diaIdx,valor){
-  rotacions[rotIdx].dies[diaIdx]=valor;
-  renderRotacio();
+// Canvi al patró setmanal d'un mes concret (afecta tots els dies d'aquell dia-de-setmana, només aquest mes)
+function onRotDayChange(rotIdx,diaIdx,valor,mes){
   const r=rotacions[rotIdx];
+  getMesPattern(r,mes)[diaIdx]=valor;
+  renderRotacio();
   const torn=dominantTorn(r.codi);
   const hDef=torn==="nocturn"?HORES_DIA_NOCTURN:HORES_DIA_DIURN;
   const lbl=isNumVal(valor)?valor+"h":(valor||`treball ${hDef}h`);
   desarDelay();
-  toast(`${r.codi}: ${DIES_L[diaIdx]} → ${lbl}`,"ok");
+  toast(`${r.codi}: ${MESOS[mes]} ${DIES_L[diaIdx]} → ${lbl}`,"ok");
 }
 
 // Canvi a una cel·la concreta del calendari → guarda override per aquest dia
 function onRotCellChange(codi,mes,dia,valor){
   const k=kRO(codi,mes,dia);
-  // Si el valor torna a coincidir amb el patró setmanal → eliminem l'override
+  // Si el valor torna a coincidir amb el patró setmanal d'aquest mes → eliminem l'override
   const rot=getRot(codi);
   const dw=dow(mes,dia);
-  const patronVal=rot.dies[dw]||"";
+  const patronVal=getMesPattern(rot,mes)[dw]||"";
   if(valor===patronVal){
     delete rotOverrides[k];
   } else {
@@ -5171,6 +5180,9 @@ function netejarFS(){
   // Reinicialitzar dies[] de les rotacions (treure FS/FA manuals, deixar buit ds/dg)
   rotacions.forEach(r=>{
     r.dies = r.dies.map((v,i)=> (v==="FS"||v==="FA") ? "" : v);
+    if(r.diesMes) Object.keys(r.diesMes).forEach(mes=>{
+      r.diesMes[mes] = r.diesMes[mes].map((v,i)=> (v==="FS"||v==="FA") ? "" : v);
+    });
   });
   renderRotacio();
   desarDelay();
