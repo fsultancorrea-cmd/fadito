@@ -617,6 +617,20 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
     <!-- TAB: SERVEIS / UP'S -->
     <div id="tab-serveis" style="display:none">
       <div id="serveisContent"></div>
+
+      <!-- RECICLATGE: HISTORIAL DE SERVEIS PER CELADOR -->
+      <div class="card" style="margin-top:14px">
+        <div class="card-hdr">
+          🔁 Reciclatge de personal i serveis
+          <div class="card-hdr-gap"></div>
+          <input id="reciSearchCel" type="text" placeholder="Buscar celador..." oninput="renderReciclatge()"
+            style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;width:170px;font-family:var(--font);margin-right:8px">
+          <select id="reciFiltreServei" onchange="renderReciclatge()" style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;font-family:var(--font)">
+            <option value="">Filtrar per servei...</option>
+          </select>
+        </div>
+        <div id="reciclatgeContent" style="padding:10px 14px;overflow-x:auto"></div>
+      </div>
     </div>
 
     <!-- TAB: GESTIÓ I ROTACIÓ DE CALENDARIS -->
@@ -3366,27 +3380,27 @@ function svRemoveExtraUP(tId, upName){
   renderServeis();
 }
 
+function upColor(up){
+  if(/pool hospitalitz/i.test(up))  return {bg:"#ede9fe",fg:"#5b21b6"};
+  if(/pool urgèn/i.test(up))         return {bg:"#fef3c7",fg:"#92400e"};
+  if(/pool crít/i.test(up))          return {bg:"#fee2e2",fg:"#991b1b"};
+  if(/pool quirúr/i.test(up))        return {bg:"#dcfce7",fg:"#166534"};
+  if(/pool consul/i.test(up))        return {bg:"#f0f9ff",fg:"#0369a1"};
+  if(/pool/i.test(up))               return {bg:"#f3e8ff",fg:"#6b21a8"};
+  if(/planta/i.test(up))             return {bg:"#dbeafe",fg:"#1e40af"};
+  if(/uci/i.test(up))                return {bg:"#fee2e2",fg:"#991b1b"};
+  if(/urgèn/i.test(up))              return {bg:"#fef9c3",fg:"#854d0e"};
+  if(/quirof/i.test(up))             return {bg:"#dcfce7",fg:"#166534"};
+  if(/encarreg/i.test(up))           return {bg:"#fef3c7",fg:"#92400e"};
+  return {bg:"#f1f5f9",fg:"#374151"};
+}
+
 function renderServeis(){
   const el = document.getElementById("serveisContent");
   if(!el) return;
   const serveis = getServeisData();
 
   const allTrebs = (unitats['mati']?.treballadors||[]).filter(t=>t.actiu!==false);
-
-  const upColor = up => {
-    if(/pool hospitalitz/i.test(up))  return {bg:"#ede9fe",fg:"#5b21b6"};
-    if(/pool urgèn/i.test(up))         return {bg:"#fef3c7",fg:"#92400e"};
-    if(/pool crít/i.test(up))          return {bg:"#fee2e2",fg:"#991b1b"};
-    if(/pool quirúr/i.test(up))        return {bg:"#dcfce7",fg:"#166534"};
-    if(/pool consul/i.test(up))        return {bg:"#f0f9ff",fg:"#0369a1"};
-    if(/pool/i.test(up))               return {bg:"#f3e8ff",fg:"#6b21a8"};
-    if(/planta/i.test(up))             return {bg:"#dbeafe",fg:"#1e40af"};
-    if(/uci/i.test(up))                return {bg:"#fee2e2",fg:"#991b1b"};
-    if(/urgèn/i.test(up))              return {bg:"#fef9c3",fg:"#854d0e"};
-    if(/quirof/i.test(up))             return {bg:"#dcfce7",fg:"#166534"};
-    if(/encarreg/i.test(up))           return {bg:"#fef3c7",fg:"#92400e"};
-    return {bg:"#f1f5f9",fg:"#374151"};
-  };
 
   // Agrupa zeladors per UP (suporta múltiples UPs via getTrebUPs)
   const byUP = {};
@@ -3468,6 +3482,82 @@ function renderServeis(){
     +'</table>'
     +'</div>'
     +'</div>';
+  renderReciclatge();
+}
+
+// ─── RECICLATGE: HISTORIAL DE SERVEIS PER CELADOR ──────────────────────
+function reciAddServei(tId, servei){
+  if(!servei) return;
+  const t = treballadors.find(x=>x.id===tId);
+  if(!t) return;
+  if(!t.historialServeis) t.historialServeis=[];
+  if(t.historialServeis.some(s=>s.toLowerCase()===servei.toLowerCase())){
+    toast(t.nom+' ja té '+servei+' al seu historial','err'); return;
+  }
+  t.historialServeis.push(servei);
+  desar();
+  toast(servei+' afegit a l\'historial de '+t.nom,'ok');
+  renderReciclatge();
+}
+
+function reciRemoveServei(tId, servei){
+  const t = treballadors.find(x=>x.id===tId);
+  if(!t) return;
+  t.historialServeis = (t.historialServeis||[]).filter(s=>s.toLowerCase()!==servei.toLowerCase());
+  desar();
+  renderReciclatge();
+}
+
+function renderReciclatge(){
+  const el = document.getElementById("reciclatgeContent");
+  if(!el) return;
+
+  const selServei = document.getElementById("reciFiltreServei");
+  if(selServei && !selServei.dataset.filled){
+    selServei.innerHTML = '<option value="">Filtrar per servei...</option>'
+      + UPS_LISTA.map(u=>`<option value="${u}">${u}</option>`).join("");
+    selServei.dataset.filled = "1";
+  }
+
+  const q = (document.getElementById("reciSearchCel")?.value||"").toLowerCase().trim();
+  const filtreServei = selServei ? selServei.value : "";
+
+  let allTrebs = (unitats['mati']?.treballadors||[]).filter(t=>t.actiu!==false);
+  if(q) allTrebs = allTrebs.filter(t=>t.nom.toLowerCase().includes(q));
+  if(filtreServei) allTrebs = allTrebs.filter(t=>(t.historialServeis||[]).some(s=>s.toLowerCase()===filtreServei.toLowerCase()));
+  allTrebs = [...allTrebs].sort((a,b)=>a.nom.localeCompare(b.nom));
+
+  if(!allTrebs.length){
+    el.innerHTML = '<div style="font-size:.78rem;color:var(--ink3);padding:10px 0">Cap celador coincideix amb el filtre.</div>';
+    return;
+  }
+
+  const rows = allTrebs.map(t=>{
+    const hist = t.historialServeis||[];
+    const tags = hist.map(s=>{
+      const c = upColor(s);
+      return `<span style="display:inline-flex;align-items:center;gap:4px;background:${c.bg};color:${c.fg};border-radius:10px;padding:2px 8px 2px 10px;font-size:.7rem;font-weight:600;margin:2px">${s}<button onclick="reciRemoveServei(${t.id},'${s.replace(/'/g,"\\'")}')" style="border:none;background:none;color:${c.fg};cursor:pointer;font-weight:700;font-size:.78rem;line-height:1;padding:0 1px" title="Treure de l'historial">✕</button></span>`;
+    }).join("") || '<span style="font-size:.7rem;color:var(--ink3)">Sense serveis registrats</span>';
+    return `<tr>
+      <td style="padding:7px 10px;font-weight:600;white-space:nowrap;border-bottom:1px solid var(--line)">${t.nom}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--line)">${tags}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap">
+        <select onchange="reciAddServei(${t.id},this.value);this.value=''" style="padding:2px 6px;border:1px solid var(--line);border-radius:5px;font-size:.7rem;font-family:var(--font)">
+          <option value="">＋ Afegir...</option>
+          ${UPS_LISTA.map(u=>`<option value="${u}">${u}</option>`).join("")}
+        </select>
+      </td>
+    </tr>`;
+  }).join("");
+
+  el.innerHTML = `<table style="border-collapse:collapse;width:100%">
+    <thead><tr style="background:#f8fafc">
+      <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2);white-space:nowrap">Celador</th>
+      <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2)">Serveis on ha estat</th>
+      <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2)"></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
 }
 
 
