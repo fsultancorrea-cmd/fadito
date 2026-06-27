@@ -2392,7 +2392,7 @@ function renderSidebar(){
   sbUPS.innerHTML=sbHdr+getServeisOrdenats().map(u=>{
       const checked=filterUPSSet.has(u);
       const safe=u.replace(/'/g,"\\'");
-      const cnt=TORNS_LIST.flatMap(tid=>(unitats[tid]?.treballadors||[])).filter(t=>t.actiu&&getTrebUPs(t).includes(u)).length;
+      const cnt=treballadors.filter(t=>t.actiu&&getTrebUPs(t).includes(u)).length;
       return `<label class="sb-item" style="cursor:pointer;${checked?'background:var(--blue-xl)':''}">
         <input type="checkbox" ${checked?'checked':''} onchange="toggleSelUPS('${safe}',this.checked)" style="accent-color:#1d4ed8;width:13px;height:13px;margin-right:2px">
         <div class="sb-dot" style="background:${upsColor(u)}"></div>
