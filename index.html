@@ -919,6 +919,13 @@ let upsCustom=[];
 try{ upsCustom = JSON.parse(localStorage.getItem("gt_b_ups_custom")||"[]"); }catch(e){}
 upsCustom.forEach(u=>{ if(!UPS_LISTA.includes(u)) UPS_LISTA.push(u); });
 
+// Ordre personalitzat
+
+// Grups de UPS (un nom \"pare\" agrupa diversos UPs \"fill\"; nomes visual, no afecta assignacions)
+let upsGrups={};
+try{ upsGrups = JSON.parse(localStorage.getItem("gt_b_ups_grups")||"{}"); }catch(e){}
+let expandedGrups=new Set();
+
 // Ordre personalitzat de les UPS (arrossegar i deixar a la barra lateral)
 let upsOrderCustom=[];
 try{ upsOrderCustom = JSON.parse(localStorage.getItem("gt_b_ups_order")||"[]"); }catch(e){}
@@ -970,6 +977,66 @@ function crearServeiUP(){
   populateUPSSelects();
   renderSidebar();
   renderAll();
+}
+
+function esFillDeGrup(u){
+  return Object.values(upsGrups).some(arr=>arr.includes(u));
+}
+
+function agruparServeis(){
+  const nom=(prompt('Nom del grup (ex: Farm\u00e0cia):')||'').trim();
+  if(!nom) return;
+  const guess=UPS_LISTA.filter(u=>u.toLowerCase().includes(nom.toLowerCase()) && !esFillDeGrup(u));
+  const llista=prompt('Escriu els noms exactes dels serveis a agrupar sota "'+nom+'", separats per coma:', guess.join(', '));
+  if(!llista) return;
+  const noms=llista.split(',').map(s=>s.trim()).filter(Boolean);
+  const trobats=[];
+  const noTrobats=[];
+  noms.forEach(n=>{
+    const real=UPS_LISTA.find(u=>u.toLowerCase()===n.toLowerCase());
+    if(real && !trobats.includes(real)) trobats.push(real); else if(!real) noTrobats.push(n);
+  });
+  if(trobats.length<2){
+    toast('Cal seleccionar almenys 2 serveis existents','warn');
+    return;
+  }
+  Object.keys(upsGrups).forEach(g=>{
+    upsGrups[g]=upsGrups[g].filter(u=>!trobats.includes(u));
+    if(upsGrups[g].length===0) delete upsGrups[g];
+  });
+  upsGrups[nom]=trobats;
+  expandedGrups.add(nom);
+  localStorage.setItem('gt_b_ups_grups', JSON.stringify(upsGrups));
+  fbSave();
+  renderSidebar();
+  if(noTrobats.length) toast('No trobats: '+noTrobats.join(', '),'warn');
+  else toast('Grup "'+nom+'" creat amb '+trobats.length+' serveis','ok');
+}
+
+function desferGrup(nom, ev){
+  if(ev) ev.stopPropagation();
+  if(!confirm('Vols desfer el grup "'+nom+'"? Els serveis tornaran a apar\u00e8ixer per separat.')) return;
+  delete upsGrups[nom];
+  expandedGrups.delete(nom);
+  localStorage.setItem('gt_b_ups_grups', JSON.stringify(upsGrups));
+  fbSave();
+  renderSidebar();
+  toast('Grup "'+nom+'" desfet','ok');
+}
+
+function toggleGrupExpand(nom, ev){
+  if(ev) ev.stopPropagation();
+  if(expandedGrups.has(nom)) expandedGrups.delete(nom); else expandedGrups.add(nom);
+  renderSidebar();
+}
+
+function toggleSelGrup(nom, on){
+  (upsGrups[nom]||[]).forEach(u=>{ if(on) filterUPSSet.add(u); else filterUPSSet.delete(u); });
+  filterUPS = filterUPSSet.size===1 ? [...filterUPSSet][0] : (filterUPSSet.size===0 ? "TOTES":"MULTI");
+  updateSelUPSLabel();
+  renderSidebar();renderKPIs();
+  if(currentTab==="quadrant") renderQuadrant();
+  else if(currentTab==="plantilla") renderPlantilla();
 }
 
 // ─── CODIS DE ROTACIÓ (editables) ───────────────────────────────────────────
@@ -1736,7 +1803,8 @@ function fbSave(){
       unitats: JSON.parse(JSON.stringify(unitats)),
       rot: rotacions,
       upsCustom: upsCustom,
-      upsOrderCustom: upsOrderCustom
+      upsOrderCustom: upsOrderCustom,
+      upsGrups: upsGrups
     });
   }catch(e){ console.warn('Firebase save error:',e); }
 }
@@ -1767,6 +1835,10 @@ function fbListen(){
         upsCustom.forEach(u=>{ if(!UPS_LISTA.includes(u)) UPS_LISTA.push(u); });
         localStorage.setItem("gt_b_ups_custom", JSON.stringify(upsCustom));
         populateUPSSelects();
+      }
+      if(d.upsGrups){
+        upsGrups = d.upsGrups;
+        localStorage.setItem("gt_b_ups_grups", JSON.stringify(upsGrups));
       }
       if(d.upsOrderCustom){
         upsOrderCustom = d.upsOrderCustom;
@@ -2427,23 +2499,59 @@ function renderSidebar(){
   renderHeaderMesos();
   // UPS
   if(sbUPS){
-  const sbCrear=`<div class="sb-item" onclick="crearServeiUP()" style="cursor:pointer;color:var(--blue-m);font-weight:700"><span style="flex:1">＋ Crear servei</span></div>`;
+  const sbCrear=`<div class="sb-item" onclick="crearServeiUP()" style="cursor:pointer;color:var(--blue-m);font-weight:700"><span style="flex:1">＋ Crear servei</span></div><div class="sb-item" onclick="agruparServeis()" style="cursor:pointer;color:var(--blue-m);font-weight:700"><span style="flex:1">🔗 Agrupar serveis</span></div>`;
   const sbHdr=sbCrear+`<div class="sb-item" onclick="clearSelUPS()" style="cursor:pointer;font-weight:${filterUPSSet.size===0?700:400}"><span style="flex:1">— Totes —</span><span class="sb-count">${treballadors.length}</span></div>`;
   const sbServeisOrdenats=getServeisOrdenats();
   const sbEncarregatIdx=sbServeisOrdenats.findIndex(u=>/encarreg/i.test(u));
   if(sbEncarregatIdx>0) sbServeisOrdenats.unshift(sbServeisOrdenats.splice(sbEncarregatIdx,1)[0]);
-  sbUPS.innerHTML=sbHdr+sbServeisOrdenats.map(u=>{
-      const checked=filterUPSSet.has(u);
-      const safe=u.replace(/'/g,"\\'");
-      const cnt=treballadors.filter(t=>t.actiu&&getTrebUPs(t).includes(u)).length;
-      return `<label class="sb-item" draggable="true" ondragstart="sbUPDragStart('${safe}')" ondragover="event.preventDefault()" ondrop="event.preventDefault();sbUPDrop('${safe}')" style="cursor:grab;${checked?'background:var(--blue-xl)':''}">
-        <span style="color:var(--ink3);font-size:.7rem;margin-right:1px;cursor:grab">⠿</span>
-        <input type="checkbox" ${checked?'checked':''} onchange="toggleSelUPS('${safe}',this.checked)" style="accent-color:#1d4ed8;width:13px;height:13px;margin-right:2px">
-        <div class="sb-dot" style="background:${upsColor(u)}"></div>
-        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:105px;font-weight:${checked?700:400};color:${checked?'#1e40af':'inherit'}">${u}</span>
-        <span class="sb-count">${cnt}</span>
-      </label>`;
-    }).join("");
+  sbUPS.innerHTML=sbHdr+(function(){
+  const renderedGroups=new Set();
+  const rowsArr=[];
+  sbServeisOrdenats.forEach(u=>{
+    const grupNom=Object.keys(upsGrups).find(g=>upsGrups[g].includes(u));
+    if(grupNom){
+      if(renderedGroups.has(grupNom)) return;
+      renderedGroups.add(grupNom);
+      const fills=upsGrups[grupNom];
+      const totalCnt=treballadors.filter(t=>t.actiu&&getTrebUPs(t).some(x=>fills.includes(x))).length;
+      const isExpanded=expandedGrups.has(grupNom);
+      const grupChecked=fills.length>0 && fills.every(f=>filterUPSSet.has(f));
+      const safeGrup=grupNom.replace(/'/g,"\\'");
+      rowsArr.push(`<label class="sb-item" style="cursor:pointer;${grupChecked?'background:var(--blue-xl)':''}" onclick="if(event.target.tagName!=='INPUT')toggleGrupExpand('${safeGrup}',event)">
+        <span style="color:var(--ink3);font-size:.7rem;margin-right:1px;width:13px;text-align:center;font-weight:700">${isExpanded?'\u2212':'+'}</span>
+        <input type="checkbox" ${grupChecked?'checked':''} onclick="event.stopPropagation()" onchange="toggleSelGrup('${safeGrup}',this.checked)" style="accent-color:#1d4ed8;width:13px;height:13px;margin-right:2px">
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px;font-weight:${grupChecked?700:600}">${grupNom}</span>
+        <span class="sb-count">${totalCnt}</span>
+        <span onclick="desferGrup('${safeGrup}',event)" title="Desfer grup" style="margin-left:2px;color:var(--ink3);font-size:.65rem;cursor:pointer;padding:0 2px">\u2715</span>
+      </label>`);
+      if(isExpanded){
+        fills.forEach(fu=>{
+          const checked=filterUPSSet.has(fu);
+          const safe=fu.replace(/'/g,"\\'");
+          const cnt=treballadors.filter(t=>t.actiu&&getTrebUPs(t).includes(fu)).length;
+          rowsArr.push(`<label class="sb-item" style="cursor:pointer;padding-left:18px;${checked?'background:var(--blue-xl)':''}">
+            <input type="checkbox" ${checked?'checked':''} onchange="toggleSelUPS('${safe}',this.checked)" style="accent-color:#1d4ed8;width:13px;height:13px;margin-right:2px">
+            <div class="sb-dot" style="background:${upsColor(fu)}"></div>
+            <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:95px;font-weight:${checked?700:400};color:${checked?'#1e40af':'inherit'}">${fu}</span>
+            <span class="sb-count">${cnt}</span>
+          </label>`);
+        });
+      }
+      return;
+    }
+    const checked=filterUPSSet.has(u);
+    const safe=u.replace(/'/g,"\\'");
+    const cnt=treballadors.filter(t=>t.actiu&&getTrebUPs(t).includes(u)).length;
+    rowsArr.push(`<label class="sb-item" draggable="true" ondragstart="sbUPDragStart('${safe}')" ondragover="event.preventDefault()" ondrop="event.preventDefault();sbUPDrop('${safe}')" style="cursor:grab;${checked?'background:var(--blue-xl)':''}">
+      <span style="color:var(--ink3);font-size:.7rem;margin-right:1px;cursor:grab">\u283f</span>
+      <input type="checkbox" ${checked?'checked':''} onchange="toggleSelUPS('${safe}',this.checked)" style="accent-color:#1d4ed8;width:13px;height:13px;margin-right:2px">
+      <div class="sb-dot" style="background:${upsColor(u)}"></div>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:105px;font-weight:${checked?700:400};color:${checked?'#1e40af':'inherit'}">${u}</span>
+      <span class="sb-count">${cnt}</span>
+    </label>`);
+  });
+  return rowsArr.join("");
+})();
   }
   const treb=getTreb();
   let cIT=0,cVA=0,cAP=0,cPerm=0;
