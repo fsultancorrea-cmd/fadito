@@ -536,7 +536,7 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   <div class="sidebar" id="mainSidebar">
     <div class="sb-sec">
       <div class="sb-hdr"><span>UPS / Serveis</span></div>
-      <div id="sbUPS" style="max-height:420px;overflow-y:auto;scrollbar-width:thin"></div>
+      <div id="sbUPS" style="max-height:420px;overflow-y:auto;padding-bottom:14px;scrollbar-width:thin"></div>
     </div>
     <div class="sb-sec" style="border-top:2px solid #e2e8f0">
       <div class="sb-hdr" style="display:flex;align-items:center;justify-content:space-between;gap:4px">
@@ -919,6 +919,10 @@ let upsCustom=[];
 try{ upsCustom = JSON.parse(localStorage.getItem("gt_b_ups_custom")||"[]"); }catch(e){}
 upsCustom.forEach(u=>{ if(!UPS_LISTA.includes(u)) UPS_LISTA.push(u); });
 
+let upsDeleted=[];
+try{ upsDeleted = JSON.parse(localStorage.getItem("gt_b_ups_deleted")||"[]"); }catch(e){}
+upsDeleted.forEach(u=>{ const _di=UPS_LISTA.indexOf(u); if(_di>-1) UPS_LISTA.splice(_di,1); });
+
 // Ordre personalitzat
 
 // Grups de UPS (un nom \"pare\" agrupa diversos UPs \"fill\"; nomes visual, no afecta assignacions)
@@ -972,11 +976,49 @@ function crearServeiUP(){
   UPS_LISTA.push(nom);
   upsCustom.push(nom);
   localStorage.setItem("gt_b_ups_custom", JSON.stringify(upsCustom));
+  if(!upsOrderCustom.includes(nom)){
+    upsOrderCustom.push(nom);
+    localStorage.setItem("gt_b_ups_order", JSON.stringify(upsOrderCustom));
+  }
   fbSave();
   toast(nom+' creada','ok');
   populateUPSSelects();
   renderSidebar();
   renderAll();
+  setTimeout(()=>{
+    const row=[...document.querySelectorAll("#sbUPS .sb-item")].find(l=>l.textContent.includes(nom));
+    if(row) row.scrollIntoView({block:"nearest"});
+  }, 50);
+}
+
+function eliminarServeiUP(nom){
+  const enUs = treballadors.filter(t=>getTrebUPs(t).includes(nom));
+  let msg = 'Eliminar la UP "'+nom+'"?';
+  if(enUs.length) msg += '\n\n'+enUs.length+' treballador(s) tenen aquesta UP assignada i quedaran sense aquesta assignacio.';
+  if(!confirm(msg)) return;
+  const eraCustom = upsCustom.includes(nom);
+  let i=UPS_LISTA.indexOf(nom); if(i>-1) UPS_LISTA.splice(i,1);
+  i=upsCustom.indexOf(nom); if(i>-1) upsCustom.splice(i,1);
+  i=upsOrderCustom.indexOf(nom); if(i>-1) upsOrderCustom.splice(i,1);
+  if(!eraCustom && !upsDeleted.includes(nom)) upsDeleted.push(nom);
+  Object.keys(upsGrups).forEach(g=>{
+    upsGrups[g]=upsGrups[g].filter(u=>u!==nom);
+    if(!upsGrups[g].length) delete upsGrups[g];
+  });
+  treballadors.forEach(t=>{
+    if((t.ups||"")===nom) t.ups="";
+    if(Array.isArray(t.upsExtra)) t.upsExtra=t.upsExtra.filter(u=>u!==nom);
+  });
+  localStorage.setItem("gt_b_ups_custom", JSON.stringify(upsCustom));
+  localStorage.setItem("gt_b_ups_order", JSON.stringify(upsOrderCustom));
+  localStorage.setItem("gt_b_ups_grups", JSON.stringify(upsGrups));
+  localStorage.setItem("gt_b_ups_deleted", JSON.stringify(upsDeleted));
+  fbSave();
+  toast(nom+' eliminada','ok');
+  populateUPSSelects();
+  renderSidebar();
+  renderAll();
+  if(typeof desarDelay==="function") desarDelay();
 }
 
 function esFillDeGrup(u){
@@ -1804,6 +1846,7 @@ function fbSave(){
       rot: rotacions,
       upsCustom: upsCustom,
       upsOrderCustom: upsOrderCustom,
+      upsDeleted: upsDeleted,
       upsGrups: upsGrups
     });
   }catch(e){ console.warn('Firebase save error:',e); }
@@ -1834,6 +1877,12 @@ function fbListen(){
         upsCustom = d.upsCustom;
         upsCustom.forEach(u=>{ if(!UPS_LISTA.includes(u)) UPS_LISTA.push(u); });
         localStorage.setItem("gt_b_ups_custom", JSON.stringify(upsCustom));
+        populateUPSSelects();
+      }
+      if(d.upsDeleted){
+        upsDeleted = d.upsDeleted;
+        upsDeleted.forEach(u=>{ const _di=UPS_LISTA.indexOf(u); if(_di>-1) UPS_LISTA.splice(_di,1); });
+        localStorage.setItem('gt_b_ups_deleted', JSON.stringify(upsDeleted));
         populateUPSSelects();
       }
       if(d.upsGrups){
@@ -2534,6 +2583,7 @@ function renderSidebar(){
             <div class="sb-dot" style="background:${upsColor(fu)}"></div>
             <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:95px;font-weight:${checked?700:400};color:${checked?'#1e40af':'inherit'}">${fu}</span>
             <span class="sb-count">${cnt}</span>
+          <button class="cc-tram-del" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();eliminarServeiUP('${safe}')" title="Eliminar UP" style="margin-left:2px">✕</button>
           </label>`);
         });
       }
@@ -2548,6 +2598,7 @@ function renderSidebar(){
       <div class="sb-dot" style="background:${upsColor(u)}"></div>
       <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:105px;font-weight:${checked?700:400};color:${checked?'#1e40af':'inherit'}">${u}</span>
       <span class="sb-count">${cnt}</span>
+    <button class="cc-tram-del" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();eliminarServeiUP('${safe}')" title="Eliminar UP" style="margin-left:2px">✕</button>
     </label>`);
   });
   return rowsArr.join("");
