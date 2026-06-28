@@ -500,29 +500,6 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   <div id="llegPanel" style="display:none;padding:4px 14px 6px;border-bottom:1px solid var(--line2);background:#fafafa">
     <div class="llegenda" id="llegBar"></div>
   </div>
-  <div id="tb-plantilla" style="display:none;align-items:center;gap:8px">
-    <button class="btn btn-p btn-sm" onclick="openModalTreballador()">＋ Nou treballador</button>
-    <div class="tb-sep"></div>
-    <span class="lbl">Filtrar:</span>
-    <select class="sel" id="filtPlant" onchange="renderPlantilla()">
-      <option value="">Tots</option>
-      <option value="estatutari">Estatutaris</option>
-      <option value="interí">Interins</option>
-      <option value="interí 28h">Interins 28h</option>
-      <option value="interí 21h">Interins 21h</option>
-      <option value="programa">Programa</option>
-      <option value="programa 28h">Programa 28h</option>
-      <option value="substitució directa">Substitució directa</option>
-    </select>
-    <input class="inp" id="srchPlant" placeholder="Buscar..." oninput="renderPlantilla()" style="width:140px">
-    <div class="tb-sep"></div>
-    <button id="btnOutlook" class="btn btn-sm" onclick="outlookSeleccionats()" title="Obrir correu corporatiu dels seleccionats a Outlook"
-      style="display:none;background:#0078d4;color:#fff;border:none;border-radius:6px;padding:4px 11px;cursor:pointer;font-size:.72rem;font-weight:700;gap:5px;align-items:center">
-      📧 Outlook &nbsp;<span id="cntSelOut" style="background:#fff;color:#0078d4;border-radius:9px;padding:0 6px;font-weight:900">0</span>
-    </button>
-    <button id="btnDeselAll" class="btn btn-o btn-sm" onclick="deseleccionarTots()" title="Deseleccionar tots"
-      style="display:none;font-size:.68rem">✕ Netejar selecció</button>
-  </div>
   <div id="tb-rotacio" style="display:none;align-items:center;gap:8px;flex-wrap:wrap">
     <button class="btn btn-p btn-sm" onclick="openModalRotacio()">＋ Nou codi</button>
     <button class="btn btn-o btn-sm" style="color:var(--red)" onclick="netejarFS()">🗑 Netejar FS/FA</button>
@@ -602,9 +579,24 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
     <!-- TAB: PLANTILLA -->
     <div id="tab-plantilla" style="display:none">
       <div class="card">
-        <div class="card-hdr">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-          Plantilla de Zeladors
+        <div class="card-hdr" id="tb-plantilla" style="flex-wrap:wrap">
+          <button class="btn btn-p btn-sm" onclick="openModalTreballador()">+ Nou treballador</button>
+          <div class="tb-sep"></div>
+          <span class="lbl">Filtrar:</span>
+          <select class="sel" id="filtPlant" onchange="renderPlantilla()">
+            <option value="">Tots</option>
+            <option value="estatutari">Estatutaris</option>
+            <option value="interí">Interins</option>
+            <option value="interí 28h">Interins 28h</option>
+            <option value="interí 21h">Interins 21h</option>
+            <option value="programa">Programa</option>
+            <option value="programa 28h">Programa 28h</option>
+            <option value="substitució directa">Substitució directa</option>
+          </select>
+          <input class="inp" id="srchPlant" placeholder="Buscar..." oninput="renderPlantilla()" style="width:140px">
+          <div class="tb-sep"></div>
+          <button id="btnOutlook" class="btn btn-sm" onclick="outlookSeleccionats()" title="Obrir correu corporatiu dels seleccionats a Outlook" style="display:none;background:#0078d4;color:#fff;border:none;border-radius:6px;padding:4px 11px;cursor:pointer;font-size:.72rem;font-weight:700;gap:5px;align-items:center">📧 Outlook &nbsp;<span id="cntSelOut" style="background:#fff;color:#0078d4;border-radius:9px;padding:0 6px;font-weight:900">0</span></button>
+          <button id="btnDeselAll" class="btn btn-o btn-sm" onclick="deseleccionarTots()" title="Deseleccionar tots" style="display:none;font-size:.68rem">✕ Netejar selecció</button>
           <div class="card-hdr-gap"></div>
           <span id="plantInfo" style="font-size:.66rem;color:var(--ink3)"></span>
         </div>
