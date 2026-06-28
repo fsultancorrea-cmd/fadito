@@ -939,12 +939,25 @@ function sbUPDragStart(up){ _sbDragUP=up; }
 function sbUPDrop(targetUP){
   if(!_sbDragUP || _sbDragUP===targetUP) return;
   const ordre = getServeisOrdenats();
-  const from = ordre.indexOf(_sbDragUP);
-  const to   = ordre.indexOf(targetUP);
-  if(from<0||to<0) return;
-  ordre.splice(from,1);
-  ordre.splice(to,0,_sbDragUP);
-  upsOrderCustom = ordre;
+  const dragIsGrup = _sbDragUP.indexOf('GRUP::')===0;
+  const targetIsGrup = targetUP.indexOf('GRUP::')===0;
+  const movingNames = dragIsGrup ? (upsGrups[_sbDragUP.slice(6)]||[]).slice() : [_sbDragUP];
+  if(!movingNames.length){ _sbDragUP=null; return; }
+  const movingSet = new Set(movingNames);
+  const remaining = ordre.filter(u=>!movingSet.has(u));
+  const movingInOrder = ordre.filter(u=>movingSet.has(u));
+  let insertAt;
+  if(targetIsGrup){
+    const targetFills = upsGrups[targetUP.slice(6)]||[];
+    let pos = remaining.length;
+    targetFills.forEach(f=>{ const idxF=remaining.indexOf(f); if(idxF>-1 && idxF<pos) pos=idxF; });
+    insertAt = pos;
+  } else {
+    insertAt = remaining.indexOf(targetUP);
+    if(insertAt<0) insertAt = remaining.length;
+  }
+  remaining.splice(insertAt,0,...movingInOrder);
+  upsOrderCustom = remaining;
   localStorage.setItem("gt_b_ups_order", JSON.stringify(upsOrderCustom));
   fbSave();
   _sbDragUP=null;
@@ -2566,7 +2579,7 @@ function renderSidebar(){
       const isExpanded=expandedGrups.has(grupNom);
       const grupChecked=fills.length>0 && fills.every(f=>filterUPSSet.has(f));
       const safeGrup=grupNom.replace(/'/g,"\\'");
-      rowsArr.push(`<label class="sb-item" style="cursor:pointer;${grupChecked?'background:var(--blue-xl)':''}" onclick="if(event.target.tagName!=='INPUT')toggleGrupExpand('${safeGrup}',event)">
+      rowsArr.push(`<label draggable="true" ondragstart="sbUPDragStart('GRUP::${safeGrup}')" ondragover="event.preventDefault()" ondrop="event.preventDefault();sbUPDrop('GRUP::${safeGrup}')" class="sb-item" style="cursor:pointer;${grupChecked?'background:var(--blue-xl)':''}" onclick="if(event.target.tagName!=='INPUT')toggleGrupExpand('${safeGrup}',event)">
         <span style="color:var(--ink3);font-size:.7rem;margin-right:1px;width:13px;text-align:center;font-weight:700">${isExpanded?'\u2212':'+'}</span>
         <input type="checkbox" ${grupChecked?'checked':''} onclick="event.stopPropagation()" onchange="toggleSelGrup('${safeGrup}',this.checked)" style="accent-color:#1d4ed8;width:13px;height:13px;margin-right:2px">
         <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px;font-weight:${grupChecked?700:600}">${grupNom}</span>
