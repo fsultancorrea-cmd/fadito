@@ -690,7 +690,6 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
           <div id="gtDetallContent"><p style="color:var(--ink3);font-size:.8rem;text-align:center;padding:40px 0">Selecciona un treballador a la Vista de Permisos per veure el seu detall</p></div>
         </div>
         <div id="gtView2" style="display:none;overflow:auto;max-height:calc(100vh - 155px)">
-          <div class="kpi-row" id="kpiResum" style="margin-bottom:0;padding:10px 14px"></div>
           <div style="overflow:auto;padding:0 0 8px">
             <table class="ra" id="tblRA" style="border-collapse:collapse;font-size:.68rem;width:100%"></table>
           </div>
@@ -2936,7 +2935,7 @@ function renderKPIs(){
             <div class="kpi-l">📅 Vista de Permisos</div>
           </button>
           <button id="gtVBtn1" onclick="switchGTView(1)" class="kpi or" style="cursor:pointer;text-align:left;font-family:inherit;min-width:120px">
-            <div class="kpi-l">👤 Detall Treballador</div>
+            <div class="kpi-l">👤 Fitxa Treballador</div>
           </button>
           <button id="gtVBtn2" onclick="switchGTView(2)" class="kpi bl" style="cursor:pointer;text-align:left;font-family:inherit;min-width:130px">
             <div class="kpi-l">📊 Balanç d'Hores</div>
@@ -6565,13 +6564,7 @@ function renderResum(){
   });
   const fmtH = h => h>=10000 ? `${(h/1000).toFixed(1)}k` : (h%1===0?h:h.toFixed(1));
 
-  document.getElementById("kpiResum").innerHTML=`
-    <div class="kpi bl"><div class="kpi-v">${list.length}</div><div class="kpi-l">Total zeladors actius</div><div class="kpi-s">2027</div></div>
-    <div class="kpi gn"><div class="kpi-v">${totVA}</div><div class="kpi-l">Dies VA usats</div><div class="kpi-s">vacances anuals</div></div>
-    <div class="kpi or"><div class="kpi-v">${totAP}</div><div class="kpi-l">Dies AP usats</div><div class="kpi-s">assumptes personals</div></div>
-    <div class="kpi cy"><div class="kpi-v">${tot3A}</div><div class="kpi-l">Dies 3A usats</div><div class="kpi-s">3r acord</div></div>
-    <div class="kpi rd"><div class="kpi-v">${fmtH(totHoresPlan)}</div><div class="kpi-l">Hores planificades</div><div class="kpi-s">suma plantilla · 2027</div></div>
-  `;
+  // kpiResum eliminat — només es mostra la taula
 
   const mShort=MESOS.map(m=>m.slice(0,3));
   let h=`<thead><tr style="background:#1e293b;color:#fff">
@@ -8457,3 +8450,4 @@ function qaAsk(){
 </div>
 </body>
 </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
