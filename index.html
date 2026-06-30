@@ -453,7 +453,7 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   <div class="h-sep"></div>
   <div class="h-mesos" id="headerMesos"></div>
   <div class="h-gap"></div>
-  <button class="h-save" style="background:#fff;color:#111;border:1.5px solid #111;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="openDirectori()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72" width="22" height="20" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="40" y1="2" x2="40" y2="8"/><polygon points="37,8 40,2 43,8" fill="#111" stroke="#111" stroke-width="1"/><path d="M28,20 Q40,8 52,20"/><path d="M31,22 Q40,13 49,22" stroke-dasharray="2,2"/><line x1="26" y1="21" x2="54" y2="21"/><path d="M14,24 Q18,18 22,24"/><rect x="14" y="24" width="8" height="12"/><path d="M58,24 Q62,18 66,24"/><rect x="58" y="24" width="8" height="12"/><rect x="10" y="36" width="60" height="26"/><path d="M34,62 L34,50 Q40,44 46,50 L46,62"/><rect x="15" y="40" width="6" height="8" rx="1"/><rect x="24" y="40" width="6" height="8" rx="1"/><rect x="50" y="40" width="6" height="8" rx="1"/><rect x="59" y="40" width="6" height="8" rx="1"/><line x1="10" y1="50" x2="33" y2="50"/><line x1="47" y1="50" x2="70" y2="50"/><line x1="7" y1="63" x2="73" y2="63"/><line x1="4" y1="66" x2="76" y2="66"/></svg><span>Bas&iacute;lica Sant Pietro</span></button>
+  <button class="h-save" style="background:#fff;color:#c0202a;border:1.5px solid #c0202a;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="switchTab('resum')" title="Gestió de Temps"><svg width="16" height="18" viewBox="0 0 48 52" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="28" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="1" y="5" width="44" height="44" rx="5" fill="#e0e0e0"/><rect x="1" y="5" width="44" height="16" rx="5" fill="#c0202a"/><rect x="1" y="14" width="44" height="7" fill="#c0202a"/><text x="23" y="17" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="6.5" font-weight="700">GT</text><text x="23" y="42" text-anchor="middle" fill="#2a2a2a" font-family="Arial Black,sans-serif" font-size="23" font-weight="900">GT</text></svg> <span style="font-weight:700;font-size:.68rem">Gestió de Temps</span></button>
   <button class="h-save" id="btnFbLogout" style="background:#fff;color:#475569;border:1.5px solid #cbd5e1;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="_fbLogout()" title="Tancar sessió compartida">⏻ <span style="font-weight:700;font-size:.68rem">Sortir</span></button>
 
 </header>
@@ -591,7 +591,7 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
         <div class="card-hdr" id="tb-plantilla" style="flex-wrap:wrap">
           <button class="btn btn-p btn-sm" onclick="openModalTreballador()">+ Nou treballador</button>
           <div class="tb-sep"></div>
-          <span class="lbl">Filtrar:</span>
+          <span class="lbl">Contracte:</span>
           <select class="sel" id="filtPlant" onchange="renderPlantilla()">
             <option value="">Tots</option>
             <option value="estatutari">Estatutaris</option>
@@ -601,6 +601,10 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
             <option value="programa">Programa</option>
             <option value="programa 28h">Programa 28h</option>
             <option value="substitució directa">Substitució directa</option>
+          </select>
+          <span class="lbl">Servei:</span>
+          <select class="sel" id="filtUps" onchange="renderPlantilla()" style="max-width:180px">
+            <option value="">Tots</option>
           </select>
           <input class="inp" id="srchPlant" placeholder="Buscar..." oninput="renderPlantilla()" style="width:140px">
           <div class="tb-sep"></div>
@@ -684,6 +688,12 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
         </div>
         <div id="gtView1" style="display:none;overflow:auto;max-height:calc(100vh - 155px);padding:16px">
           <div id="gtDetallContent"><p style="color:var(--ink3);font-size:.8rem;text-align:center;padding:40px 0">Selecciona un treballador a la Vista de Permisos per veure el seu detall</p></div>
+        </div>
+        <div id="gtView2" style="display:none;overflow:auto;max-height:calc(100vh - 155px)">
+          <div class="kpi-row" id="kpiResum" style="margin-bottom:0;padding:10px 14px"></div>
+          <div style="overflow:auto;padding:0 0 8px">
+            <table class="ra" id="tblRA" style="border-collapse:collapse;font-size:.68rem;width:100%"></table>
+          </div>
         </div>
       </div>
     </div>
@@ -856,6 +866,21 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
     <div class="dir-ftr">
       <span class="dir-ftr-info" id="dirInfo"></span>
       <button class="btn btn-o" onclick="tancarDirectori()">Tancar</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP DIRECTORI CEL·LA -->
+<div class="dir-overlay" id="ovDirPopup" onclick="if(event.target===this)tancarDirPopup()">
+  <div class="dir-modal" style="max-width:700px">
+    <div class="dir-hdr" style="background:#1e3a5f">
+      <div class="dir-hdr-title" id="dirPopupTitle"></div>
+      <button class="btn btn-o btn-sm" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="tancarDirPopup()">✕</button>
+    </div>
+    <div class="dir-body" id="dirPopupBody"></div>
+    <div class="dir-ftr">
+      <span class="dir-ftr-info" id="dirPopupInfo"></span>
+      <button class="btn btn-o" onclick="tancarDirPopup()">Tancar</button>
     </div>
   </div>
 </div>
@@ -2411,22 +2436,175 @@ function renderDashAnual(){
     CONT_ORDER.forEach(c=>{
       const cCol=CONT_COLORS[c]||{bg:"#f1f5f9",fg:"#475569"};
       TORNS_LIST.forEach(tid=>{
-        const tornList=allList.filter(t=>getEffectiveTorn(t,m-1)===tid);
+        const tornList=allList.filter(t=>!_noActMes(t,m-1)&&getEffectiveTorn(t,m-1)===tid);
         const cnt=tornList.filter(t=>{
           const info=getCanvisMes(t,m-1);
           return (info.unic||info.contBase||t.cont)===c;
         }).length;
         grandTotal+=cnt;
         const tBgD=TORN_BG[tid]||{bg:"#f1f5f9",fg:"#475569"};
-        html+='<td style="padding:3px 5px;border:1px solid #e2e8f0;text-align:center;background:'+(cnt?tBgD.bg:"#fff")+';color:'+(cnt?tBgD.fg:"#cbd5e1")+';font-size:.65rem;'+rowFw+'">'+(cnt||"—")+'</td>';
+        if(cnt){
+          html+=`<td data-dp-mes="${m-1}" data-dp-cont="${c}" data-dp-torn="${tid}" onclick="openDirPopup(this)" title="Veure ${cnt} zeladors" style="padding:3px 5px;border:1px solid #e2e8f0;text-align:center;background:${tBgD.bg};color:${tBgD.fg};font-size:.65rem;${rowFw};cursor:pointer;transition:filter .1s" onmouseover="this.style.filter='brightness(.88)'" onmouseout="this.style.filter=''">${cnt}</td>`;
+        } else {
+          html+='<td style="padding:3px 5px;border:1px solid #e2e8f0;text-align:center;background:#fff;color:#cbd5e1;font-size:.65rem;'+rowFw+'">—</td>';
+        }
       });
     });
-    html+='<td style="padding:3px 8px;border:1px solid #e2e8f0;text-align:center;font-weight:700;background:#f8fafc">'+grandTotal+'</td>';
+    html+=`<td data-dp-mes="${m-1}" onclick="openDirPopup(this)" title="Veure tots els ${grandTotal} zeladors del mes" style="padding:3px 8px;border:1px solid #e2e8f0;text-align:center;font-weight:700;background:#f8fafc;cursor:pointer;transition:filter .1s" onmouseover="this.style.filter='brightness(.88)'" onmouseout="this.style.filter=''">${grandTotal}</td>`;
     html+='</tr>';
   }
   html+='</tbody></table></div>';
   html+='<p style="font-size:.63rem;color:#94a3b8;margin:8px 0 0">Mes actual destacat en blau · '+allList.length+' zeladors actius en total</p>';
   document.getElementById("dashAnualBody").innerHTML=html;
+}
+
+// Retorna true si el worker té noAct que se solapa amb el mes mes0 (0-indexed)
+function _noActMes(t, mes0){
+  if(!t.noActInici||!t.noActFi) return false;
+  const mIni=isoDate(YEAR,mes0,1);
+  const mFi=isoDate(YEAR,mes0,dM(mes0));
+  return mIni<=t.noActFi && mFi>=t.noActInici;
+}
+
+// ── POPUP DETALL CEL·LA DIRECTORI ──────────────────────────────────────────
+function openDirPopup(el){
+  const CONT_LABELS={"estatutari":"Estatutari","interí":"Interí","interí 28h":"Interí 28h","interí 21h":"Interí 21h","programa":"Programa","programa 28h":"Programa 28h","substitució directa":"Sub. Directa"};
+  const TORN_LABELS={"mati":"Matí","tarda":"Tarda","nit1":"Nit 1","nit2":"Nit 2"};
+  const TORN_COLORS={"mati":"#b45309","tarda":"#6d28d9","nit1":"#0e7490","nit2":"#065f46"};
+  const MESOS_COMPLETS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
+
+  const mes0  = parseInt(el.getAttribute("data-dp-mes"));
+  const cont  = el.getAttribute("data-dp-cont") || null;
+  const tornId= el.getAttribute("data-dp-torn") || null;
+
+  const seen=new Set();
+  let workers=TORNS_LIST.flatMap(tid=>(unitats[tid]?.treballadors||[])).filter(t=>{
+    if(seen.has(t.id))return false; seen.add(t.id); return t.actiu;
+  });
+
+  workers=workers.filter(t=>!_noActMes(t,mes0));
+  if(tornId) workers=workers.filter(t=>getEffectiveTorn(t,mes0)===tornId);
+  if(cont)   workers=workers.filter(t=>{
+    const info=getCanvisMes(t,mes0);
+    return (info.unic||info.contBase||t.cont)===cont;
+  });
+
+  workers=workers.slice().sort((a,b)=>(a.nom||"").localeCompare(b.nom||"","ca"));
+
+  const mesNom=MESOS_COMPLETS[mes0];
+  const parts=[mesNom];
+  if(cont)   parts.push(CONT_LABELS[cont]||cont);
+  if(tornId) parts.push(TORN_LABELS[tornId]||tornId);
+  const col=tornId?TORN_COLORS[tornId]:"#1e3a5f";
+
+  document.getElementById("dirPopupTitle").innerHTML=
+    `<span style="font-size:.8rem">👥</span>&nbsp;`+
+    `<span>${parts.join(" · ")}</span>&nbsp;`+
+    `<span style="background:rgba(255,255,255,.2);padding:1px 10px;border-radius:10px;font-size:.72rem">${workers.length} zelador${workers.length!==1?"s":""}</span>`;
+  document.getElementById("ovDirPopup").querySelector(".dir-hdr").style.background=col;
+
+  const CC_CONT_COLS={"estatutari":{bg:"#dbeafe",fg:"#1e40af"},"interí":{bg:"#ede9fe",fg:"#7c3aed"},"interí 28h":{bg:"#f3e8ff",fg:"#6d28d9"},"interí 21h":{bg:"#fce7f3",fg:"#9d174d"},"programa":{bg:"#dcfce7",fg:"#166534"},"programa 28h":{bg:"#d1fae5",fg:"#065f46"},"substitució directa":{bg:"#fef3c7",fg:"#92400e"}};
+  const TORN_BG_P={"mati":{bg:"#fef3c7",fg:"#92400e"},"tarda":{bg:"#ede9fe",fg:"#6d28d9"},"nit1":{bg:"#cffafe",fg:"#0e7490"},"nit2":{bg:"#d1fae5",fg:"#065f46"}};
+
+  if(!workers.length){
+    document.getElementById("dirPopupBody").innerHTML=
+      `<p style="padding:24px;text-align:center;color:var(--ink3);font-size:.8rem">Cap zelador per a aquest filtre</p>`;
+  } else {
+    const rows=workers.map((t,i)=>{
+      const effTorn=getEffectiveTorn(t,mes0);
+      const info=getCanvisMes(t,mes0);
+      const effCont=info.unic||info.contBase||t.cont||"—";
+      const cCol=CC_CONT_COLS[effCont]||{bg:"#f1f5f9",fg:"#64748b"};
+      const tCol=TORN_BG_P[effTorn]||{bg:"#f1f5f9",fg:"#475569"};
+      const rowBg=i%2===0?"#fff":"#f8fafc";
+      return `<tr style="background:${rowBg}">
+        <td style="padding:5px 10px;border-bottom:1px solid var(--line2);font-weight:600">${t.nom||"—"}</td>
+        <td style="padding:5px 10px;border-bottom:1px solid var(--line2);color:var(--ink3);font-size:.7rem">${t.ups||"—"}</td>
+        <td style="padding:5px 10px;border-bottom:1px solid var(--line2);text-align:center">
+          <span style="background:${tCol.bg};color:${tCol.fg};padding:1px 8px;border-radius:9px;font-size:.65rem;font-weight:700">${TORN_LABELS[effTorn]||effTorn}</span>
+        </td>
+        <td style="padding:5px 10px;border-bottom:1px solid var(--line2);text-align:center">
+          <span style="background:${cCol.bg};color:${cCol.fg};padding:1px 8px;border-radius:9px;font-size:.65rem;font-weight:700">${CONT_LABELS[effCont]||effCont}</span>
+        </td>
+      </tr>`;
+    }).join("");
+    document.getElementById("dirPopupBody").innerHTML=
+      `<div style="overflow-y:auto;max-height:460px">
+        <table class="dir-table" style="width:100%">
+          <thead><tr>
+            <th style="min-width:180px">Nom</th>
+            <th>UPS / Destí</th>
+            <th style="text-align:center;min-width:70px">Torn</th>
+            <th style="text-align:center;min-width:110px">Contracte</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+       </div>`;
+  }
+
+  // ── Canvis respecte el mes anterior (només per a Total) ──
+  if(!cont && !tornId && mes0 > 0){
+    const seen2=new Set();
+    const workersPrev=TORNS_LIST.flatMap(tid=>(unitats[tid]?.treballadors||[])).filter(t=>{
+      if(seen2.has(t.id))return false; seen2.add(t.id); return t.actiu;
+    }).filter(t=>!_noActMes(t,mes0-1));
+
+    const idsM=new Set(workers.map(t=>t.id));
+    const idsPrev=new Set(workersPrev.map(t=>t.id));
+
+    const entrades=workers.filter(t=>!idsPrev.has(t.id));
+    const sortides=workersPrev.filter(t=>!idsM.has(t.id));
+    const canvisM=workers.filter(t=>{
+      if(!idsPrev.has(t.id))return false;
+      const iM=getCanvisMes(t,mes0), iP=getCanvisMes(t,mes0-1);
+      return (iM.unic||iM.contBase||t.cont)!==(iP.unic||iP.contBase||t.cont)
+          || getEffectiveTorn(t,mes0)!==getEffectiveTorn(t,mes0-1);
+    });
+
+    if(entrades.length||sortides.length||canvisM.length){
+      const prevNom=MESOS_COMPLETS[mes0-1];
+      let cHtml=`<div style="margin-top:4px;padding:10px 12px;border-top:1.5px solid var(--line)">
+        <div style="font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span>Canvis respecte ${prevNom}</span>
+          <span style="font-size:.63rem;color:#94a3b8;font-weight:400;text-transform:none">
+            ${entrades.length?`+${entrades.length} entrada${entrades.length!==1?"es":""}`:""} ${sortides.length?`−${sortides.length} sortida${sortides.length!==1?"es":""}`:""} ${canvisM.length?`⇄${canvisM.length} canvi${canvisM.length!==1?"s":""}`:""}</span></div>`;
+      if(entrades.length){
+        entrades.slice().sort((a,b)=>(a.nom||"").localeCompare(b.nom||"","ca")).forEach(t=>{
+          const iM=getCanvisMes(t,mes0); const cM=iM.unic||iM.contBase||t.cont||"—";
+          const cC=CC_CONT_COLS[cM]||{bg:"#dcfce7",fg:"#166534"};
+          cHtml+=`<div style="display:flex;align-items:center;gap:8px;padding:3px 8px;background:#f0fdf4;border-left:3px solid #22c55e;border-radius:0 4px 4px 0;margin-bottom:2px"><span style="color:#16a34a;font-weight:800">+</span><span style="font-size:.72rem;font-weight:600;flex:1">${t.nom||"—"}</span><span style="font-size:.62rem;color:var(--ink3)">${t.ups||""}</span><span style="background:${cC.bg};color:${cC.fg};padding:1px 7px;border-radius:9px;font-size:.63rem;font-weight:700">${CONT_LABELS[cM]||cM}</span></div>`;
+        });
+      }
+      if(sortides.length){
+        sortides.slice().sort((a,b)=>(a.nom||"").localeCompare(b.nom||"","ca")).forEach(t=>{
+          const iP=getCanvisMes(t,mes0-1); const cP=iP.unic||iP.contBase||t.cont||"—";
+          const cC=CC_CONT_COLS[cP]||{bg:"#fee2e2",fg:"#991b1b"};
+          cHtml+=`<div style="display:flex;align-items:center;gap:8px;padding:3px 8px;background:#fff5f5;border-left:3px solid #ef4444;border-radius:0 4px 4px 0;margin-bottom:2px"><span style="color:#dc2626;font-weight:800">−</span><span style="font-size:.72rem;font-weight:600;flex:1;text-decoration:line-through;color:#94a3b8">${t.nom||"—"}</span><span style="font-size:.62rem;color:#94a3b8">${t.ups||""}</span><span style="background:${cC.bg};color:${cC.fg};padding:1px 7px;border-radius:9px;font-size:.63rem;font-weight:700;text-decoration:line-through">${CONT_LABELS[cP]||cP}</span></div>`;
+        });
+      }
+      if(canvisM.length){
+        canvisM.slice().sort((a,b)=>(a.nom||"").localeCompare(b.nom||"","ca")).forEach(t=>{
+          const iM=getCanvisMes(t,mes0), iP=getCanvisMes(t,mes0-1);
+          const cM=iM.unic||iM.contBase||t.cont||"—", cP=iP.unic||iP.contBase||t.cont||"—";
+          const tornM=getEffectiveTorn(t,mes0), tornP=getEffectiveTorn(t,mes0-1);
+          const cCP=CC_CONT_COLS[cP]||{bg:"#fef3c7",fg:"#92400e"}, cCM=CC_CONT_COLS[cM]||{bg:"#fef3c7",fg:"#92400e"};
+          let detall="";
+          if(cP!==cM) detall+=`<span style="background:${cCP.bg};color:${cCP.fg};padding:1px 6px;border-radius:9px;font-size:.63rem;font-weight:700;text-decoration:line-through">${CONT_LABELS[cP]||cP}</span><span style="color:#94a3b8;font-size:.7rem"> → </span><span style="background:${cCM.bg};color:${cCM.fg};padding:1px 6px;border-radius:9px;font-size:.63rem;font-weight:700">${CONT_LABELS[cM]||cM}</span>`;
+          if(tornP!==tornM) detall+=`${detall?`<span style="color:#94a3b8;margin:0 3px">·</span>`:""}${TORN_LABELS[tornP]||tornP} <span style="color:#94a3b8">→</span> ${TORN_LABELS[tornM]||tornM}`;
+          cHtml+=`<div style="display:flex;align-items:center;gap:8px;padding:3px 8px;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:0 4px 4px 0;margin-bottom:2px"><span style="color:#d97706;font-weight:800">⇄</span><span style="font-size:.72rem;font-weight:600;flex:1">${t.nom||"—"}</span><span style="font-size:.62rem;color:var(--ink3)">${t.ups||""}</span><div style="display:flex;align-items:center;gap:3px;font-size:.68rem">${detall}</div></div>`;
+        });
+      }
+      cHtml+='</div>';
+      document.getElementById("dirPopupBody").innerHTML+=cHtml;
+    }
+  }
+
+  document.getElementById("dirPopupInfo").textContent=`${parts.join(" · ")} · ${workers.length} zelador${workers.length!==1?"s":""}`;
+  document.getElementById("ovDirPopup").classList.add("open");
+}
+
+function tancarDirPopup(){
+  document.getElementById("ovDirPopup").classList.remove("open");
 }
 
 function renderQuadrantDashboard(){
@@ -2759,6 +2937,9 @@ function renderKPIs(){
           </button>
           <button id="gtVBtn1" onclick="switchGTView(1)" class="kpi or" style="cursor:pointer;text-align:left;font-family:inherit;min-width:120px">
             <div class="kpi-l">👤 Detall Treballador</div>
+          </button>
+          <button id="gtVBtn2" onclick="switchGTView(2)" class="kpi bl" style="cursor:pointer;text-align:left;font-family:inherit;min-width:130px">
+            <div class="kpi-l">📊 Balanç d'Hores</div>
           </button>
         </div>
         <!-- DRETA: actualitzar + mes + navegació setmana -->
@@ -4239,9 +4420,20 @@ function confirmarRJ(codiRJ, trebId, dia){
 function renderPlantilla(){
   const filt=document.getElementById("filtPlant").value;
   const srch=document.getElementById("srchPlant").value.toLowerCase();
+
+  const filtUpsEl=document.getElementById("filtUps");
+  const prevUps=filtUpsEl?filtUpsEl.value:"";
+  if(filtUpsEl){
+    const upsVals=[...new Set(treballadors.map(t=>(t.ups||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ca"));
+    filtUpsEl.innerHTML='<option value="">Tots</option>'+
+      upsVals.map(u=>`<option value="${u}"${u===prevUps?" selected":""}>${u}</option>`).join("");
+  }
+  const filtUps=filtUpsEl?filtUpsEl.value:"";
+
   const list=treballadors.filter(t=>
     (!filt||t.cont===filt)&&
-    (!srch||t.nom.toLowerCase().includes(srch)||t.ups.toLowerCase().includes(srch))
+    (!filtUps||(t.ups||"").trim()===filtUps)&&
+    (!srch||t.nom.toLowerCase().includes(srch)||(t.ups||"").toLowerCase().includes(srch))
   );
   document.getElementById("plantInfo").textContent=`${list.length} treballadors`;
   const rot_badges=t=>{
@@ -4268,7 +4460,6 @@ function renderPlantilla(){
       <th style="min-width:180px">Nom i Cognoms</th>
       <th style="min-width:160px">Servei Assignat</th>
       <th>Contracte</th>
-      <th>Localització</th>
       <th style="min-width:180px">Estat Actual</th>
     </tr></thead>
     <tbody>${list.map((t,i)=>{
@@ -4309,9 +4500,6 @@ function renderPlantilla(){
           }
           return cont_badge(t);
         })()}
-      </td>
-      <td style="font-size:.68rem;padding:0 4px">
-        ${t.ubicacio ? `<span style="background:${t.ubicacio.toUpperCase().includes('CORRETORN')?'#fef3c7':'#dbeafe'};color:${t.ubicacio.toUpperCase().includes('CORRETORN')?'#92400e':'#1e40af'};padding:1px 7px;border-radius:9px;font-size:.63rem;font-weight:700">${t.ubicacio}</span>` : ''}
       </td>
       <td style="padding:3px 6px;min-width:230px">
         ${(()=>{
@@ -6350,10 +6538,125 @@ let gtPlanData = {};
 
 function kGTP(mes,sid,slot,dia){ return `${mes}|${sid}|${slot}|${dia}`; }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// BALANÇ D'HORES — Resum Anual
+// ═══════════════════════════════════════════════════════════════════════════
+function renderResum(){
+  const list=treballadors;
+  let totBE=0,totVA=0,totAP=0,tot3A=0,totHoresPlan=0,totHoresContr=0,totHoresPerm=0;
+
+  list.forEach(t=>{
+    const hDef = horesDiaTreb(t);
+    let hPlan=0;
+    for(let m=0;m<12;m++){
+      const nD=dM(m);
+      for(let d=1;d<=nD;d++){
+        const v=getT(m,t.id,d);
+        if(v==="BE") totBE++;
+        if(v==="VA") totVA++;
+        if(v==="AP") totAP++;
+        if(v==="3A") tot3A++;
+        hPlan += horesDeVal(v, hDef);
+      }
+    }
+    totHoresPlan  += hPlan;
+    totHoresContr += getHoresContr(t);
+    totHoresPerm  += getHoresPermisos(t);
+  });
+  const fmtH = h => h>=10000 ? `${(h/1000).toFixed(1)}k` : (h%1===0?h:h.toFixed(1));
+
+  document.getElementById("kpiResum").innerHTML=`
+    <div class="kpi bl"><div class="kpi-v">${list.length}</div><div class="kpi-l">Total zeladors actius</div><div class="kpi-s">2027</div></div>
+    <div class="kpi gn"><div class="kpi-v">${totVA}</div><div class="kpi-l">Dies VA usats</div><div class="kpi-s">vacances anuals</div></div>
+    <div class="kpi or"><div class="kpi-v">${totAP}</div><div class="kpi-l">Dies AP usats</div><div class="kpi-s">assumptes personals</div></div>
+    <div class="kpi cy"><div class="kpi-v">${tot3A}</div><div class="kpi-l">Dies 3A usats</div><div class="kpi-s">3r acord</div></div>
+    <div class="kpi rd"><div class="kpi-v">${fmtH(totHoresPlan)}</div><div class="kpi-l">Hores planificades</div><div class="kpi-s">suma plantilla · 2027</div></div>
+  `;
+
+  const mShort=MESOS.map(m=>m.slice(0,3));
+  let h=`<thead><tr style="background:#1e293b;color:#fff">
+    <th style="text-align:left;min-width:170px;padding:5px 10px" rowspan="2">Treballador</th>
+    <th style="min-width:55px;padding:5px 8px" rowspan="2">Calendari</th>
+    <th style="min-width:50px;padding:5px 8px" rowspan="2">Torn</th>
+    <th colspan="12" style="background:#1e293b;padding:5px 8px">Hores planificades / mes</th>
+    <th colspan="3" style="background:#1e293b;padding:5px 8px">Saldo permisos (usats / total)</th>
+    <th colspan="3" style="background:#1e293b;padding:5px 8px">Hores anuals</th>
+  </tr><tr style="background:#334155;color:#fff">
+    ${mShort.map(m=>`<th style="background:#334155;font-size:.62rem;padding:4px 5px">${m}</th>`).join("")}
+    <th style="background:#334155;color:#fff;padding:4px 6px" title="Vacances anuals">VA</th>
+    <th style="background:#334155;color:#fff;padding:4px 6px" title="Assumptes personals">AP</th>
+    <th style="background:#334155;color:#fff;padding:4px 6px" title="3r acord">3A</th>
+    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Suma de totes les hores planificades">H. Planif.</th>
+    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Hores de treball contractades">H. Treball</th>
+    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Hores de permisos">H. Permís</th>
+  </tr></thead><tbody>`;
+
+  let sumPlan=0,sumContr=0,sumPerm=0;
+  list.forEach(t=>{
+    const hDef = horesDiaTreb(t);
+    const mesHores=[];
+    for(let m=0;m<12;m++){
+      const nD=dM(m);
+      let hMes=0;
+      for(let d=1;d<=nD;d++){
+        const v=getT(m,t.id,d);
+        hMes+=horesDeVal(v, hDef);
+      }
+      mesHores.push(hMes);
+    }
+    const horesPlan  = mesHores.reduce((a,b)=>a+b,0);
+    const horesContr = getHoresContr(t);
+    const horesPerm  = getHoresPermisos(t);
+    sumPlan += horesPlan; sumContr += horesContr; sumPerm += horesPerm;
+
+    const saldo = getSaldoTreb(t);
+    const rot=getRot(t.rot);
+    const tornLbl = t.torn==="nocturn" ? "N" : "D";
+    const tornFg  = t.torn==="nocturn" ? "#1e293b" : "#92400e";
+
+    const cellPerm = (codi) => {
+      const s = saldo[codi];
+      const overflow = s.usats > s.total;
+      const tip = overflow
+        ? `⚠️ ${codi}: ${s.usats}/${s.total} (sobre el saldo)`
+        : `${codi}: ${s.usats}/${s.total} usats · queden ${s.resta}`;
+      return `<td style="font-size:.7rem;color:${overflow?"#dc2626":"#374151"};font-weight:${overflow?"700":"500"};text-align:center" title="${tip}">${s.usats}/${s.total}${overflow?" ⚠":""}</td>`;
+    };
+
+    h+=`<tr style="border-bottom:1px solid #f1f5f9">
+      <td style="font-weight:500;padding:3px 8px">${t.nom}</td>
+      <td style="text-align:center;padding:3px 5px"><span style="background:${rot.color}22;color:${rot.color};padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:.66rem;font-weight:700">${t.rot}</span></td>
+      <td style="text-align:center;padding:3px 5px;font-size:.62rem;font-weight:600;color:${tornFg}">${tornLbl}</td>
+      ${mesHores.map(v=>{
+        const fmt = v%1===0 ? v : v.toFixed(1);
+        return `<td style="color:#374151;font-size:.66rem;text-align:center;padding:2px 3px">${v>0?fmt:""}</td>`;
+      }).join("")}
+      ${cellPerm("VA")}
+      ${cellPerm("AP")}
+      ${cellPerm("3A")}
+      <td style="font-weight:700;font-size:.75rem;text-align:center;color:#0369a1;padding:3px 8px">${horesPlan%1===0?horesPlan:horesPlan.toFixed(1)}h</td>
+      <td style="font-weight:700;font-size:.75rem;text-align:center;color:#15803d;padding:3px 8px">${horesContr}h</td>
+      <td style="font-weight:700;font-size:.74rem;text-align:center;color:#0f766e;padding:3px 8px">${horesPerm}h</td>
+    </tr>`;
+  });
+
+  const mCols=mShort.length;
+  h+=`<tr style="background:#f8fafc;font-weight:700;border-top:2px solid #1e293b">
+    <td colspan="3" style="padding:4px 8px;font-size:.72rem">TOTAL PLANTILLA</td>
+    <td colspan="${mCols+3}"></td>
+    <td style="font-size:.78rem;text-align:center;color:#0369a1;padding:3px 8px">${fmtH(sumPlan)}h</td>
+    <td style="font-size:.78rem;text-align:center;color:#15803d;padding:3px 8px">${fmtH(sumContr)}h</td>
+    <td style="font-size:.74rem;text-align:center;color:#0f766e;padding:3px 8px">${fmtH(sumPerm)}h</td>
+  </tr>`;
+
+  h+="</tbody>";
+  document.getElementById("tblRA").innerHTML=h;
+}
+
 // Ampliem switchGTView per gestionar la vista 'plan'
 const _origSwitchGTView = switchGTView;
 switchGTView = function(v){
-  const views = ['plan',0,1];
+  const views = ['plan',0,1,2];
   views.forEach(i=>{
     const el = document.getElementById(i==='plan'?"gtViewPlan":"gtView"+i);
     if(el) el.style.display = i===v ? "block" : "none";
@@ -6362,6 +6665,7 @@ switchGTView = function(v){
   gtCurrentView = v;
   if(v==='plan')  { renderGTPlan(); }
   if(v===1 && gtSelectedId) renderGTDetall(gtSelectedId);
+  if(v===2) renderResum();
 };
 
 // Noms curts dels mesos
