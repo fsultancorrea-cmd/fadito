@@ -461,13 +461,12 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
 <div class="tabs">
   <div class="tab" data-tab="plantilla" onclick="switchTab('plantilla')">Plantilla</div>
   <div class="tab active" data-tab="quadrant" onclick="switchTab('quadrant')">Planificador d'Unitat<span id="tabDateInfo" style="margin-left:7px;font-size:.68rem;font-weight:600;color:#1d4ed8;background:#dbeafe;border-radius:6px;padding:1px 7px;letter-spacing:.01em"></span></div>
-  <div class="tab" data-tab="rotacio" onclick="switchTab('rotacio')">Codis i Calendaris</div>
   <div class="tab" data-tab="serveis" onclick="switchTab('serveis')">Reciclatge de personal i serveis</div>
   <div class="tab" data-tab="xoc" onclick="switchTab('xoc')">Pla de Xoc (Quiròfans)</div>
   <div class="tab" data-tab="resum" onclick="switchTab('resum')" style="display:flex;align-items:center;gap:5px"><svg width="14" height="16" viewBox="0 0 48 52" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><rect x="14" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="28" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="1" y="5" width="44" height="44" rx="5" fill="#e0e0e0"/><rect x="1" y="5" width="44" height="16" rx="5" fill="#c0202a"/><rect x="1" y="14" width="44" height="7" fill="#c0202a"/><text x="23" y="17" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="6.5" font-weight="700">GT</text><text x="23" y="42" text-anchor="middle" fill="#2a2a2a" font-family="Arial Black,sans-serif" font-size="23" font-weight="900">GT</text></svg> Gestió de Temps (recolzament)</div>
   <div style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:0 10px">
     <button onclick="toggleDashAnual()" id="btnDashAnual" title="Directori de contractació" style="background:#eff6ff;color:#1e40af;border:1.5px solid #bfdbfe;border-radius:7px;padding:4px 12px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap">Directori contractació</button>
-    <button onclick="exportExcel()" title="Exportar a Excel" style="background:#bbf7d0;color:#000;border:1.5px solid #86efac;border-radius:7px;padding:4px 12px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap">Excel</button>
+    <button onclick="switchTab('rotacio')" title="Codis i Calendaris" style="background:#fef9c3;color:#713f12;border:1.5px solid #fde68a;border-radius:7px;padding:4px 12px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap">Codis i Calendaris</button>
   </div>
 </div>
 
@@ -8454,4 +8453,4 @@ function qaAsk(){
 </div>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
