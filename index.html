@@ -8410,6 +8410,185 @@ function qaAsk(){
   inp.value="";
 }
 
+// ══ SELECCIÓ MÚLTIPLE PLANIFICADOR D'UNITAT (estil Excel) ══════════════════
+(function(){
+  // Afegir CSS per a la selecció
+  const _selStyle = document.createElement('style');
+  _selStyle.textContent =
+    '#tblGTPlan td.gt-sel{outline:2px solid #2563eb !important;outline-offset:-2px;' +
+    'background:rgba(37,99,235,.13) !important;position:relative;z-index:1}' +
+    '#tblGTPlan td.gt-sel-copy{outline:2px dashed #16a34a !important;outline-offset:-2px}';
+  document.head.appendChild(_selStyle);
+
+  let _anchor    = null;    // td on s'inicia el drag
+  let _dragging  = false;
+  let _selSet    = new Set(); // keys de les td seleccionades
+  let _clipCode  = null;    // codi copiat (string; '' = disponible; null = buit)
+
+  function cellKey(td){
+    return td.dataset.gtPool || td.dataset.gtNeed || null;
+  }
+
+  function applyHighlight(){
+    document.querySelectorAll('#tblGTPlan .gt-sel').forEach(td=>td.classList.remove('gt-sel'));
+    _selSet.forEach(k=>{
+      if(!k) return;
+      const td = document.querySelector(`#tblGTPlan [data-gt-pool="${k}"]`) ||
+                 document.querySelector(`#tblGTPlan [data-gt-need="${k}"]`);
+      if(td) td.classList.add('gt-sel');
+    });
+  }
+
+  function cellsInRange(a, b){
+    const tbl = document.getElementById('tblGTPlan');
+    if(!tbl || !a || !b) return a ? [a] : [];
+    const rows = Array.from(tbl.querySelectorAll('tr'));
+    const grid = [];
+    rows.forEach((tr, ri)=>{
+      Array.from(tr.querySelectorAll('td[data-gt-pool], td[data-gt-need]')).forEach((td, ci)=>{
+        grid.push({td, ri, ci});
+      });
+    });
+    let ar=-1,ac=-1,br=-1,bc=-1;
+    grid.forEach(({td,ri,ci})=>{
+      if(td===a){ar=ri;ac=ci;}
+      if(td===b){br=ri;bc=ci;}
+    });
+    if(ar<0||br<0) return [a];
+    const r1=Math.min(ar,br), r2=Math.max(ar,br);
+    const c1=Math.min(ac,bc), c2=Math.max(ac,bc);
+    return grid.filter(({ri,ci})=>ri>=r1&&ri<=r2&&ci>=c1&&ci<=c2).map(x=>x.td);
+  }
+
+  function initSelListeners(){
+    const tbl = document.getElementById('tblGTPlan');
+    if(!tbl || tbl._gtSelInited) return;
+    tbl._gtSelInited = true;
+
+    tbl.addEventListener('mousedown', e=>{
+      const td = e.target.closest('td[data-gt-pool], td[data-gt-need]');
+      if(!td || e.button!==0) return;
+      _dragging = true;
+      _anchor   = td;
+      _selSet   = new Set([cellKey(td)].filter(Boolean));
+      applyHighlight();
+      e.preventDefault();
+    });
+
+    tbl.addEventListener('mouseover', e=>{
+      if(!_dragging || !_anchor) return;
+      const td = e.target.closest('td[data-gt-pool], td[data-gt-need]');
+      if(!td) return;
+      const range = cellsInRange(_anchor, td);
+      _selSet = new Set(range.map(cellKey).filter(Boolean));
+      applyHighlight();
+    });
+
+    document.addEventListener('mouseup', ()=>{ _dragging = false; });
+  }
+
+  // Teclat: Ctrl+C, Ctrl+V, Delete/Backspace, Escape
+  document.addEventListener('keydown', e=>{
+    const tbl = document.getElementById('tblGTPlan');
+    if(!tbl) return;
+    // Comprova que el Planificador és visible
+    const viewPlan = document.getElementById('gtViewPlan');
+    if(!viewPlan || viewPlan.style.display==='none') return;
+    if(_selSet.size===0) return;
+
+    const ctrl = e.ctrlKey || e.metaKey;
+
+    // ── Ctrl+C: copia el codi de la primera cel·la pool seleccionada
+    if(ctrl && e.key==='c'){
+      const firstPoolKey = [..._selSet].find(k=>k && document.querySelector(`#tblGTPlan [data-gt-pool="${k}"]`));
+      if(!firstPoolKey){ e.preventDefault(); return; }
+      const [trebId, mes, dia] = firstPoolKey.split('-').map(Number);
+      _clipCode = getT(mes, trebId, dia);
+      const td = document.querySelector(`#tblGTPlan [data-gt-pool="${firstPoolKey}"]`);
+      if(td){
+        td.classList.add('gt-sel-copy');
+        setTimeout(()=>{ if(td) td.classList.remove('gt-sel-copy'); applyHighlight(); }, 600);
+      }
+      const codiText = _clipCode || '(disponible)';
+      if(typeof toast==='function') toast(`📋 Copiat: ${codiText}`,'ok');
+      e.preventDefault();
+    }
+
+    // ── Ctrl+V: enganxa el codi a totes les cel·les pool seleccionades
+    if(ctrl && e.key==='v'){
+      if(_clipCode===null) return;
+      let changed = false;
+      _selSet.forEach(k=>{
+        if(!k) return;
+        const td = document.querySelector(`#tblGTPlan [data-gt-pool="${k}"]`);
+        if(!td) return;
+        const [trebId, mes, dia] = k.split('-').map(Number);
+        const current = getT(mes, trebId, dia);
+        if(current === _clipCode) return;
+        if(_clipCode==='') delete torns[kT(mes, trebId, dia)];
+        else torns[kT(mes, trebId, dia)] = _clipCode;
+        changed = true;
+      });
+      if(changed){
+        renderGTPlan(true);
+        setTimeout(applyHighlight, 50);
+        desarDelay();
+      }
+      e.preventDefault();
+    }
+
+    // ── Delete / Backspace: esborra codis de les cel·les pool seleccionades
+    if((e.key==='Delete' || e.key==='Backspace') && !ctrl && !e.target.matches('input,textarea,select')){
+      let changed = false;
+      _selSet.forEach(k=>{
+        if(!k) return;
+        const td = document.querySelector(`#tblGTPlan [data-gt-pool="${k}"]`);
+        if(!td) return;
+        const [trebId, mes, dia] = k.split('-').map(Number);
+        if(getT(mes, trebId, dia) !== ''){
+          delete torns[kT(mes, trebId, dia)];
+          changed = true;
+        }
+      });
+      if(changed){
+        renderGTPlan(true);
+        setTimeout(applyHighlight, 50);
+        desarDelay();
+      }
+      e.preventDefault();
+    }
+
+    // ── Escape: deselecciona
+    if(e.key==='Escape'){
+      _selSet.clear();
+      applyHighlight();
+      _clipCode = null;
+    }
+  });
+
+  // Deselecciona si es fa clic fora del tblGTPlan
+  document.addEventListener('mousedown', e=>{
+    if(!e.target.closest('#tblGTPlan') && !e.target.closest('#gtViewPlan')){
+      if(_selSet.size>0){ _selSet.clear(); applyHighlight(); }
+    }
+  }, true);
+
+  // Arrenca els listeners quan el Planificador es renderitza
+  const _origRGTPlan = typeof renderGTPlan !== 'undefined'
+    ? renderGTPlan : null;
+  if(_origRGTPlan){
+    renderGTPlan = function(force){
+      _origRGTPlan.call(this, force);
+      if(_selSet.size>0) setTimeout(applyHighlight, 20);
+      initSelListeners();
+    };
+  }
+
+  // Primer init (per si renderGTPlan ja ha corregut)
+  setTimeout(initSelListeners, 500);
+})();
+// ── FI SELECCIO MULTIPLE ─────────────────────────────────────────────────
+
 </script>
 
 
@@ -8453,4 +8632,4 @@ function qaAsk(){
 </div>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+px;padding
