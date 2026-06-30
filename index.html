@@ -2927,18 +2927,17 @@ function renderKPIs(){
           <input id="gtPoolSearch" type="text" placeholder="🔍 Cercar zelador..." oninput="gtRenderView()"
             style="font-size:.72rem;padding:3px 9px;border:1px solid #cbd5e1;border-radius:5px;width:150px"/>
           <div class="tb-sep"></div>
-          <button id="gtVBtnP" onclick="switchGTView('plan')" class="kpi bl" style="cursor:pointer;text-align:left;font-family:inherit;min-width:130px">
-            <div class="kpi-l">Planificador d'unitat</div>
-          </button>
-          <button id="gtVBtn0" onclick="switchGTView(0)" class="kpi gn" style="cursor:pointer;text-align:left;font-family:inherit;min-width:110px">
-            <div class="kpi-l">Vista de permisos</div>
-          </button>
-          <button id="gtVBtn1" onclick="switchGTView(1)" class="kpi or" style="cursor:pointer;text-align:left;font-family:inherit;min-width:120px">
-            <div class="kpi-l">Fitxa treballador</div>
-          </button>
-          <button id="gtVBtn2" onclick="switchGTView(2)" class="kpi bl" style="cursor:pointer;text-align:left;font-family:inherit;min-width:130px">
-            <div class="kpi-l">Balanç d'hores</div>
-          </button>
+          <button id="gtVBtnP" onclick="switchGTView('plan')" style="cursor:pointer;font-family:inherit;padding:5px 12px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;font-size:.7rem;font-weight:600;color:#475569;white-space:nowrap">Planificador d'unitat</button>
+          <button id="gtVBtn0" onclick="switchGTView(0)" style="cursor:pointer;font-family:inherit;padding:5px 12px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;font-size:.7rem;font-weight:600;color:#475569;white-space:nowrap">Vista de permisos</button>
+          <button id="gtVBtn1" onclick="switchGTView(1)" style="cursor:pointer;font-family:inherit;padding:5px 12px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;font-size:.7rem;font-weight:600;color:#475569;white-space:nowrap">Fitxa treballador</button>
+          <button id="gtVBtn2" onclick="switchGTView(2)" style="cursor:pointer;font-family:inherit;padding:5px 12px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;font-size:.7rem;font-weight:600;color:#475569;white-space:nowrap">Balanç d'hores</button>
+          <span id="gtPermisMesWrap" style="display:none;align-items:center;gap:4px;margin-left:4px">
+            <span style="font-size:.68rem;color:#475569;font-weight:600">Mes:</span>
+            <select id="gtPermisMesFilter" onchange="renderGT()" style="font-size:.7rem;padding:2px 6px;border:1px solid #cbd5e1;border-radius:4px">
+              <option value="-1">Tots</option>
+              ${optionsHtml}
+            </select>
+          </span>
         </div>
         <!-- DRETA: actualitzar + mes + navegació setmana -->
         <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;margin-left:12px">
@@ -6655,7 +6654,10 @@ switchGTView = function(v){
   });
   gtSetActiveViewBtn(v);
   gtCurrentView = v;
+  const mesWrap = document.getElementById("gtPermisMesWrap");
+  if(mesWrap) mesWrap.style.display = v===0 ? "inline-flex" : "none";
   if(v==='plan')  { renderGTPlan(); }
+  if(v===0) { renderGT(); }
   if(v===1 && gtSelectedId) renderGTDetall(gtSelectedId);
   if(v===2) renderResum();
 };
@@ -7594,14 +7596,14 @@ let gtCurrentView = 'plan';
 let gtSelectedId  = null;
 
 function gtSetActiveViewBtn(v){
-  const buttons = {plan:'gtVBtnP', 0:'gtVBtn0', 1:'gtVBtn1'};
+  const buttons = {plan:'gtVBtnP', 0:'gtVBtn0', 1:'gtVBtn1', 2:'gtVBtn2'};
   Object.entries(buttons).forEach(([k,bid])=>{
     const btn=document.getElementById(bid);
     if(!btn) return;
     const active = String(k)===String(v);
-    btn.style.background  = active ? "#eff6ff" : "var(--white)";
-    btn.style.boxShadow   = active ? "0 0 0 2px var(--blue-m) inset" : "none";
-    btn.querySelector(".kpi-l").style.color = active ? "var(--blue-m)" : "var(--ink3)";
+    btn.style.background  = active ? "#eff6ff" : "#fff";
+    btn.style.boxShadow   = active ? "0 0 0 2px #2563eb inset" : "none";
+    btn.style.color       = active ? "#2563eb" : "#475569";
   });
 }
 
@@ -7618,11 +7620,10 @@ function switchGTView(v){
 
 // Retorna tots els treballadors filtrats per torn/contracte/cerca
 function getGTWorkers(){
-  const torn  = "mati";
-  const cont  = (document.getElementById("gtCont")  ||{}).value || "tots";
+  const cont  = (document.getElementById("gtCont")||{}).value || "tots";
   const cerca = ((document.getElementById("gtPoolSearch")||document.getElementById("gtSearch")||{}).value || "").toLowerCase().trim();
   let workers = [];
-  const tornIds = ["mati"];
+  const tornIds = typeof TORNS_LIST !== "undefined" ? TORNS_LIST : ["mati","tarda","nit1","nit2"];
   tornIds.forEach(tid=>{
     (unitats[tid]?.treballadors||[]).forEach(t=>{
       workers.push({...t, _torn: tid});
@@ -7673,12 +7674,16 @@ function renderGT(){
   const workers = getGTWorkers();
   renderGTKpis(workers);
 
+  const mesFiltRaw = (document.getElementById("gtPermisMesFilter")||{}).value;
+  const mesFilt = mesFiltRaw !== undefined ? parseInt(mesFiltRaw) : -1;
+  const mesosShow = mesFilt === -1 ? Array.from({length:12},(_,i)=>i) : [mesFilt];
+
   const MESOS_CURTS = ["Gen","Feb","Mar","Abr","Mai","Jun","Jul","Ago","Set","Oct","Nov","Des"];
   let h = `<thead><tr style="background:#0f172a;color:#fff;position:sticky;top:0;z-index:5">
     <th style="padding:6px 10px;text-align:left;white-space:nowrap;min-width:180px">Treballador</th>
     <th style="padding:6px 8px;text-align:center;min-width:70px">Torn</th>
     <th style="padding:6px 8px;text-align:center;min-width:90px">Contracte</th>`;
-  for(let m=0;m<12;m++) h+=`<th style="padding:6px 8px;text-align:center;min-width:70px">${MESOS_CURTS[m]}</th>`;
+  for(const m of mesosShow) h+=`<th style="padding:6px 8px;text-align:center;min-width:70px">${MESOS_CURTS[m]}</th>`;
   h+=`<th style="padding:6px 8px;text-align:center;min-width:60px">IT anual</th>
       <th style="padding:6px 8px;text-align:center;min-width:60px">VA anual</th>
       <th style="padding:6px 8px;text-align:center;min-width:60px">AP anual</th>
@@ -7704,7 +7709,7 @@ function renderGT(){
       <td style="padding:4px 8px;text-align:center;font-size:.65rem;white-space:nowrap">${tornLbl}</td>
       <td style="padding:4px 8px;text-align:center"><span style="background:${cc.bg};color:${cc.fg};border-radius:4px;padding:1px 6px;font-size:.62rem;font-weight:600">${t.cont||"—"}</span></td>`;
 
-    for(let m=0;m<12;m++){
+    for(const m of mesosShow){
       const c = gtComptaCodis(t.id, m);
       let cellParts = [];
       if(c.it>0)  cellParts.push(`<span style="background:#fee2e2;color:#991b1b;border-radius:3px;padding:0 4px;font-weight:700">IT:${c.it}</span>`);
@@ -8449,4 +8454,4 @@ function qaAsk(){
 </div>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
