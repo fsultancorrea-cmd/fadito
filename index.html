@@ -30,13 +30,11 @@ header{background:var(--blue);color:#fff;display:flex;align-items:center;gap:10p
 .h-logo em{opacity:.55;font-style:normal;font-weight:400}
 .h-sep{width:1px;height:18px;background:rgba(255,255,255,.2)}
 .h-sub{font-size:.72rem;opacity:.75}
-.h-gap{flex:0 0 14px}
-.h-mesos{display:flex;align-items:center;gap:5px;flex:1;justify-content:center}
-.h-mesos button{flex:1;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:var(--r);padding:5px 10px;cursor:pointer;font-family:var(--font);font-size:.74rem;font-weight:600;transition:background .12s;white-space:nowrap;text-align:center}
-.h-mesos button:hover{background:rgba(255,255,255,.28)}
-.h-mesos button.active{background:#fff;color:#1d4ed8}
-.h-mesos button.h-mesos-arrow{flex:0 0 auto;padding:5px 9px;font-weight:700;background:#d1fae5;color:#000}
-.h-mesos button.h-mesos-arrow:hover{background:#a7f3d0}
+.h-gap{flex:1}
+.h-nav{display:flex;align-items:center;gap:5px}
+.h-nav button{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:var(--r);padding:3px 9px;cursor:pointer;font-family:var(--font);font-size:.72rem;font-weight:600;transition:background .12s}
+.h-nav button:hover{background:rgba(255,255,255,.28)}
+.h-nav .mes-lbl{font-size:.82rem;font-weight:700;min-width:100px;text-align:center}
 .h-save{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:var(--r);padding:4px 11px;cursor:pointer;font-family:var(--font);font-size:.72rem;font-weight:600;transition:all .12s}
 .h-save:hover{background:rgba(255,255,255,.3)}
 .h-torn{display:flex;align-items:center;gap:6px}
@@ -451,8 +449,14 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
     </select>
   </div>
   <div class="h-sep"></div>
-  <div class="h-mesos" id="headerMesos"></div>
+  <div class="h-nav">
+    <button onclick="canviMes(-1)">◀</button>
+    <span class="mes-lbl" id="mesLbl"></span>
+    <button onclick="canviMes(1)">▶</button>
+  </div>
   <div class="h-gap"></div>
+  <button class="h-save" style="background:#fff;color:#111;border:1.5px solid #111;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="openDirectori()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72" width="22" height="20" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="40" y1="2" x2="40" y2="8"/><polygon points="37,8 40,2 43,8" fill="#111" stroke="#111" stroke-width="1"/><path d="M28,20 Q40,8 52,20"/><path d="M31,22 Q40,13 49,22" stroke-dasharray="2,2"/><line x1="26" y1="21" x2="54" y2="21"/><path d="M14,24 Q18,18 22,24"/><rect x="14" y="24" width="8" height="12"/><path d="M58,24 Q62,18 66,24"/><rect x="58" y="24" width="8" height="12"/><rect x="10" y="36" width="60" height="26"/><path d="M34,62 L34,50 Q40,44 46,50 L46,62"/><rect x="15" y="40" width="6" height="8" rx="1"/><rect x="24" y="40" width="6" height="8" rx="1"/><rect x="50" y="40" width="6" height="8" rx="1"/><rect x="59" y="40" width="6" height="8" rx="1"/><line x1="10" y1="50" x2="33" y2="50"/><line x1="47" y1="50" x2="70" y2="50"/><line x1="7" y1="63" x2="73" y2="63"/><line x1="4" y1="66" x2="76" y2="66"/></svg><span>Bas&iacute;lica Sant Pietro</span></button>
+  <button class="h-save" style="background:#fff;color:#c0202a;border:1.5px solid #c0202a;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="switchTab('gt')" title="Gestió de Temps"><svg width="16" height="18" viewBox="0 0 48 52" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="28" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="1" y="5" width="44" height="44" rx="5" fill="#e0e0e0"/><rect x="1" y="5" width="44" height="16" rx="5" fill="#c0202a"/><rect x="1" y="14" width="44" height="7" fill="#c0202a"/><text x="23" y="17" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="6.5" font-weight="700">GT</text><text x="23" y="42" text-anchor="middle" fill="#2a2a2a" font-family="Arial Black,sans-serif" font-size="23" font-weight="900">GT</text></svg> <span style="font-weight:700;font-size:.68rem">Gestió de Temps</span></button>
   <button class="h-save" id="btnFbLogout" style="background:#fff;color:#475569;border:1.5px solid #cbd5e1;display:flex;align-items:center;gap:5px;padding:4px 10px" onclick="_fbLogout()" title="Tancar sessió compartida">⏻ <span style="font-weight:700;font-size:.68rem">Sortir</span></button>
 
 </header>
@@ -461,18 +465,31 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
 <div class="tabs">
   <div class="tab" data-tab="plantilla" onclick="switchTab('plantilla')">Plantilla</div>
   <div class="tab active" data-tab="quadrant" onclick="switchTab('quadrant')">Planificador d'Unitat<span id="tabDateInfo" style="margin-left:7px;font-size:.68rem;font-weight:600;color:#1d4ed8;background:#dbeafe;border-radius:6px;padding:1px 7px;letter-spacing:.01em"></span></div>
-  <div class="tab" data-tab="serveis" onclick="switchTab('serveis')">Reciclatge de personal i serveis</div>
-  <div class="tab" data-tab="xoc" onclick="switchTab('xoc')">Pla de Xoc (Quiròfans)</div>
-  <div class="tab" data-tab="resum" onclick="switchTab('resum')" style="display:flex;align-items:center;gap:5px"><svg width="14" height="16" viewBox="0 0 48 52" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><rect x="14" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="28" y="0" width="6" height="10" rx="3" fill="#888"/><rect x="1" y="5" width="44" height="44" rx="5" fill="#e0e0e0"/><rect x="1" y="5" width="44" height="16" rx="5" fill="#c0202a"/><rect x="1" y="14" width="44" height="7" fill="#c0202a"/><text x="23" y="17" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="6.5" font-weight="700">GT</text><text x="23" y="42" text-anchor="middle" fill="#2a2a2a" font-family="Arial Black,sans-serif" font-size="23" font-weight="900">GT</text></svg> Gestió de Temps (recolzament)</div>
+  <div class="tab" data-tab="agenda" onclick="switchTab('agenda')">Agenda de serveis</div>
+  <div class="tab" data-tab="rotacio" onclick="switchTab('rotacio')">Gestió i rotació de calendaris</div>
+  <div class="tab" data-tab="serveis" onclick="switchTab('serveis')">Registre de personal i servei</div>
+  <div class="tab" data-tab="resum" onclick="switchTab('resum')">Resum anual d'hores</div>
   <div style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:0 10px">
     <button onclick="toggleDashAnual()" id="btnDashAnual" title="Directori de contractació" style="background:#eff6ff;color:#1e40af;border:1.5px solid #bfdbfe;border-radius:7px;padding:4px 12px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap">Directori contractació</button>
-    <button onclick="switchTab('rotacio')" title="Codis i Calendaris" style="background:#fef9c3;color:#713f12;border:1.5px solid #fde68a;border-radius:7px;padding:4px 12px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap">Codis i Calendaris</button>
+    <button onclick="exportExcel()" title="Exportar a Excel" style="background:#bbf7d0;color:#000;border:1.5px solid #86efac;border-radius:7px;padding:4px 12px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap">Excel</button>
   </div>
 </div>
 
 <!-- TOOLBAR -->
 <div class="toolbar" id="toolbar">
   <div id="tb-quadrant" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%">
+    <span class="lbl">UPS:</span>
+    <div style="position:relative">
+      <button class="btn btn-o btn-sm" id="btnSelUPS" onclick="toggleSelUPSPanel(event)" title="Seleccionar UPs (multi-selecció)" style="font-size:.75rem;padding:2px 10px;min-width:120px;text-align:left">— Totes —</button>
+      <span id="selUPSBadge" style="display:none;background:#1d4ed8;color:#fff;border-radius:10px;padding:1px 7px;font-size:.65rem;font-weight:700;margin-left:2px;cursor:pointer" onclick="toggleSelUPSPanel(event)"></span>
+      <div id="selUPSPanel" style="display:none;position:fixed;z-index:9999;background:#fff;border:1.5px solid #1d4ed8;border-radius:10px;box-shadow:0 6px 24px #0003;padding:10px 12px;min-width:230px;max-height:360px;overflow-y:auto">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <strong style="font-size:.8rem;color:#1d4ed8">🔍 Filtrar per UPs</strong>
+          <button onclick="clearSelUPS()" style="font-size:.65rem;background:#fef2f2;color:#991b1b;border:1px solid #fca5a5;border-radius:6px;padding:1px 7px;cursor:pointer">✕ Totes</button>
+        </div>
+        <div id="selUPSList" style="display:flex;flex-direction:column;gap:4px"></div>
+      </div>
+    </div>
     <div style="display:flex;align-items:center;gap:4px">
       <button class="btn btn-o btn-sm" id="btnPinUPS" onclick="togglePinMode()" title="Activa mode fixar: clica el nom d'un zelador per fixar la seva fila" style="font-size:.75rem;padding:2px 9px">📌 Fixar zelador</button>
       <span id="pinnedUPSBadge" style="display:none;background:#7c3aed;color:#fff;border-radius:10px;padding:1px 7px;font-size:.65rem;font-weight:700;cursor:pointer" onclick="clearPinnedUPS()" title="Clica per eliminar totes les files fixades"></span>
@@ -509,7 +526,7 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   <div id="tb-serveis" style="display:none;align-items:center;gap:8px">
     <button class="btn btn-p btn-sm" onclick="openModalServei()">＋ Nou servei</button>
     <div class="tb-sep"></div>
-    <span style="font-size:.72rem;color:var(--ink3)">Reciclatge de personal i serveis</span>
+    <span style="font-size:.72rem;color:var(--ink3)">Registre de personal i servei</span>
   </div>
   <div id="tb-agenda" style="display:none;align-items:center;gap:8px;flex-wrap:wrap">
     <span class="lbl">Visualitzar:</span>
@@ -526,14 +543,6 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   <div id="tb-resum" style="display:none;align-items:center;gap:8px">
     <button class="btn btn-o btn-sm" onclick="exportResumCSV()">⬇ Exportar resum</button>
   </div>
-  <div id="tb-xoc" style="display:none;align-items:center;gap:8px;flex-wrap:wrap">
-    <button class="btn btn-o btn-sm" onclick="xocAddRow('serveis')">＋ Necessitat</button>
-    <button class="btn btn-o btn-sm" onclick="xocAddRow('suplents')">＋ Suplent</button>
-    <div class="tb-sep"></div>
-    <button class="btn btn-o btn-sm" style="color:var(--red)" onclick="xocClearAll()">🗑 Buidar tot</button>
-    <div class="tb-sep"></div>
-    <span id="xocDatesInfo" style="font-size:.72rem;color:var(--ink3)"></span>
-  </div>
 
 </div>
 
@@ -542,8 +551,8 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   <button class="sb-toggle" id="sbToggleBtn" onclick="toggleSidebar()" title="Amaga/mostra el panell">◀</button>
   <div class="sidebar" id="mainSidebar">
     <div class="sb-sec">
-      <div class="sb-hdr"><span>UPS / Serveis</span></div>
-      <div id="sbUPS" style="max-height:420px;overflow-y:auto;padding-bottom:14px;scrollbar-width:thin"></div>
+      <div class="sb-hdr" id="sbMesosHdr" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between" onclick="toggleSbMesos()"><span>Mesos 2026</span><span id="sbArrow" style="font-size:.65rem">▼</span></div>
+      <div id="sbMesos" style="display:none"></div>
     </div>
     <div class="sb-sec" style="border-top:2px solid #e2e8f0">
       <div class="sb-hdr" style="display:flex;align-items:center;justify-content:space-between;gap:4px">
@@ -575,7 +584,8 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
       <div id="cobQuadrant" style="margin-bottom:8px;overflow-x:auto"></div>
       <div class="card">
         <div class="card-hdr">
-          <button class="btn btn-o btn-sm" onclick="switchTab('agenda')" title="Obrir l'agenda de serveis del mes actual">Agenda de serveis</button>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Planificador d'Unitat
           <div class="card-hdr-gap"></div>
           <span id="qInfo" style="font-size:.66rem;color:var(--ink3)"></span>
         </div>
@@ -587,9 +597,9 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
     <div id="tab-plantilla" style="display:none">
       <div class="card">
         <div class="card-hdr" id="tb-plantilla" style="flex-wrap:wrap">
-          <button class="btn btn-p btn-sm" onclick="openModalTreballador()">+ Nou treballador</button>
+          <button class="btn btn-p btn-sm" onclick="openModalTreballador()">＋ Nou treballador</button>
           <div class="tb-sep"></div>
-          <span class="lbl">Contracte:</span>
+          <span class="lbl">Filtrar:</span>
           <select class="sel" id="filtPlant" onchange="renderPlantilla()">
             <option value="">Tots</option>
             <option value="estatutari">Estatutaris</option>
@@ -600,14 +610,14 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
             <option value="programa 28h">Programa 28h</option>
             <option value="substitució directa">Substitució directa</option>
           </select>
-          <span class="lbl">Servei:</span>
-          <select class="sel" id="filtUps" onchange="renderPlantilla()" style="max-width:180px">
-            <option value="">Tots</option>
-          </select>
           <input class="inp" id="srchPlant" placeholder="Buscar..." oninput="renderPlantilla()" style="width:140px">
           <div class="tb-sep"></div>
-          <button id="btnOutlook" class="btn btn-sm" onclick="outlookSeleccionats()" title="Obrir correu corporatiu dels seleccionats a Outlook" style="display:none;background:#0078d4;color:#fff;border:none;border-radius:6px;padding:4px 11px;cursor:pointer;font-size:.72rem;font-weight:700;gap:5px;align-items:center">📧 Outlook &nbsp;<span id="cntSelOut" style="background:#fff;color:#0078d4;border-radius:9px;padding:0 6px;font-weight:900">0</span></button>
-          <button id="btnDeselAll" class="btn btn-o btn-sm" onclick="deseleccionarTots()" title="Deseleccionar tots" style="display:none;font-size:.68rem">✕ Netejar selecció</button>
+          <button id="btnOutlook" class="btn btn-sm" onclick="outlookSeleccionats()" title="Obrir correu corporatiu dels seleccionats a Outlook"
+            style="display:none;background:#0078d4;color:#fff;border:none;border-radius:6px;padding:4px 11px;cursor:pointer;font-size:.72rem;font-weight:700;gap:5px;align-items:center">
+            📧 Outlook &nbsp;<span id="cntSelOut" style="background:#fff;color:#0078d4;border-radius:9px;padding:0 6px;font-weight:900">0</span>
+          </button>
+          <button id="btnDeselAll" class="btn btn-o btn-sm" onclick="deseleccionarTots()" title="Deseleccionar tots"
+            style="display:none;font-size:.68rem">✕ Netejar selecció</button>
           <div class="card-hdr-gap"></div>
           <span id="plantInfo" style="font-size:.66rem;color:var(--ink3)"></span>
         </div>
@@ -620,19 +630,6 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
     <!-- TAB: SERVEIS / UP'S -->
     <div id="tab-serveis" style="display:none">
       <div id="serveisContent"></div>
-
-      <!-- RECICLATGE: HISTORIAL DE SERVEIS PER CELADOR -->
-      <div class="card" style="margin-top:14px">
-        <div class="card-hdr">
-          <input id="reciSearchCel" type="text" placeholder="Buscar celador..." oninput="renderReciclatge()"
-            style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;width:170px;font-family:var(--font);margin-right:8px">
-          <select id="reciFiltreServei" onchange="renderReciclatge()" style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;font-family:var(--font)">
-            <option value="">Filtrar per servei...</option>
-          </select>
-          <div class="card-hdr-gap"></div>
-        </div>
-        <div id="reciclatgeContent" style="padding:10px 14px;overflow-x:auto"></div>
-      </div>
     </div>
 
     <!-- TAB: GESTIÓ I ROTACIÓ DE CALENDARIS -->
@@ -640,14 +637,16 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
       <!-- ── PANELL DE GESTIÓ DE GRUPS ── -->
       <div class="card" style="margin-bottom:10px">
         <div class="card-hdr">
-          <input id="gestioSearch" type="text" placeholder="Buscar treballador..." oninput="renderGestioGrups()"
-            style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;width:180px;font-family:var(--font);margin-right:10px">
-          <button class="btn btn-o btn-sm" onclick="openRotGridModal()" title="Obrir el generador de cadència de FS">📅 Generador de cadència de FS</button>
+          📋 Gestió de Grups de Calendari
           <div class="card-hdr-gap"></div>
+          <input id="gestioSearch" type="text" placeholder="Buscar treballador..." oninput="renderGestioGrups()"
+            style="padding:3px 8px;border:1px solid var(--line);border-radius:5px;font-size:.72rem;width:180px;font-family:var(--font)">
           <span id="gestioInfo" style="font-size:.66rem;color:var(--ink3);margin-left:6px"></span>
         </div>
         <div id="gestioGrups" style="padding:10px 12px;overflow-x:auto"></div>
       </div>
+      <!-- ── TAULA FS MENSUAL ── -->
+      <div id="rotGrid"></div>
     </div>
 
     <!-- TAB: VACANCES -->
@@ -656,7 +655,6 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
       <div class="card">
         <div class="card-hdr">
           🏥 <span id="agendaTitle">Agenda de serveis</span>
-          <button class="btn btn-o btn-sm" onclick="switchTab('quadrant')" title="Tornar al Planificador d'Unitat" style="margin-left:8px">⬅ Planificador d'Unitat</button>
           <div class="card-hdr-gap"></div>
           <span id="agendaInfo" style="font-size:.66rem;color:var(--ink3)"></span>
         </div>
@@ -668,8 +666,19 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
     <!-- TAB: VERIFICACIÓ GT -->
     
 
-    <!-- TAB: GT GESTIÓ DE TEMPS -->
+    <!-- TAB: RESUM ANUAL -->
     <div id="tab-resum" style="display:none">
+      <div class="kpi-row" id="kpiResum" style="margin-bottom:0"></div>
+      <div class="card" style="margin-top:11px">
+        <div class="card-hdr">📊 Resum Anual per Treballador — <span id="resumYearLbl">2026</span></div>
+        <div style="overflow:auto;max-height:calc(100vh - 290px)">
+          <table class="ra" id="tblRA"></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: GESTIÓ DE TEMPS -->
+    <div id="tab-gt" style="display:none">
       <!-- Hidden selectors kept for JS compatibility -->
       <select id="gtTorn" style="display:none"><option value="mati" selected>Matí</option></select>
       <select id="gtCont" style="display:none"><option value="tots" selected>Tots</option></select>
@@ -685,49 +694,11 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
           <table id="tblGT" style="border-collapse:collapse;font-size:.68rem;min-width:max-content;width:100%"></table>
         </div>
         <div id="gtView1" style="display:none;overflow:auto;max-height:calc(100vh - 155px);padding:16px">
-          <div id="gtDetallContent"><p style="color:var(--ink3);font-size:.8rem;text-align:center;padding:40px 0">Selecciona un treballador a la Vista de Permisos per veure el seu detall</p></div>
+          <div id="gtDetallContent"><p style="color:var(--ink3);font-size:.8rem;text-align:center;padding:40px 0">Selecciona un treballador a la Vista Anual per veure el seu detall</p></div>
         </div>
-        <div id="gtView2" style="display:none;overflow:auto;max-height:calc(100vh - 155px)">
-          <div style="overflow:auto;padding:0 0 8px">
-            <table class="ra" id="tblRA" style="border-collapse:collapse;font-size:.68rem;width:100%"></table>
-          </div>
+        <div id="gtView2" style="display:none;overflow:auto;max-height:calc(100vh - 155px);padding:16px">
+          <div id="gtBalancContent"></div>
         </div>
-      </div>
-    </div>
-
-    <!-- TAB: PLA DE XOC (QUIRÒFANS) -->
-    <div id="tab-xoc" style="display:none">
-      <div style="background:#fef3c7;border:1.5px solid #fcd34d;border-radius:8px;padding:8px 12px;margin-bottom:11px;font-size:.72rem;color:#92400e">
-        ⚠️ Plantilla del Pla de Xoc de Quiròfans. Les peonades només es fan <strong>dissabtes, diumenges i festius</strong> (els dies Dl-Dv es descarten automàticament, excepte si són festius). Selecciona un o més mesos per veure'ls combinats. El <strong>Pool Matí/Tarda es genera automàticament</strong> amb els celadors que tenen un servei de quiròfan assignat (Plantilla 1ª/2ª, Urgències), i la disponibilitat de cada dia es calcula a partir del seu calendari (<strong>TR</strong> = treballant, no disponible). A les cel·les de Necessitat, tria el celador amb el desplegable.
-      </div>
-      <div class="card" style="margin-bottom:11px">
-        <div class="card-hdr">📅 Mesos <span style="font-weight:400;font-size:.65rem;color:var(--ink3)">(pots seleccionar-ne diversos)</span></div>
-        <div id="xocMesBar" style="display:flex;gap:5px;flex-wrap:wrap;padding:10px 14px"></div>
-      </div>
-      <div class="card" style="margin-bottom:11px">
-        <div class="card-hdr">🎌 Festius <span style="font-weight:400;font-size:.65rem;color:var(--ink3)">(dies Dl-Dv tractats com a cap de setmana per a l'any <span id="xocFestiusAny"></span>)</span></div>
-        <div style="padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <input id="xocFestiuData" type="date" style="height:30px;border:1px solid #d1d5db;border-radius:6px;padding:0 8px;font-size:.74rem">
-          <input id="xocFestiuNom" type="text" placeholder="Nom (opcional)" style="height:30px;border:1px solid #d1d5db;border-radius:6px;padding:0 8px;font-size:.74rem;width:160px">
-          <button class="btn btn-o btn-sm" onclick="xocAddFestiu()">＋ Afegir festiu</button>
-        </div>
-        <div id="xocFestiusList" style="padding:0 14px 10px;display:flex;flex-wrap:wrap;gap:6px"></div>
-      </div>
-      <div class="card" style="margin-bottom:11px">
-        <div class="card-hdr">🟢 Necessitats (serveis a cobrir)</div>
-        <div style="overflow:auto;max-height:42vh" id="xocNecWrap"></div>
-      </div>
-      <div class="card" style="margin-bottom:11px">
-        <div class="card-hdr">🌅 Pool — Torn Matí <span style="font-weight:400;font-size:.65rem;color:var(--ink3)">(automàtic)</span></div>
-        <div style="overflow:auto;max-height:32vh" id="xocMatiWrap"></div>
-      </div>
-      <div class="card" style="margin-bottom:11px">
-        <div class="card-hdr">🌇 Pool — Torn Tarda <span style="font-weight:400;font-size:.65rem;color:var(--ink3)">(automàtic)</span></div>
-        <div style="overflow:auto;max-height:32vh" id="xocTardaWrap"></div>
-      </div>
-      <div class="card" style="margin-bottom:11px">
-        <div class="card-hdr">🔁 Suplents</div>
-        <div style="overflow:auto;max-height:32vh" id="xocSupWrap"></div>
       </div>
     </div>
   </div>
@@ -800,16 +771,6 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
   </div>
 </div>
 
-<!-- MODAL TAULA FS MENSUAL -->
-<div class="overlay" id="ovRotGrid" onclick="if(event.target===this)closeModal('ovRotGrid')">
-  <div class="modal" style="max-width:1400px;width:96vw;max-height:94vh">
-    <div class="modal-hdr"><span style="flex:1">📅 Generador de FS de Calendari</span><button onclick="closeModal('ovRotGrid')" class="btn btn-o btn-sm" style="padding:2px 8px">✕</button></div>
-    <div class="modal-body" style="max-height:85vh;overflow:auto;padding:14px 16px">
-      <div id="rotGrid"></div>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL ROTACIÓ -->
 <div class="overlay" id="ovRot" onclick="if(event.target===this)closeModal('ovRot')">
   <div class="modal" style="width:520px">
@@ -863,21 +824,6 @@ table.ra tbody tr:hover{background:var(--blue-xl)}
     <div class="dir-ftr">
       <span class="dir-ftr-info" id="dirInfo"></span>
       <button class="btn btn-o" onclick="tancarDirectori()">Tancar</button>
-    </div>
-  </div>
-</div>
-
-<!-- POPUP DIRECTORI CEL·LA -->
-<div class="dir-overlay" id="ovDirPopup" onclick="if(event.target===this)tancarDirPopup()">
-  <div class="dir-modal" style="max-width:700px">
-    <div class="dir-hdr" style="background:#1e3a5f">
-      <div class="dir-hdr-title" id="dirPopupTitle"></div>
-      <button class="btn btn-o btn-sm" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="tancarDirPopup()">✕</button>
-    </div>
-    <div class="dir-body" id="dirPopupBody"></div>
-    <div class="dir-ftr">
-      <span class="dir-ftr-info" id="dirPopupInfo"></span>
-      <button class="btn btn-o" onclick="tancarDirPopup()">Tancar</button>
     </div>
   </div>
 </div>
@@ -981,186 +927,6 @@ const MATRIU_GENER = {
 // UPS llista completa
 const UPS_LISTA=["Planta 3","Planta 4","Planta 5","Planta 6","Planta 7","Planta 8","Planta 9","Planta 10","Planta 11","Planta 12","Planta 13","UCI 1","UCI 2","UCI 3 - VIC","Urgències General","Urgències Obstetrícia (Parts)","Urgències Triatge (portes)","Urgències Psiquiàtriques","Urgències Pediatria","Quirofàn 1ª Planta","Quirofàn 2ª Planta","Quirofàn d'Urgències","Endoscòpies","Radiodiàgnostic","Hemodiàlisis","Hemodinàmica","Rehabilitació","Maternal","Coro/Upac/Hemodinàmica","Farmàcia Sueros","Consultes Externes","Reanimació","Neonats","URPI","UCE","Pool Hospitalització","Pool Urgències","Pool Crítics","Pool Quirúrgic","Pool Consultes/Altres","Hospital Modular","Encarregat torn"];
 
-// UPS/serveis creats manualment per l'usuari (persisteixen a banda de la llista base)
-let upsCustom=[];
-try{ upsCustom = JSON.parse(localStorage.getItem("gt_b_ups_custom")||"[]"); }catch(e){}
-upsCustom.forEach(u=>{ if(!UPS_LISTA.includes(u)) UPS_LISTA.push(u); });
-
-let upsDeleted=[];
-try{ upsDeleted = JSON.parse(localStorage.getItem("gt_b_ups_deleted")||"[]"); }catch(e){}
-upsDeleted.forEach(u=>{ const _di=UPS_LISTA.indexOf(u); if(_di>-1) UPS_LISTA.splice(_di,1); });
-
-// Ordre personalitzat
-
-// Grups de UPS (un nom \"pare\" agrupa diversos UPs \"fill\"; nomes visual, no afecta assignacions)
-let upsGrups={};
-try{ upsGrups = JSON.parse(localStorage.getItem("gt_b_ups_grups")||"{}"); }catch(e){}
-let expandedGrups=new Set();
-
-// Ordre personalitzat de les UPS (arrossegar i deixar a la barra lateral)
-let upsOrderCustom=[];
-try{ upsOrderCustom = JSON.parse(localStorage.getItem("gt_b_ups_order")||"[]"); }catch(e){}
-
-let _sbDragUP=null;
-function sbUPDragStart(up){ _sbDragUP=up; }
-function sbUPDrop(targetUP){
-  if(!_sbDragUP || _sbDragUP===targetUP) return;
-  const ordre = getServeisOrdenats();
-  const dragIsGrup = _sbDragUP.indexOf('GRUP::')===0;
-  const targetIsGrup = targetUP.indexOf('GRUP::')===0;
-  const movingNames = dragIsGrup ? (upsGrups[_sbDragUP.slice(6)]||[]).slice() : [_sbDragUP];
-  if(!movingNames.length){ _sbDragUP=null; return; }
-  const movingSet = new Set(movingNames);
-  const remaining = ordre.filter(u=>!movingSet.has(u));
-  const movingInOrder = ordre.filter(u=>movingSet.has(u));
-  let insertAt;
-  if(targetIsGrup){
-    const targetFills = upsGrups[targetUP.slice(6)]||[];
-    let pos = remaining.length;
-    targetFills.forEach(f=>{ const idxF=remaining.indexOf(f); if(idxF>-1 && idxF<pos) pos=idxF; });
-    insertAt = pos;
-  } else {
-    insertAt = remaining.indexOf(targetUP);
-    if(insertAt<0) insertAt = remaining.length;
-  }
-  remaining.splice(insertAt,0,...movingInOrder);
-  upsOrderCustom = remaining;
-  localStorage.setItem("gt_b_ups_order", JSON.stringify(upsOrderCustom));
-  fbSave();
-  _sbDragUP=null;
-  renderSidebar();
-}
-
-function populateUPSSelects(){
-  ["selUPS","fUPS"].forEach(id=>{
-    const sel=document.getElementById(id);
-    if(!sel)return;
-    const prevVal = sel.value;
-    if(id==="selUPS") sel.innerHTML=`<option value="TOTES">— Totes —</option>`;
-    else sel.innerHTML="";
-    UPS_LISTA.forEach(u=>{
-      const o=document.createElement("option");
-      o.value=u;o.textContent=u;sel.appendChild(o);
-    });
-    if(prevVal && [...sel.options].some(o=>o.value===prevVal)) sel.value=prevVal;
-  });
-}
-
-function crearServeiUP(){
-  const nom=(prompt("Nom de la nova UP / servei:")||"").trim();
-  if(!nom) return;
-  if(UPS_LISTA.some(u=>u.toLowerCase()===nom.toLowerCase())){
-    toast('Aquesta UP ja existeix','warn');
-    return;
-  }
-  UPS_LISTA.push(nom);
-  upsCustom.push(nom);
-  localStorage.setItem("gt_b_ups_custom", JSON.stringify(upsCustom));
-  if(!upsOrderCustom.includes(nom)){
-    upsOrderCustom.push(nom);
-    localStorage.setItem("gt_b_ups_order", JSON.stringify(upsOrderCustom));
-  }
-  fbSave();
-  toast(nom+' creada','ok');
-  populateUPSSelects();
-  renderSidebar();
-  renderAll();
-  setTimeout(()=>{
-    const row=[...document.querySelectorAll("#sbUPS .sb-item")].find(l=>l.textContent.includes(nom));
-    if(row) row.scrollIntoView({block:"nearest"});
-  }, 50);
-}
-
-function eliminarServeiUP(nom){
-  const enUs = treballadors.filter(t=>getTrebUPs(t).includes(nom));
-  let msg = 'Eliminar la UP "'+nom+'"?';
-  if(enUs.length) msg += '\n\n'+enUs.length+' treballador(s) tenen aquesta UP assignada i quedaran sense aquesta assignacio.';
-  if(!confirm(msg)) return;
-  const eraCustom = upsCustom.includes(nom);
-  let i=UPS_LISTA.indexOf(nom); if(i>-1) UPS_LISTA.splice(i,1);
-  i=upsCustom.indexOf(nom); if(i>-1) upsCustom.splice(i,1);
-  i=upsOrderCustom.indexOf(nom); if(i>-1) upsOrderCustom.splice(i,1);
-  if(!eraCustom && !upsDeleted.includes(nom)) upsDeleted.push(nom);
-  Object.keys(upsGrups).forEach(g=>{
-    upsGrups[g]=upsGrups[g].filter(u=>u!==nom);
-    if(!upsGrups[g].length) delete upsGrups[g];
-  });
-  treballadors.forEach(t=>{
-    if((t.ups||"")===nom) t.ups="";
-    if(Array.isArray(t.upsExtra)) t.upsExtra=t.upsExtra.filter(u=>u!==nom);
-  });
-  localStorage.setItem("gt_b_ups_custom", JSON.stringify(upsCustom));
-  localStorage.setItem("gt_b_ups_order", JSON.stringify(upsOrderCustom));
-  localStorage.setItem("gt_b_ups_grups", JSON.stringify(upsGrups));
-  localStorage.setItem("gt_b_ups_deleted", JSON.stringify(upsDeleted));
-  fbSave();
-  toast(nom+' eliminada','ok');
-  populateUPSSelects();
-  renderSidebar();
-  renderAll();
-  if(typeof desarDelay==="function") desarDelay();
-}
-
-function esFillDeGrup(u){
-  return Object.values(upsGrups).some(arr=>arr.includes(u));
-}
-
-function agruparServeis(){
-  const nom=(prompt('Nom del grup (ex: Farm\u00e0cia):')||'').trim();
-  if(!nom) return;
-  const guess=UPS_LISTA.filter(u=>u.toLowerCase().includes(nom.toLowerCase()) && !esFillDeGrup(u));
-  const llista=prompt('Escriu els noms exactes dels serveis a agrupar sota "'+nom+'", separats per coma:', guess.join(', '));
-  if(!llista) return;
-  const noms=llista.split(',').map(s=>s.trim()).filter(Boolean);
-  const trobats=[];
-  const noTrobats=[];
-  noms.forEach(n=>{
-    const real=UPS_LISTA.find(u=>u.toLowerCase()===n.toLowerCase());
-    if(real && !trobats.includes(real)) trobats.push(real); else if(!real) noTrobats.push(n);
-  });
-  if(trobats.length<2){
-    toast('Cal seleccionar almenys 2 serveis existents','warn');
-    return;
-  }
-  Object.keys(upsGrups).forEach(g=>{
-    upsGrups[g]=upsGrups[g].filter(u=>!trobats.includes(u));
-    if(upsGrups[g].length===0) delete upsGrups[g];
-  });
-  upsGrups[nom]=trobats;
-  expandedGrups.add(nom);
-  localStorage.setItem('gt_b_ups_grups', JSON.stringify(upsGrups));
-  fbSave();
-  renderSidebar();
-  if(noTrobats.length) toast('No trobats: '+noTrobats.join(', '),'warn');
-  else toast('Grup "'+nom+'" creat amb '+trobats.length+' serveis','ok');
-}
-
-function desferGrup(nom, ev){
-  if(ev) ev.stopPropagation();
-  if(!confirm('Vols desfer el grup "'+nom+'"? Els serveis tornaran a apar\u00e8ixer per separat.')) return;
-  delete upsGrups[nom];
-  expandedGrups.delete(nom);
-  localStorage.setItem('gt_b_ups_grups', JSON.stringify(upsGrups));
-  fbSave();
-  renderSidebar();
-  toast('Grup "'+nom+'" desfet','ok');
-}
-
-function toggleGrupExpand(nom, ev){
-  if(ev) ev.stopPropagation();
-  if(expandedGrups.has(nom)) expandedGrups.delete(nom); else expandedGrups.add(nom);
-  renderSidebar();
-}
-
-function toggleSelGrup(nom, on){
-  (upsGrups[nom]||[]).forEach(u=>{ if(on) filterUPSSet.add(u); else filterUPSSet.delete(u); });
-  filterUPS = filterUPSSet.size===1 ? [...filterUPSSet][0] : (filterUPSSet.size===0 ? "TOTES":"MULTI");
-  updateSelUPSLabel();
-  renderSidebar();renderKPIs();
-  if(currentTab==="quadrant") renderQuadrant();
-  else if(currentTab==="plantilla") renderPlantilla();
-}
-
 // ─── CODIS DE ROTACIÓ (editables) ───────────────────────────────────────────
 // Estructura: { codi, desc, color, dies: [v0..v6] (0=dl..6=dg) }
 let rotacions = [
@@ -1220,15 +986,15 @@ let rotacions = [
 // ─── PLANTILLA MATÍ (inicial) ───────────────────────────────────────────────
 // Aquesta llista pertany al torn de Matí. Els altres torns (Tarda, Nit 1, Nit 2)
 // comencen buits i s'omplen quan portis l'Excel corresponent.
-const TREBALLADORS_MATI=[{id:1,nom:"Zelador 001",ups:"Planta 3",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:2,nom:"Zelador 002",ups:"Planta 3",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:3,nom:"Zelador 003",ups:"Planta 4",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:4,nom:"Zelador 004",ups:"Planta 4",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:5,nom:"Zelador 005",ups:"Planta 5",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:6,nom:"Zelador 006",ups:"Planta 5",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:7,nom:"Zelador 007",ups:"Planta 6",rot:"FF2T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:8,nom:"Zelador 008",ups:"Planta 6",rot:"FF3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:9,nom:"Zelador 009",ups:"Planta 7",rot:"FF4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:10,nom:"Zelador 010",ups:"Planta 7",rot:"FF5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:11,nom:"Zelador 011",ups:"Planta 8",rot:"1TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:12,nom:"Zelador 012",ups:"Planta 8",rot:"2TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:13,nom:"Zelador 013",ups:"Planta 9",rot:"3TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:14,nom:"Zelador 014",ups:"Planta 9",rot:"4TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:15,nom:"Zelador 015",ups:"Planta 10",rot:"5TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:16,nom:"Zelador 016",ups:"Planta 10",rot:"03TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:17,nom:"Zelador 017",ups:"Planta 11",rot:"04TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:18,nom:"Zelador 018",ups:"Planta 11",rot:"05TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:19,nom:"Zelador 019",ups:"Planta 12",rot:"0F3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:20,nom:"Zelador 020",ups:"Planta 12",rot:"0F4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:21,nom:"Zelador 021",ups:"Planta 13",rot:"0F5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:22,nom:"Zelador 022",ups:"Planta 13",rot:"THFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:23,nom:"Zelador 023",ups:"UCI 1",rot:"CT28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:24,nom:"Zelador 024",ups:"UCI 1",rot:"INT.28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:25,nom:"Zelador 025",ups:"UCI 2",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:26,nom:"Zelador 026",ups:"UCI 2",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:27,nom:"Zelador 027",ups:"UCI 3 - VIC",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:28,nom:"Zelador 028",ups:"UCI 3 - VIC",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:29,nom:"Zelador 029",ups:"Urgències General",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:30,nom:"Zelador 030",ups:"Urgències General",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:31,nom:"Zelador 031",ups:"Urgències Obstetrícia (Parts)",rot:"FF2T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:32,nom:"Zelador 032",ups:"Urgències Obstetrícia (Parts)",rot:"FF3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:33,nom:"Zelador 033",ups:"Urgències Triatge (portes)",rot:"FF4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:34,nom:"Zelador 034",ups:"Urgències Triatge (portes)",rot:"FF5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:35,nom:"Zelador 035",ups:"Urgències Psiquiàtriques",rot:"1TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:36,nom:"Zelador 036",ups:"Urgències Psiquiàtriques",rot:"2TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:37,nom:"Zelador 037",ups:"Urgències Pediatria",rot:"3TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:38,nom:"Zelador 038",ups:"Urgències Pediatria",rot:"4TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:39,nom:"Zelador 039",ups:"Quirofàn 1ª Planta",rot:"5TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:40,nom:"Zelador 040",ups:"Quirofàn 1ª Planta",rot:"03TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:41,nom:"Zelador 041",ups:"Quirofàn 2ª Planta",rot:"04TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:42,nom:"Zelador 042",ups:"Quirofàn 2ª Planta",rot:"05TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:43,nom:"Zelador 043",ups:"Quirofàn d'Urgències",rot:"0F3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:44,nom:"Zelador 044",ups:"Quirofàn d'Urgències",rot:"0F4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:45,nom:"Zelador 045",ups:"Endoscòpies",rot:"0F5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:46,nom:"Zelador 046",ups:"Endoscòpies",rot:"THFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:47,nom:"Zelador 047",ups:"Radiodiàgnostic",rot:"CT28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:48,nom:"Zelador 048",ups:"Radiodiàgnostic",rot:"INT.28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:49,nom:"Zelador 049",ups:"Hemodiàlisis",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:50,nom:"Zelador 050",ups:"Hemodiàlisis",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:51,nom:"Zelador 051",ups:"Hemodinàmica",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:52,nom:"Zelador 052",ups:"Hemodinàmica",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:53,nom:"Zelador 053",ups:"Rehabilitació",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:54,nom:"Zelador 054",ups:"Rehabilitació",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:55,nom:"Zelador 055",ups:"Maternal",rot:"FF2T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:56,nom:"Zelador 056",ups:"Maternal",rot:"FF3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:57,nom:"Zelador 057",ups:"Coro/Upac/Hemodinàmica",rot:"FF4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:58,nom:"Zelador 058",ups:"Coro/Upac/Hemodinàmica",rot:"FF5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:59,nom:"Zelador 059",ups:"Farmàcia Sueros",rot:"1TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:60,nom:"Zelador 060",ups:"Farmàcia Sueros",rot:"2TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:61,nom:"Zelador 061",ups:"Consultes Externes",rot:"3TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:62,nom:"Zelador 062",ups:"Consultes Externes",rot:"4TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:63,nom:"Zelador 063",ups:"Reanimació",rot:"5TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:64,nom:"Zelador 064",ups:"Reanimació",rot:"03TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:65,nom:"Zelador 065",ups:"Neonats",rot:"04TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:66,nom:"Zelador 066",ups:"Neonats",rot:"05TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:67,nom:"Zelador 067",ups:"URPI",rot:"0F3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:68,nom:"Zelador 068",ups:"URPI",rot:"0F4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:69,nom:"Zelador 069",ups:"UCE",rot:"0F5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:70,nom:"Zelador 070",ups:"UCE",rot:"THFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:71,nom:"Zelador 071",ups:"Hospital Modular",rot:"CT28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:72,nom:"Zelador 072",ups:"Hospital Modular",rot:"INT.28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:73,nom:"Zelador 073",ups:"Encarregat torn",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:74,nom:"Zelador 074",ups:"Encarregat torn",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:75,nom:"Zelador 075",ups:"Pool Hospitalització",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:76,nom:"Zelador 076",ups:"Pool Urgències",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:77,nom:"Zelador 077",ups:"Pool Crítics",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:78,nom:"Zelador 078",ups:"Pool Quirúrgic",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:79,nom:"Zelador 079",ups:"Pool Consultes/Altres",rot:"FF2T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:80,nom:"Zelador 080",ups:"Pool Hospitalització",rot:"FF3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:81,nom:"Zelador 081",ups:"Pool Urgències",rot:"FF4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:82,nom:"Zelador 082",ups:"Pool Crítics",rot:"FF5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:83,nom:"Zelador 083",ups:"Pool Quirúrgic",rot:"1TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:84,nom:"Zelador 084",ups:"Pool Consultes/Altres",rot:"2TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:85,nom:"Zelador 085",ups:"Pool Hospitalització",rot:"3TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:86,nom:"Zelador 086",ups:"Pool Urgències",rot:"4TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:87,nom:"Zelador 087",ups:"Pool Crítics",rot:"5TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:88,nom:"Zelador 088",ups:"Pool Quirúrgic",rot:"03TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:89,nom:"Zelador 089",ups:"Pool Consultes/Altres",rot:"04TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:90,nom:"Zelador 090",ups:"Pool Hospitalització",rot:"05TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:91,nom:"Zelador 091",ups:"Pool Urgències",rot:"0F3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:92,nom:"Zelador 092",ups:"Pool Crítics",rot:"0F4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:93,nom:"Zelador 093",ups:"Pool Quirúrgic",rot:"0F5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:94,nom:"Zelador 094",ups:"Pool Consultes/Altres",rot:"THFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:95,nom:"Zelador 095",ups:"Pool Hospitalització",rot:"CT28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:96,nom:"Zelador 096",ups:"Pool Urgències",rot:"INT.28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:97,nom:"Zelador 097",ups:"Pool Crítics",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:98,nom:"Zelador 098",ups:"Pool Quirúrgic",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:99,nom:"Zelador 099",ups:"Pool Consultes/Altres",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:100,nom:"Zelador 100",ups:"Pool Hospitalització",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:101,nom:"Zelador 101",ups:"Pool Urgències",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:102,nom:"Zelador 102",ups:"Pool Crítics",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:103,nom:"Zelador 103",ups:"Pool Quirúrgic",rot:"FF2T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:104,nom:"Zelador 104",ups:"Pool Consultes/Altres",rot:"FF3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:105,nom:"Zelador 105",ups:"Pool Hospitalització",rot:"FF4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:106,nom:"Zelador 106",ups:"Pool Urgències",rot:"FF5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:107,nom:"Zelador 107",ups:"Pool Crítics",rot:"1TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:108,nom:"Zelador 108",ups:"Pool Quirúrgic",rot:"2TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:109,nom:"Zelador 109",ups:"Pool Consultes/Altres",rot:"3TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:110,nom:"Zelador 110",ups:"Pool Hospitalització",rot:"4TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:111,nom:"Zelador 111",ups:"Pool Urgències",rot:"5TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:112,nom:"Zelador 112",ups:"Pool Crítics",rot:"03TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:113,nom:"Zelador 113",ups:"Pool Quirúrgic",rot:"04TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:114,nom:"Zelador 114",ups:"Pool Consultes/Altres",rot:"05TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:115,nom:"Zelador 115",ups:"Pool Hospitalització",rot:"0F3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:116,nom:"Zelador 116",ups:"Pool Urgències",rot:"0F4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:117,nom:"Zelador 117",ups:"Pool Crítics",rot:"0F5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:118,nom:"Zelador 118",ups:"Pool Quirúrgic",rot:"THFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:119,nom:"Zelador 119",ups:"Pool Consultes/Altres",rot:"CT28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:120,nom:"Zelador 120",ups:"Pool Hospitalització",rot:"INT.28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:121,nom:"Zelador 121",ups:"Pool Urgències",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:122,nom:"Zelador 122",ups:"Pool Crítics",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:123,nom:"Zelador 123",ups:"Pool Quirúrgic",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:124,nom:"Zelador 124",ups:"Pool Consultes/Altres",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:125,nom:"Zelador 125",ups:"Pool Hospitalització",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:126,nom:"Zelador 126",ups:"Pool Urgències",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:127,nom:"Zelador 127",ups:"Pool Crítics",rot:"FF2T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:128,nom:"Zelador 128",ups:"Pool Quirúrgic",rot:"FF3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:129,nom:"Zelador 129",ups:"Pool Consultes/Altres",rot:"FF4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:130,nom:"Zelador 130",ups:"Pool Hospitalització",rot:"FF5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:131,nom:"Zelador 131",ups:"Pool Urgències",rot:"1TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:132,nom:"Zelador 132",ups:"Pool Crítics",rot:"2TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:133,nom:"Zelador 133",ups:"Pool Quirúrgic",rot:"3TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:134,nom:"Zelador 134",ups:"Pool Consultes/Altres",rot:"4TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:135,nom:"Zelador 135",ups:"Pool Hospitalització",rot:"5TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:136,nom:"Zelador 136",ups:"Pool Urgències",rot:"03TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:137,nom:"Zelador 137",ups:"Pool Crítics",rot:"04TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:138,nom:"Zelador 138",ups:"Pool Quirúrgic",rot:"05TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:139,nom:"Zelador 139",ups:"Pool Consultes/Altres",rot:"0F3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:140,nom:"Zelador 140",ups:"Pool Hospitalització",rot:"0F4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:141,nom:"Zelador 141",ups:"Pool Urgències",rot:"0F5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:142,nom:"Zelador 142",ups:"Pool Crítics",rot:"THFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:143,nom:"Zelador 143",ups:"Pool Quirúrgic",rot:"CT28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:144,nom:"Zelador 144",ups:"Pool Consultes/Altres",rot:"INT.28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:145,nom:"Zelador 145",ups:"Pool Hospitalització",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:146,nom:"Zelador 146",ups:"Pool Urgències",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:147,nom:"Zelador 147",ups:"Pool Crítics",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:148,nom:"Zelador 148",ups:"Pool Quirúrgic",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:149,nom:"Zelador 149",ups:"Pool Consultes/Altres",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:150,nom:"Zelador 150",ups:"Pool Hospitalització",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]}]
+const TREBALLADORS_MATI=[]
 
 const BASILICA_EXCEL_TORNS={}
 
-const TREBALLADORS_TARDA=[{id:151,nom:"Zelador 151",ups:"Planta 3",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:152,nom:"Zelador 152",ups:"Planta 3",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:153,nom:"Zelador 153",ups:"Planta 4",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:154,nom:"Zelador 154",ups:"Planta 4",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:155,nom:"Zelador 155",ups:"Planta 5",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:156,nom:"Zelador 156",ups:"Planta 5",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:157,nom:"Zelador 157",ups:"Planta 6",rot:"FF2T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:158,nom:"Zelador 158",ups:"Planta 6",rot:"FF3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:159,nom:"Zelador 159",ups:"Planta 7",rot:"FF4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:160,nom:"Zelador 160",ups:"Planta 7",rot:"FF5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:161,nom:"Zelador 161",ups:"Planta 8",rot:"1TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:162,nom:"Zelador 162",ups:"Planta 8",rot:"2TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:163,nom:"Zelador 163",ups:"Planta 9",rot:"3TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:164,nom:"Zelador 164",ups:"Planta 9",rot:"4TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:165,nom:"Zelador 165",ups:"Planta 10",rot:"5TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:166,nom:"Zelador 166",ups:"Planta 10",rot:"03TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:167,nom:"Zelador 167",ups:"Planta 11",rot:"04TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:168,nom:"Zelador 168",ups:"Planta 11",rot:"05TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:169,nom:"Zelador 169",ups:"Planta 12",rot:"0F3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:170,nom:"Zelador 170",ups:"Planta 12",rot:"0F4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:171,nom:"Zelador 171",ups:"Planta 13",rot:"0F5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:172,nom:"Zelador 172",ups:"Planta 13",rot:"THFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:173,nom:"Zelador 173",ups:"UCI 1",rot:"CT28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:174,nom:"Zelador 174",ups:"UCI 1",rot:"INT.28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:175,nom:"Zelador 175",ups:"UCI 2",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:176,nom:"Zelador 176",ups:"UCI 2",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:177,nom:"Zelador 177",ups:"UCI 3 - VIC",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:178,nom:"Zelador 178",ups:"UCI 3 - VIC",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:179,nom:"Zelador 179",ups:"Urgències General",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:180,nom:"Zelador 180",ups:"Urgències General",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:181,nom:"Zelador 181",ups:"Urgències Obstetrícia (Parts)",rot:"FF2T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:182,nom:"Zelador 182",ups:"Urgències Obstetrícia (Parts)",rot:"FF3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:183,nom:"Zelador 183",ups:"Urgències Triatge (portes)",rot:"FF4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:184,nom:"Zelador 184",ups:"Urgències Triatge (portes)",rot:"FF5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:185,nom:"Zelador 185",ups:"Urgències Psiquiàtriques",rot:"1TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:186,nom:"Zelador 186",ups:"Urgències Psiquiàtriques",rot:"2TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:187,nom:"Zelador 187",ups:"Urgències Pediatria",rot:"3TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:188,nom:"Zelador 188",ups:"Urgències Pediatria",rot:"4TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:189,nom:"Zelador 189",ups:"Quirofàn 1ª Planta",rot:"5TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:190,nom:"Zelador 190",ups:"Quirofàn 1ª Planta",rot:"03TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:191,nom:"Zelador 191",ups:"Quirofàn 2ª Planta",rot:"04TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:192,nom:"Zelador 192",ups:"Quirofàn 2ª Planta",rot:"05TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:193,nom:"Zelador 193",ups:"Quirofàn d'Urgències",rot:"0F3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:194,nom:"Zelador 194",ups:"Quirofàn d'Urgències",rot:"0F4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:195,nom:"Zelador 195",ups:"Endoscòpies",rot:"0F5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:196,nom:"Zelador 196",ups:"Endoscòpies",rot:"THFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:197,nom:"Zelador 197",ups:"Radiodiàgnostic",rot:"CT28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:198,nom:"Zelador 198",ups:"Radiodiàgnostic",rot:"INT.28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:199,nom:"Zelador 199",ups:"Hemodiàlisis",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:200,nom:"Zelador 200",ups:"Hemodiàlisis",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:201,nom:"Zelador 201",ups:"Hemodinàmica",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:202,nom:"Zelador 202",ups:"Hemodinàmica",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:203,nom:"Zelador 203",ups:"Rehabilitació",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:204,nom:"Zelador 204",ups:"Rehabilitació",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:205,nom:"Zelador 205",ups:"Maternal",rot:"FF2T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:206,nom:"Zelador 206",ups:"Maternal",rot:"FF3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:207,nom:"Zelador 207",ups:"Coro/Upac/Hemodinàmica",rot:"FF4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:208,nom:"Zelador 208",ups:"Coro/Upac/Hemodinàmica",rot:"FF5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:209,nom:"Zelador 209",ups:"Farmàcia Sueros",rot:"1TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:210,nom:"Zelador 210",ups:"Farmàcia Sueros",rot:"2TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:211,nom:"Zelador 211",ups:"Consultes Externes",rot:"3TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:212,nom:"Zelador 212",ups:"Consultes Externes",rot:"4TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:213,nom:"Zelador 213",ups:"Reanimació",rot:"5TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:214,nom:"Zelador 214",ups:"Reanimació",rot:"03TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:215,nom:"Zelador 215",ups:"Neonats",rot:"04TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:216,nom:"Zelador 216",ups:"Neonats",rot:"05TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:217,nom:"Zelador 217",ups:"URPI",rot:"0F3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:218,nom:"Zelador 218",ups:"URPI",rot:"0F4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:219,nom:"Zelador 219",ups:"UCE",rot:"0F5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:220,nom:"Zelador 220",ups:"UCE",rot:"THFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:221,nom:"Zelador 221",ups:"Hospital Modular",rot:"CT28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:222,nom:"Zelador 222",ups:"Hospital Modular",rot:"INT.28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:223,nom:"Zelador 223",ups:"Encarregat torn",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:224,nom:"Zelador 224",ups:"Encarregat torn",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:225,nom:"Zelador 225",ups:"Pool Hospitalització",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:226,nom:"Zelador 226",ups:"Pool Urgències",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:227,nom:"Zelador 227",ups:"Pool Crítics",rot:"F5TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:228,nom:"Zelador 228",ups:"Pool Quirúrgic",rot:"FF1T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:229,nom:"Zelador 229",ups:"Pool Consultes/Altres",rot:"FF2T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:230,nom:"Zelador 230",ups:"Pool Hospitalització",rot:"FF3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:231,nom:"Zelador 231",ups:"Pool Urgències",rot:"FF4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:232,nom:"Zelador 232",ups:"Pool Crítics",rot:"FF5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:233,nom:"Zelador 233",ups:"Pool Quirúrgic",rot:"1TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:234,nom:"Zelador 234",ups:"Pool Consultes/Altres",rot:"2TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:235,nom:"Zelador 235",ups:"Pool Hospitalització",rot:"3TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:236,nom:"Zelador 236",ups:"Pool Urgències",rot:"4TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:237,nom:"Zelador 237",ups:"Pool Crítics",rot:"5TFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:238,nom:"Zelador 238",ups:"Pool Quirúrgic",rot:"03TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:239,nom:"Zelador 239",ups:"Pool Consultes/Altres",rot:"04TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:240,nom:"Zelador 240",ups:"Pool Hospitalització",rot:"05TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:241,nom:"Zelador 241",ups:"Pool Urgències",rot:"0F3T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:242,nom:"Zelador 242",ups:"Pool Crítics",rot:"0F4T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:243,nom:"Zelador 243",ups:"Pool Quirúrgic",rot:"0F5T",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:244,nom:"Zelador 244",ups:"Pool Consultes/Altres",rot:"THFF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:245,nom:"Zelador 245",ups:"Pool Hospitalització",rot:"CT28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:246,nom:"Zelador 246",ups:"Pool Urgències",rot:"INT.28hh",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:247,nom:"Zelador 247",ups:"Pool Crítics",rot:"F1TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:248,nom:"Zelador 248",ups:"Pool Quirúrgic",rot:"F2TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:249,nom:"Zelador 249",ups:"Pool Consultes/Altres",rot:"F3TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:250,nom:"Zelador 250",ups:"Pool Hospitalització",rot:"F4TF",cont:"estatutari",torn:"diurn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]}]
+const TREBALLADORS_TARDA=[]
 
-const TREBALLADORS_NIT1=[{id:251,nom:"Zelador 251",ups:"UCI 1",rot:"N1P1",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:252,nom:"Zelador 252",ups:"UCI 1",rot:"N1P2",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:253,nom:"Zelador 253",ups:"UCI 2",rot:"N1P4",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:254,nom:"Zelador 254",ups:"UCI 2",rot:"N1P5",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:255,nom:"Zelador 255",ups:"UCI 3 - VIC",rot:"N1P6",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:256,nom:"Zelador 256",ups:"UCI 3 - VIC",rot:"N1P7",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:257,nom:"Zelador 257",ups:"Urgències General",rot:"N1S1",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:258,nom:"Zelador 258",ups:"Urgències General",rot:"N1S2",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:259,nom:"Zelador 259",ups:"Urgències Triatge (portes)",rot:"N1S3",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:260,nom:"Zelador 260",ups:"Urgències Triatge (portes)",rot:"N1S4",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:261,nom:"Zelador 261",ups:"Urgències Obstetrícia (Parts)",rot:"N1S5",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:262,nom:"Zelador 262",ups:"Urgències Obstetrícia (Parts)",rot:"N1S6",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:263,nom:"Zelador 263",ups:"Urgències Pediatria",rot:"N1S7",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:264,nom:"Zelador 264",ups:"Urgències Pediatria",rot:"N1P1",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:265,nom:"Zelador 265",ups:"Quirofàn d'Urgències",rot:"N1P2",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:266,nom:"Zelador 266",ups:"Quirofàn d'Urgències",rot:"N1P4",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:267,nom:"Zelador 267",ups:"Reanimació",rot:"N1P5",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:268,nom:"Zelador 268",ups:"Reanimació",rot:"N1P6",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:269,nom:"Zelador 269",ups:"Neonats",rot:"N1P7",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:270,nom:"Zelador 270",ups:"Neonats",rot:"N1S1",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:271,nom:"Zelador 271",ups:"Maternal",rot:"N1S2",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:272,nom:"Zelador 272",ups:"Maternal",rot:"N1S3",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:273,nom:"Zelador 273",ups:"URPI",rot:"N1S4",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:274,nom:"Zelador 274",ups:"URPI",rot:"N1S5",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:275,nom:"Zelador 275",ups:"Pool Crítics",rot:"N1S6",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]}]
+const TREBALLADORS_NIT1=[]
 
-const TREBALLADORS_NIT2=[{id:276,nom:"Zelador 276",ups:"UCI 1",rot:"N2P1",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:277,nom:"Zelador 277",ups:"UCI 1",rot:"N2P2",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:278,nom:"Zelador 278",ups:"UCI 2",rot:"N2P3",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:279,nom:"Zelador 279",ups:"UCI 2",rot:"N2P4",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:280,nom:"Zelador 280",ups:"UCI 3 - VIC",rot:"N2P6",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:281,nom:"Zelador 281",ups:"UCI 3 - VIC",rot:"N2P7",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:282,nom:"Zelador 282",ups:"Urgències General",rot:"N2S1",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:283,nom:"Zelador 283",ups:"Urgències General",rot:"N2S2",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:284,nom:"Zelador 284",ups:"Urgències Triatge (portes)",rot:"N2S3",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:285,nom:"Zelador 285",ups:"Urgències Triatge (portes)",rot:"N2S5",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:286,nom:"Zelador 286",ups:"Urgències Obstetrícia (Parts)",rot:"N2S6",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:287,nom:"Zelador 287",ups:"Urgències Obstetrícia (Parts)",rot:"N2S7",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:288,nom:"Zelador 288",ups:"Urgències Pediatria",rot:"N2P1",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:289,nom:"Zelador 289",ups:"Urgències Pediatria",rot:"N2P2",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:290,nom:"Zelador 290",ups:"Quirofàn d'Urgències",rot:"N2P3",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:291,nom:"Zelador 291",ups:"Quirofàn d'Urgències",rot:"N2P4",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:292,nom:"Zelador 292",ups:"Reanimació",rot:"N2P6",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:293,nom:"Zelador 293",ups:"Reanimació",rot:"N2P7",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:294,nom:"Zelador 294",ups:"Neonats",rot:"N2S1",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:295,nom:"Zelador 295",ups:"Neonats",rot:"N2S2",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:296,nom:"Zelador 296",ups:"Maternal",rot:"N2S3",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:297,nom:"Zelador 297",ups:"Maternal",rot:"N2S5",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:298,nom:"Zelador 298",ups:"URPI",rot:"N2S6",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:299,nom:"Zelador 299",ups:"URPI",rot:"N2S7",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]},{id:300,nom:"Zelador 300",ups:"Pool Urgències",rot:"N2P1",cont:"estatutari",torn:"nocturn",actiu:true,vacDies:22,apDies:6,noActInici:null,noActFi:null,correu:"",canvisContracte:[]}]
+const TREBALLADORS_NIT2=[]
 
 // ─── ESTAT MULTI-TORN ───────────────────────────────────────────────────────
 // Configuració dels 4 torns de treball
@@ -1474,21 +1240,17 @@ function getMatriuFS(year, codi, mes, dia){
   return M[codi][mes][dia] || null;
 }
 
-// Cada mes té el seu propi patró setmanal independent (no es comparteix entre mesos)
-function getMesPattern(rot,mes){
-  if(!rot.diesMes) rot.diesMes={};
-  if(!rot.diesMes[mes]) rot.diesMes[mes]=[...(rot.dies||["","","","","","FS","FS"])];
-  return rot.diesMes[mes];
-}
-
 function getRotDay(codi,mes,dia){
   // 1) Override manual (té màxima prioritat)
   const k=kRO(codi,mes,dia);
   if(rotOverrides[k]!==undefined) return rotOverrides[k];
-  // 2) Patró setmanal del mes (es repeteix cada setmana d'aquest mes; buit = treballant)
+  // 2) Matriu real de l'exercici (si està disponible)
+  const m = getMatriuFS(YEAR, codi, mes, dia);
+  if(m !== null) return m;
+  // 3) Fallback al patró setmanal genèric
   const rot=getRot(codi);
   const dw=dow(mes,dia);
-  return getMesPattern(rot,mes)[dw]||"";
+  return rot.dies[dw]||"";
 }
 
 // Genera patró del mes (respectant overrides si n'hi ha)
@@ -1794,7 +1556,7 @@ function editAgendaCell(sid, mes, dia, currentVal) {
     agendaOverrides[k] = n;
   }
   renderAgenda();
-  if(currentTab==="resum") renderGTPlan();
+  if(currentTab==="gt") renderGTPlan();
   desarDelay();
   toast(`${sv.servei} dia ${dia}: ${n} zeladors`, "ok");
 }
@@ -1820,7 +1582,7 @@ function editAgendaStdFest(sid, field, currentVal) {
   }
   desar();
   renderAgenda();
-  if (currentTab === "resum") renderGTPlan();
+  if (currentTab === "gt") renderGTPlan();
   toast(`${sv.servei} — ${mesNom} ${label}: ${n} zeladors`, "ok");
 }
 
@@ -1833,7 +1595,7 @@ function resetAgendaMes() {
     delete agendaMonthOverrides[sv.id + '|' + mes];
   });
   renderAgenda();
-  if(currentTab==="resum") renderGTPlan();
+  if(currentTab==="gt") renderGTPlan();
   desarDelay();
   toast("Agenda reiniciada als valors per defecte", "ok");
 }
@@ -1923,12 +1685,7 @@ function fbSave(){
   try{
     _db.ref('/data').set({
       unitats: JSON.parse(JSON.stringify(unitats)),
-      rot: rotacions,
-      upsCustom: upsCustom,
-      upsOrderCustom: upsOrderCustom,
-      upsDeleted: upsDeleted,
-      upsGrups: upsGrups,
-      xoc: xocPla
+      rot: rotacions
     });
   }catch(e){ console.warn('Firebase save error:',e); }
 }
@@ -1954,32 +1711,9 @@ function fbListen(){
         bindUnitat(currentTornTreball);
       }
       if(d.rot) rotacions = d.rot;
-      if(d.upsCustom){
-        upsCustom = d.upsCustom;
-        upsCustom.forEach(u=>{ if(!UPS_LISTA.includes(u)) UPS_LISTA.push(u); });
-        localStorage.setItem("gt_b_ups_custom", JSON.stringify(upsCustom));
-        populateUPSSelects();
-      }
-      if(d.upsDeleted){
-        upsDeleted = d.upsDeleted;
-        upsDeleted.forEach(u=>{ const _di=UPS_LISTA.indexOf(u); if(_di>-1) UPS_LISTA.splice(_di,1); });
-        localStorage.setItem('gt_b_ups_deleted', JSON.stringify(upsDeleted));
-        populateUPSSelects();
-      }
-      if(d.upsGrups){
-        upsGrups = d.upsGrups;
-        localStorage.setItem("gt_b_ups_grups", JSON.stringify(upsGrups));
-      }
-      if(d.upsOrderCustom){
-        upsOrderCustom = d.upsOrderCustom;
-        localStorage.setItem("gt_b_ups_order", JSON.stringify(upsOrderCustom));
-      }
-      if(d.xoc) xocPla = d.xoc;
       localStorage.setItem("gt_b_unitats", JSON.stringify(unitats));
       if(d.rot) localStorage.setItem("gt_b_rot", JSON.stringify(rotacions));
-      if(d.xoc) localStorage.setItem("gt_b_xoc", JSON.stringify(xocPla));
       renderAll();
-      if(typeof renderXoc==="function") renderXoc();
     }finally{ _fbApplying = false; }
   });
 }
@@ -2002,12 +1736,6 @@ function init(){
   try{
     const rot=localStorage.getItem("gt_b_rot");
     if(rot) rotacions=JSON.parse(rot);
-  }catch(e){}
-
-  // ── 1b) Carrega el Pla de Xoc (Quiròfans), si n'hi ha ──
-  try{
-    const xocRaw = localStorage.getItem("gt_b_xoc");
-    if(xocRaw) xocPla = JSON.parse(xocRaw);
   }catch(e){}
 
   // ── 2) Inicialitza les 4 unitats amb valors per defecte ──
@@ -2068,7 +1796,16 @@ function init(){
   if(selT) selT.value = currentTornTreball;
 
   // ── 5) Pobla selects UPS ──
-  populateUPSSelects();
+  ["selUPS","fUPS"].forEach(id=>{
+    const sel=document.getElementById(id);
+    if(!sel)return;
+    if(id==="selUPS") sel.innerHTML=`<option value="TOTES">— Totes —</option>`;
+    else sel.innerHTML="";
+    UPS_LISTA.forEach(u=>{
+      const o=document.createElement("option");
+      o.value=u;o.textContent=u;sel.appendChild(o);
+    });
+  });
 
   actualizaSelRot();
   renderLlegenda();
@@ -2140,7 +1877,7 @@ function gtSearchJumpQ(){
 function switchTab(tab){
   currentTab=tab;
   document.querySelectorAll(".tab").forEach(el=>el.classList.toggle("active",el.dataset.tab===tab));
-  ["quadrant","plantilla","serveis","rotacio","vacances","agenda","resum","xoc"].forEach(t=>{
+  ["quadrant","plantilla","serveis","rotacio","vacances","agenda","resum","gt"].forEach(t=>{
     const el=document.getElementById("tab-"+t);
     if(el) el.style.display=t===tab?"block":"none";
     const tb=document.getElementById("tb-"+t);
@@ -2149,7 +1886,6 @@ function switchTab(tab){
   updateTabDate();
   renderKPIs();
   renderAll();
-  if(tab==="xoc") renderXoc();
 }
 
 function toggleSidebar(){
@@ -2159,20 +1895,44 @@ function toggleSidebar(){
   btn.textContent=col?"▶":"◀";
   btn.style.left=col?"0":"196px";
 }
+function toggleSbMesos(){
+  const el=document.getElementById("sbMesos");
+  const ar=document.getElementById("sbArrow");
+  const show=el.style.display==="none";
+  el.style.display=show?"":"none";
+  ar.textContent=show?"▲":"▼";
+}
 function setMes(m){
   currentMes=m;
+  document.getElementById("mesLbl").textContent=MESOS[m]+" "+YEAR;
   renderSidebar();renderKPIs();
   if(currentTab==="quadrant")  renderQuadrant();
   else if(currentTab==="rotacio")  renderRotacio();
   else if(currentTab==="serveis")  renderServeis();
   else if(currentTab==="agenda")   renderAgenda();
-  else if(currentTab==="resum")    gtRenderView();
+  else if(currentTab==="resum")    renderResum();
 }
+function canviMes(d){setMes((currentMes+d+12)%12)}
 
+function setUPS(u){
+  // Legacy single-select path (sidebar clicks)
+  if(u==="TOTES"){ filterUPSSet.clear(); }
+  else { filterUPSSet.clear(); filterUPSSet.add(u); }
+  filterUPS = u; // keep legacy compat
+  updateSelUPSLabel();
+  renderSidebar();renderKPIs();
+  if(currentTab==="quadrant") renderQuadrant();
+  else if(currentTab==="plantilla") renderPlantilla();
+  else if(currentTab==="rotacio") renderRotacio();
+  else if(currentTab==="serveis") renderServeis();
+  else if(currentTab==="agenda") renderAgenda();
+  else if(currentTab==="resum") renderResum();
+}
 function toggleSelUPS(u, on){
   if(on) filterUPSSet.add(u); else filterUPSSet.delete(u);
   filterUPS = filterUPSSet.size===1 ? [...filterUPSSet][0] : (filterUPSSet.size===0?"TOTES":"MULTI");
   updateSelUPSLabel();
+  buildSelUPSList();
   renderSidebar();renderKPIs();
   if(currentTab==="quadrant") renderQuadrant();
   else if(currentTab==="plantilla") renderPlantilla();
@@ -2181,8 +1941,41 @@ function clearSelUPS(){
   filterUPSSet.clear();
   filterUPS="TOTES";
   updateSelUPSLabel();
+  document.getElementById('selUPSPanel').style.display='none';
+  buildSelUPSList();
   renderSidebar();renderKPIs();
   if(currentTab==="quadrant") renderQuadrant();
+}
+function toggleSelUPSPanel(e){
+  e.stopPropagation();
+  const panel=document.getElementById('selUPSPanel');
+  if(!panel) return;
+  const isOpen=panel.style.display!=='none';
+  if(isOpen){ panel.style.display='none'; return; }
+  const btn=document.getElementById('btnSelUPS');
+  const rect=btn.getBoundingClientRect();
+  panel.style.top=(rect.bottom+4)+'px';
+  panel.style.left=rect.left+'px';
+  buildSelUPSList();
+  panel.style.display='block';
+  setTimeout(()=>{
+    const close=(ev)=>{ if(!panel.contains(ev.target)&&ev.target!==btn){panel.style.display='none';document.removeEventListener('click',close);} };
+    document.addEventListener('click',close);
+  },10);
+}
+function buildSelUPSList(){
+  const listEl=document.getElementById('selUPSList');
+  if(!listEl) return;
+  listEl.innerHTML=UPS_LISTA.map(u=>{
+    const checked=filterUPSSet.has(u);
+    const safe=u.replace(/'/g,"\'");
+    const cnt=TORNS_LIST.flatMap(tid=>(unitats[tid]?.treballadors||[])).filter(t=>t.actiu&&getTrebUPs(t).includes(u)).length;
+    return `<label style="display:flex;align-items:center;gap:7px;cursor:pointer;padding:3px 6px;border-radius:6px;${checked?'background:#dbeafe;':''}font-size:.78rem">
+      <input type="checkbox" ${checked?'checked':''} onchange="toggleSelUPS('${safe}',this.checked)" style="accent-color:#1d4ed8;width:14px;height:14px">
+      <span style="flex:1;color:${checked?'#1e40af':'#374151'};font-weight:${checked?700:400}">${u}</span>
+      <span style="font-size:.65rem;color:#64748b;background:#f1f5f9;border-radius:8px;padding:0 5px">${cnt}</span>
+    </label>`;
+  }).join('');
 }
 function updateSelUPSLabel(){
   const btn=document.getElementById('btnSelUPS');
@@ -2208,7 +2001,7 @@ function renderAll(){
   else if(currentTab==="rotacio") renderRotacio();
   else if(currentTab==="serveis") renderServeis();
   else if(currentTab==="agenda") renderAgenda();
-  else if(currentTab==="resum") gtRenderView();
+  else if(currentTab==="resum") renderResum();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -2433,175 +2226,22 @@ function renderDashAnual(){
     CONT_ORDER.forEach(c=>{
       const cCol=CONT_COLORS[c]||{bg:"#f1f5f9",fg:"#475569"};
       TORNS_LIST.forEach(tid=>{
-        const tornList=allList.filter(t=>!_noActMes(t,m-1)&&getEffectiveTorn(t,m-1)===tid);
+        const tornList=allList.filter(t=>getEffectiveTorn(t,m-1)===tid);
         const cnt=tornList.filter(t=>{
           const info=getCanvisMes(t,m-1);
           return (info.unic||info.contBase||t.cont)===c;
         }).length;
         grandTotal+=cnt;
         const tBgD=TORN_BG[tid]||{bg:"#f1f5f9",fg:"#475569"};
-        if(cnt){
-          html+=`<td data-dp-mes="${m-1}" data-dp-cont="${c}" data-dp-torn="${tid}" onclick="openDirPopup(this)" title="Veure ${cnt} zeladors" style="padding:3px 5px;border:1px solid #e2e8f0;text-align:center;background:${tBgD.bg};color:${tBgD.fg};font-size:.65rem;${rowFw};cursor:pointer;transition:filter .1s" onmouseover="this.style.filter='brightness(.88)'" onmouseout="this.style.filter=''">${cnt}</td>`;
-        } else {
-          html+='<td style="padding:3px 5px;border:1px solid #e2e8f0;text-align:center;background:#fff;color:#cbd5e1;font-size:.65rem;'+rowFw+'">—</td>';
-        }
+        html+='<td style="padding:3px 5px;border:1px solid #e2e8f0;text-align:center;background:'+(cnt?tBgD.bg:"#fff")+';color:'+(cnt?tBgD.fg:"#cbd5e1")+';font-size:.65rem;'+rowFw+'">'+(cnt||"—")+'</td>';
       });
     });
-    html+=`<td data-dp-mes="${m-1}" onclick="openDirPopup(this)" title="Veure tots els ${grandTotal} zeladors del mes" style="padding:3px 8px;border:1px solid #e2e8f0;text-align:center;font-weight:700;background:#f8fafc;cursor:pointer;transition:filter .1s" onmouseover="this.style.filter='brightness(.88)'" onmouseout="this.style.filter=''">${grandTotal}</td>`;
+    html+='<td style="padding:3px 8px;border:1px solid #e2e8f0;text-align:center;font-weight:700;background:#f8fafc">'+grandTotal+'</td>';
     html+='</tr>';
   }
   html+='</tbody></table></div>';
   html+='<p style="font-size:.63rem;color:#94a3b8;margin:8px 0 0">Mes actual destacat en blau · '+allList.length+' zeladors actius en total</p>';
   document.getElementById("dashAnualBody").innerHTML=html;
-}
-
-// Retorna true si el worker té noAct que se solapa amb el mes mes0 (0-indexed)
-function _noActMes(t, mes0){
-  if(!t.noActInici||!t.noActFi) return false;
-  const mIni=isoDate(YEAR,mes0,1);
-  const mFi=isoDate(YEAR,mes0,dM(mes0));
-  return mIni<=t.noActFi && mFi>=t.noActInici;
-}
-
-// ── POPUP DETALL CEL·LA DIRECTORI ──────────────────────────────────────────
-function openDirPopup(el){
-  const CONT_LABELS={"estatutari":"Estatutari","interí":"Interí","interí 28h":"Interí 28h","interí 21h":"Interí 21h","programa":"Programa","programa 28h":"Programa 28h","substitució directa":"Sub. Directa"};
-  const TORN_LABELS={"mati":"Matí","tarda":"Tarda","nit1":"Nit 1","nit2":"Nit 2"};
-  const TORN_COLORS={"mati":"#b45309","tarda":"#6d28d9","nit1":"#0e7490","nit2":"#065f46"};
-  const MESOS_COMPLETS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
-
-  const mes0  = parseInt(el.getAttribute("data-dp-mes"));
-  const cont  = el.getAttribute("data-dp-cont") || null;
-  const tornId= el.getAttribute("data-dp-torn") || null;
-
-  const seen=new Set();
-  let workers=TORNS_LIST.flatMap(tid=>(unitats[tid]?.treballadors||[])).filter(t=>{
-    if(seen.has(t.id))return false; seen.add(t.id); return t.actiu;
-  });
-
-  workers=workers.filter(t=>!_noActMes(t,mes0));
-  if(tornId) workers=workers.filter(t=>getEffectiveTorn(t,mes0)===tornId);
-  if(cont)   workers=workers.filter(t=>{
-    const info=getCanvisMes(t,mes0);
-    return (info.unic||info.contBase||t.cont)===cont;
-  });
-
-  workers=workers.slice().sort((a,b)=>(a.nom||"").localeCompare(b.nom||"","ca"));
-
-  const mesNom=MESOS_COMPLETS[mes0];
-  const parts=[mesNom];
-  if(cont)   parts.push(CONT_LABELS[cont]||cont);
-  if(tornId) parts.push(TORN_LABELS[tornId]||tornId);
-  const col=tornId?TORN_COLORS[tornId]:"#1e3a5f";
-
-  document.getElementById("dirPopupTitle").innerHTML=
-    `<span style="font-size:.8rem">👥</span>&nbsp;`+
-    `<span>${parts.join(" · ")}</span>&nbsp;`+
-    `<span style="background:rgba(255,255,255,.2);padding:1px 10px;border-radius:10px;font-size:.72rem">${workers.length} zelador${workers.length!==1?"s":""}</span>`;
-  document.getElementById("ovDirPopup").querySelector(".dir-hdr").style.background=col;
-
-  const CC_CONT_COLS={"estatutari":{bg:"#dbeafe",fg:"#1e40af"},"interí":{bg:"#ede9fe",fg:"#7c3aed"},"interí 28h":{bg:"#f3e8ff",fg:"#6d28d9"},"interí 21h":{bg:"#fce7f3",fg:"#9d174d"},"programa":{bg:"#dcfce7",fg:"#166534"},"programa 28h":{bg:"#d1fae5",fg:"#065f46"},"substitució directa":{bg:"#fef3c7",fg:"#92400e"}};
-  const TORN_BG_P={"mati":{bg:"#fef3c7",fg:"#92400e"},"tarda":{bg:"#ede9fe",fg:"#6d28d9"},"nit1":{bg:"#cffafe",fg:"#0e7490"},"nit2":{bg:"#d1fae5",fg:"#065f46"}};
-
-  if(!workers.length){
-    document.getElementById("dirPopupBody").innerHTML=
-      `<p style="padding:24px;text-align:center;color:var(--ink3);font-size:.8rem">Cap zelador per a aquest filtre</p>`;
-  } else {
-    const rows=workers.map((t,i)=>{
-      const effTorn=getEffectiveTorn(t,mes0);
-      const info=getCanvisMes(t,mes0);
-      const effCont=info.unic||info.contBase||t.cont||"—";
-      const cCol=CC_CONT_COLS[effCont]||{bg:"#f1f5f9",fg:"#64748b"};
-      const tCol=TORN_BG_P[effTorn]||{bg:"#f1f5f9",fg:"#475569"};
-      const rowBg=i%2===0?"#fff":"#f8fafc";
-      return `<tr style="background:${rowBg}">
-        <td style="padding:5px 10px;border-bottom:1px solid var(--line2);font-weight:600">${t.nom||"—"}</td>
-        <td style="padding:5px 10px;border-bottom:1px solid var(--line2);color:var(--ink3);font-size:.7rem">${t.ups||"—"}</td>
-        <td style="padding:5px 10px;border-bottom:1px solid var(--line2);text-align:center">
-          <span style="background:${tCol.bg};color:${tCol.fg};padding:1px 8px;border-radius:9px;font-size:.65rem;font-weight:700">${TORN_LABELS[effTorn]||effTorn}</span>
-        </td>
-        <td style="padding:5px 10px;border-bottom:1px solid var(--line2);text-align:center">
-          <span style="background:${cCol.bg};color:${cCol.fg};padding:1px 8px;border-radius:9px;font-size:.65rem;font-weight:700">${CONT_LABELS[effCont]||effCont}</span>
-        </td>
-      </tr>`;
-    }).join("");
-    document.getElementById("dirPopupBody").innerHTML=
-      `<div style="overflow-y:auto;max-height:460px">
-        <table class="dir-table" style="width:100%">
-          <thead><tr>
-            <th style="min-width:180px">Nom</th>
-            <th>UPS / Destí</th>
-            <th style="text-align:center;min-width:70px">Torn</th>
-            <th style="text-align:center;min-width:110px">Contracte</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-       </div>`;
-  }
-
-  // ── Canvis respecte el mes anterior (només per a Total) ──
-  if(!cont && !tornId && mes0 > 0){
-    const seen2=new Set();
-    const workersPrev=TORNS_LIST.flatMap(tid=>(unitats[tid]?.treballadors||[])).filter(t=>{
-      if(seen2.has(t.id))return false; seen2.add(t.id); return t.actiu;
-    }).filter(t=>!_noActMes(t,mes0-1));
-
-    const idsM=new Set(workers.map(t=>t.id));
-    const idsPrev=new Set(workersPrev.map(t=>t.id));
-
-    const entrades=workers.filter(t=>!idsPrev.has(t.id));
-    const sortides=workersPrev.filter(t=>!idsM.has(t.id));
-    const canvisM=workers.filter(t=>{
-      if(!idsPrev.has(t.id))return false;
-      const iM=getCanvisMes(t,mes0), iP=getCanvisMes(t,mes0-1);
-      return (iM.unic||iM.contBase||t.cont)!==(iP.unic||iP.contBase||t.cont)
-          || getEffectiveTorn(t,mes0)!==getEffectiveTorn(t,mes0-1);
-    });
-
-    if(entrades.length||sortides.length||canvisM.length){
-      const prevNom=MESOS_COMPLETS[mes0-1];
-      let cHtml=`<div style="margin-top:4px;padding:10px 12px;border-top:1.5px solid var(--line)">
-        <div style="font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span>Canvis respecte ${prevNom}</span>
-          <span style="font-size:.63rem;color:#94a3b8;font-weight:400;text-transform:none">
-            ${entrades.length?`+${entrades.length} entrada${entrades.length!==1?"es":""}`:""} ${sortides.length?`−${sortides.length} sortida${sortides.length!==1?"es":""}`:""} ${canvisM.length?`⇄${canvisM.length} canvi${canvisM.length!==1?"s":""}`:""}</span></div>`;
-      if(entrades.length){
-        entrades.slice().sort((a,b)=>(a.nom||"").localeCompare(b.nom||"","ca")).forEach(t=>{
-          const iM=getCanvisMes(t,mes0); const cM=iM.unic||iM.contBase||t.cont||"—";
-          const cC=CC_CONT_COLS[cM]||{bg:"#dcfce7",fg:"#166534"};
-          cHtml+=`<div style="display:flex;align-items:center;gap:8px;padding:3px 8px;background:#f0fdf4;border-left:3px solid #22c55e;border-radius:0 4px 4px 0;margin-bottom:2px"><span style="color:#16a34a;font-weight:800">+</span><span style="font-size:.72rem;font-weight:600;flex:1">${t.nom||"—"}</span><span style="font-size:.62rem;color:var(--ink3)">${t.ups||""}</span><span style="background:${cC.bg};color:${cC.fg};padding:1px 7px;border-radius:9px;font-size:.63rem;font-weight:700">${CONT_LABELS[cM]||cM}</span></div>`;
-        });
-      }
-      if(sortides.length){
-        sortides.slice().sort((a,b)=>(a.nom||"").localeCompare(b.nom||"","ca")).forEach(t=>{
-          const iP=getCanvisMes(t,mes0-1); const cP=iP.unic||iP.contBase||t.cont||"—";
-          const cC=CC_CONT_COLS[cP]||{bg:"#fee2e2",fg:"#991b1b"};
-          cHtml+=`<div style="display:flex;align-items:center;gap:8px;padding:3px 8px;background:#fff5f5;border-left:3px solid #ef4444;border-radius:0 4px 4px 0;margin-bottom:2px"><span style="color:#dc2626;font-weight:800">−</span><span style="font-size:.72rem;font-weight:600;flex:1;text-decoration:line-through;color:#94a3b8">${t.nom||"—"}</span><span style="font-size:.62rem;color:#94a3b8">${t.ups||""}</span><span style="background:${cC.bg};color:${cC.fg};padding:1px 7px;border-radius:9px;font-size:.63rem;font-weight:700;text-decoration:line-through">${CONT_LABELS[cP]||cP}</span></div>`;
-        });
-      }
-      if(canvisM.length){
-        canvisM.slice().sort((a,b)=>(a.nom||"").localeCompare(b.nom||"","ca")).forEach(t=>{
-          const iM=getCanvisMes(t,mes0), iP=getCanvisMes(t,mes0-1);
-          const cM=iM.unic||iM.contBase||t.cont||"—", cP=iP.unic||iP.contBase||t.cont||"—";
-          const tornM=getEffectiveTorn(t,mes0), tornP=getEffectiveTorn(t,mes0-1);
-          const cCP=CC_CONT_COLS[cP]||{bg:"#fef3c7",fg:"#92400e"}, cCM=CC_CONT_COLS[cM]||{bg:"#fef3c7",fg:"#92400e"};
-          let detall="";
-          if(cP!==cM) detall+=`<span style="background:${cCP.bg};color:${cCP.fg};padding:1px 6px;border-radius:9px;font-size:.63rem;font-weight:700;text-decoration:line-through">${CONT_LABELS[cP]||cP}</span><span style="color:#94a3b8;font-size:.7rem"> → </span><span style="background:${cCM.bg};color:${cCM.fg};padding:1px 6px;border-radius:9px;font-size:.63rem;font-weight:700">${CONT_LABELS[cM]||cM}</span>`;
-          if(tornP!==tornM) detall+=`${detall?`<span style="color:#94a3b8;margin:0 3px">·</span>`:""}${TORN_LABELS[tornP]||tornP} <span style="color:#94a3b8">→</span> ${TORN_LABELS[tornM]||tornM}`;
-          cHtml+=`<div style="display:flex;align-items:center;gap:8px;padding:3px 8px;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:0 4px 4px 0;margin-bottom:2px"><span style="color:#d97706;font-weight:800">⇄</span><span style="font-size:.72rem;font-weight:600;flex:1">${t.nom||"—"}</span><span style="font-size:.62rem;color:var(--ink3)">${t.ups||""}</span><div style="display:flex;align-items:center;gap:3px;font-size:.68rem">${detall}</div></div>`;
-        });
-      }
-      cHtml+='</div>';
-      document.getElementById("dirPopupBody").innerHTML+=cHtml;
-    }
-  }
-
-  document.getElementById("dirPopupInfo").textContent=`${parts.join(" · ")} · ${workers.length} zelador${workers.length!==1?"s":""}`;
-  document.getElementById("ovDirPopup").classList.add("open");
-}
-
-function tancarDirPopup(){
-  document.getElementById("ovDirPopup").classList.remove("open");
 }
 
 function renderQuadrantDashboard(){
@@ -2775,78 +2415,22 @@ function anarACelda(mes, dia, trebId){
   }, 280);
 }
 
-function canviMes(d){setMes((currentMes+d+12)%12)}
-
-function renderHeaderMesos(){
-  const mes=currentMes;
-  const botons=MESOS.map((m,i)=>`<button class="${i===mes?"active":""}" onclick="setMes(${i})">${m}</button>`).join("");
-  document.getElementById("headerMesos").innerHTML=`<button class="h-mesos-arrow" onclick="canviMes(-1)" title="Mes anterior">◀</button>${botons}<button class="h-mesos-arrow" onclick="canviMes(1)" title="Mes seguent">▶</button>`;
-}
-
 function renderSidebar(){
   const mes=currentMes;
   const nD=dM(mes);
   // UPS — usa cometes simples per evitar conflicte amb l'atribut HTML
   const upsPresents=[...new Set(treballadors.map(t=>t.ups))].sort();
   const sbUPS=document.getElementById("sbUPS");
-  renderHeaderMesos();
+  document.getElementById("sbMesosHdr").textContent = `Mesos ${YEAR}`;
+  document.getElementById("sbMesos").innerHTML=MESOS.map((m,i)=>`<div class="sb-item ${i===mes?"active":""}" onclick="setMes(${i})">${m}</div>`).join("");
   // UPS
   if(sbUPS){
-  const sbCrear=`<div class="sb-item" onclick="crearServeiUP()" style="cursor:pointer;color:var(--blue-m);font-weight:700"><span style="flex:1">＋ Crear servei</span></div><div class="sb-item" onclick="agruparServeis()" style="cursor:pointer;color:var(--blue-m);font-weight:700"><span style="flex:1">🔗 Agrupar serveis</span></div>`;
-  const sbHdr=sbCrear+`<div class="sb-item" onclick="clearSelUPS()" style="cursor:pointer;font-weight:${filterUPSSet.size===0?700:400}"><span style="flex:1">— Totes —</span><span class="sb-count">${treballadors.length}</span></div>`;
-  const sbServeisOrdenats=getServeisOrdenats();
-  const sbEncarregatIdx=sbServeisOrdenats.findIndex(u=>/encarreg/i.test(u));
-  if(sbEncarregatIdx>0) sbServeisOrdenats.unshift(sbServeisOrdenats.splice(sbEncarregatIdx,1)[0]);
-  sbUPS.innerHTML=sbHdr+(function(){
-  const renderedGroups=new Set();
-  const rowsArr=[];
-  sbServeisOrdenats.forEach(u=>{
-    const grupNom=Object.keys(upsGrups).find(g=>upsGrups[g].includes(u));
-    if(grupNom){
-      if(renderedGroups.has(grupNom)) return;
-      renderedGroups.add(grupNom);
-      const fills=upsGrups[grupNom];
-      const totalCnt=treballadors.filter(t=>t.actiu&&getTrebUPs(t).some(x=>fills.includes(x))).length;
-      const isExpanded=expandedGrups.has(grupNom);
-      const grupChecked=fills.length>0 && fills.every(f=>filterUPSSet.has(f));
-      const safeGrup=grupNom.replace(/'/g,"\\'");
-      rowsArr.push(`<label draggable="true" ondragstart="sbUPDragStart('GRUP::${safeGrup}')" ondragover="event.preventDefault()" ondrop="event.preventDefault();sbUPDrop('GRUP::${safeGrup}')" class="sb-item" style="cursor:pointer;${grupChecked?'background:var(--blue-xl)':''}" onclick="if(event.target.tagName!=='INPUT')toggleGrupExpand('${safeGrup}',event)">
-        <span style="color:var(--ink3);font-size:.7rem;margin-right:1px;width:13px;text-align:center;font-weight:700">${isExpanded?'\u2212':'+'}</span>
-        <input type="checkbox" ${grupChecked?'checked':''} onclick="event.stopPropagation()" onchange="toggleSelGrup('${safeGrup}',this.checked)" style="accent-color:#1d4ed8;width:13px;height:13px;margin-right:2px">
-        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px;font-weight:${grupChecked?700:600}">${grupNom}</span>
-        <span class="sb-count">${totalCnt}</span>
-        <span onclick="desferGrup('${safeGrup}',event)" title="Desfer grup" style="margin-left:2px;color:var(--ink3);font-size:.65rem;cursor:pointer;padding:0 2px">\u2715</span>
-      </label>`);
-      if(isExpanded){
-        fills.forEach(fu=>{
-          const checked=filterUPSSet.has(fu);
-          const safe=fu.replace(/'/g,"\\'");
-          const cnt=treballadors.filter(t=>t.actiu&&getTrebUPs(t).includes(fu)).length;
-          rowsArr.push(`<label class="sb-item" style="cursor:pointer;padding-left:18px;${checked?'background:var(--blue-xl)':''}">
-            <input type="checkbox" ${checked?'checked':''} onchange="toggleSelUPS('${safe}',this.checked)" style="accent-color:#1d4ed8;width:13px;height:13px;margin-right:2px">
-            <div class="sb-dot" style="background:${upsColor(fu)}"></div>
-            <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:95px;font-weight:${checked?700:400};color:${checked?'#1e40af':'inherit'}">${fu}</span>
-            <span class="sb-count">${cnt}</span>
-          <button class="cc-tram-del" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();eliminarServeiUP('${safe}')" title="Eliminar UP" style="margin-left:2px">✕</button>
-          </label>`);
-        });
-      }
-      return;
-    }
-    const checked=filterUPSSet.has(u);
-    const safe=u.replace(/'/g,"\\'");
-    const cnt=treballadors.filter(t=>t.actiu&&getTrebUPs(t).includes(u)).length;
-    rowsArr.push(`<label class="sb-item" draggable="true" ondragstart="sbUPDragStart('${safe}')" ondragover="event.preventDefault()" ondrop="event.preventDefault();sbUPDrop('${safe}')" style="cursor:grab;${checked?'background:var(--blue-xl)':''}">
-      <span style="color:var(--ink3);font-size:.7rem;margin-right:1px;cursor:grab">\u283f</span>
-      <input type="checkbox" ${checked?'checked':''} onchange="toggleSelUPS('${safe}',this.checked)" style="accent-color:#1d4ed8;width:13px;height:13px;margin-right:2px">
-      <div class="sb-dot" style="background:${upsColor(u)}"></div>
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:105px;font-weight:${checked?700:400};color:${checked?'#1e40af':'inherit'}">${u}</span>
-      <span class="sb-count">${cnt}</span>
-    <button class="cc-tram-del" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();eliminarServeiUP('${safe}')" title="Eliminar UP" style="margin-left:2px">✕</button>
-    </label>`);
-  });
-  return rowsArr.join("");
-})();
+  sbUPS.innerHTML=`<div class="sb-item ${filterUPSSet.size===0?"active":""}" onclick="setUPS('TOTES')"><div class="sb-dot" style="background:#64748b"></div><span>Totes</span><span class="sb-count">${treballadors.length}</span></div>`
+    +upsPresents.map(u=>{
+      const cnt=treballadors.filter(t=>t.ups===u).length;
+      const safe=u.replace(/'/g,"\\'");
+      return `<div class="sb-item ${filterUPSSet.has(u)?"active":""}" onclick="setUPS('${safe}')"><div class="sb-dot" style="background:${upsColor(u)}"></div><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:115px">${u}</span><span class="sb-count">${cnt}</span></div>`;
+    }).join("");
   }
   const treb=getTreb();
   let cIT=0,cVA=0,cAP=0,cPerm=0;
@@ -2907,7 +2491,7 @@ function renderKPIs(){
   const kpiRow = document.getElementById("kpiRow");
   if(!kpiRow) return;
 
-  if(currentTab === "resum"){
+  if(currentTab === "gt"){
     // ── GT tab: show sub-navigation in kpiRow ──
     const gtMes = typeof gtPlanWeekOffset !== "undefined"
       ? (parseInt((document.getElementById("gtPlanMes")||{}).value||0))
@@ -2926,17 +2510,10 @@ function renderKPIs(){
           <input id="gtPoolSearch" type="text" placeholder="🔍 Cercar zelador..." oninput="gtRenderView()"
             style="font-size:.72rem;padding:3px 9px;border:1px solid #cbd5e1;border-radius:5px;width:150px"/>
           <div class="tb-sep"></div>
-          <button id="gtVBtnP" onclick="switchGTView('plan')" style="cursor:pointer;font-family:inherit;padding:5px 12px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;font-size:.7rem;font-weight:600;color:#475569;white-space:nowrap">Planificador d'unitat</button>
-          <button id="gtVBtn0" onclick="switchGTView(0)" style="cursor:pointer;font-family:inherit;padding:5px 12px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;font-size:.7rem;font-weight:600;color:#475569;white-space:nowrap">Vista de permisos</button>
-          <button id="gtVBtn1" onclick="switchGTView(1)" style="cursor:pointer;font-family:inherit;padding:5px 12px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;font-size:.7rem;font-weight:600;color:#475569;white-space:nowrap">Fitxa treballador</button>
-          <button id="gtVBtn2" onclick="switchGTView(2)" style="cursor:pointer;font-family:inherit;padding:5px 12px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;font-size:.7rem;font-weight:600;color:#475569;white-space:nowrap">Balanç d'hores</button>
-          <span id="gtPermisMesWrap" style="display:none;align-items:center;gap:4px;margin-left:4px">
-            <span style="font-size:.68rem;color:#475569;font-weight:600">Mes:</span>
-            <select id="gtPermisMesFilter" onchange="renderGT()" style="font-size:.7rem;padding:2px 6px;border:1px solid #cbd5e1;border-radius:4px">
-              <option value="-1">Tots</option>
-              ${optionsHtml}
-            </select>
-          </span>
+          <button id="gtVBtnP" onclick="switchGTView('plan')" style="padding:6px 14px;font-size:.75rem;font-weight:700;border:none;border-bottom:2px solid var(--blue-m);color:var(--blue-m);background:transparent;cursor:pointer">📋 Planificador d'unitat</button>
+          <button id="gtVBtn0" onclick="switchGTView(0)" style="padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-bottom:2px solid transparent;color:var(--ink3);background:transparent;cursor:pointer">📅 Vista Anual</button>
+          <button id="gtVBtn1" onclick="switchGTView(1)" style="padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-bottom:2px solid transparent;color:var(--ink3);background:transparent;cursor:pointer">👤 Detall Treballador</button>
+          <button id="gtVBtn2" onclick="switchGTView(2)" style="padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-bottom:2px solid transparent;color:var(--ink3);background:transparent;cursor:pointer">📊 Balanç d'Hores</button>
         </div>
         <!-- DRETA: actualitzar + mes + navegació setmana -->
         <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;margin-left:12px">
@@ -2954,7 +2531,17 @@ function renderKPIs(){
       </div>
     `;
     // Re-apply active state for current view
-    if(typeof gtCurrentView !== "undefined") gtSetActiveViewBtn(gtCurrentView);
+    if(typeof gtCurrentView !== "undefined"){
+      const buttons = {plan:'gtVBtnP', 0:'gtVBtn0', 1:'gtVBtn1', 2:'gtVBtn2'};
+      Object.entries(buttons).forEach(([k,bid])=>{
+        const btn=document.getElementById(bid);
+        if(!btn) return;
+        const active = String(k)===String(gtCurrentView);
+        btn.style.borderBottomColor = active ? "var(--blue-m)" : "transparent";
+        btn.style.color             = active ? "var(--blue-m)" : "var(--ink3)";
+        btn.style.fontWeight        = active ? "700" : "600";
+      });
+    }
   } else {
     // ── Other tabs: empty kpiRow ──
     kpiRow.innerHTML = "";
@@ -3224,6 +2811,7 @@ function ccConfirmar(){
     const [y,m] = tramOrdenat[0].inici.split("-").map(Number);
     if(y===YEAR){
       currentMes = m-1;
+      document.getElementById("mesLbl").textContent=`${MESOS[currentMes]} ${YEAR}`;
       currentTab = "quadrant";
       switchTab("quadrant");
     }
@@ -3767,125 +3355,164 @@ function getTrebUPs(t){
   return [...new Set(all)];
 }
 
-function upColor(up){
-  if(/pool hospitalitz/i.test(up))  return {bg:"#ede9fe",fg:"#5b21b6"};
-  if(/pool urgèn/i.test(up))         return {bg:"#fef3c7",fg:"#92400e"};
-  if(/pool crít/i.test(up))          return {bg:"#fee2e2",fg:"#991b1b"};
-  if(/pool quirúr/i.test(up))        return {bg:"#dcfce7",fg:"#166534"};
-  if(/pool consul/i.test(up))        return {bg:"#f0f9ff",fg:"#0369a1"};
-  if(/pool/i.test(up))               return {bg:"#f3e8ff",fg:"#6b21a8"};
-  if(/planta/i.test(up))             return {bg:"#dbeafe",fg:"#1e40af"};
-  if(/uci/i.test(up))                return {bg:"#fee2e2",fg:"#991b1b"};
-  if(/urgèn/i.test(up))              return {bg:"#fef9c3",fg:"#854d0e"};
-  if(/quirof/i.test(up))             return {bg:"#dcfce7",fg:"#166534"};
-  if(/encarreg/i.test(up))           return {bg:"#fef3c7",fg:"#92400e"};
-  return {bg:"#f1f5f9",fg:"#374151"};
+let _copiedZelador = null;
+
+function svCtxMenu(e, tId, tNom, upName){
+  e.preventDefault(); e.stopPropagation();
+  document.querySelectorAll('.sv-ctx').forEach(x=>x.remove());
+  const menu = document.createElement('div');
+  menu.className = 'sv-ctx';
+  menu.style.cssText = 'position:fixed;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 4px 16px #0003;padding:4px 0;min-width:180px';
+  menu.style.left = Math.min(e.clientX, window.innerWidth-200)+'px';
+  menu.style.top  = Math.min(e.clientY, window.innerHeight-100)+'px';
+  const t = treballadors.find(x=>x.id===tId);
+  const isPrimaryUP = t && (t.ups||"").toLowerCase().trim()===upName.toLowerCase().trim();
+  menu.innerHTML = '<div style="padding:6px 14px;font-size:.7rem;color:#64748b;font-weight:700;border-bottom:1px solid #f1f5f9">'+tNom+'</div>'
+    +'<div onclick="svCopyZelador('+tId+');this.closest(\'.sv-ctx\').remove()" style="padding:7px 14px;font-size:.75rem;cursor:pointer;display:flex;align-items:center;gap:6px" onmouseover="this.style.background=\'#f1f5f9\'" onmouseout="this.style.background=\'\'">📋 Copiar zelador</div>'
+    +(isPrimaryUP ? '<div style="padding:7px 14px;font-size:.72rem;color:#94a3b8;cursor:default">✕ Treure (edita el perfil)</div>'
+      : '<div onclick="svRemoveExtraUP('+tId+',\''+upName.replace(/\'/g,"\\'")+'\')" style="padding:7px 14px;font-size:.75rem;cursor:pointer;display:flex;align-items:center;gap:6px;color:#dc2626" onmouseover="this.style.background=\'#fef2f2\'" onmouseout="this.style.background=\'\'">✕ Treure d\'aquest servei</div>');
+  document.body.appendChild(menu);
+  const close=()=>{menu.remove();document.removeEventListener('click',close);};
+  setTimeout(()=>document.addEventListener('click',close),10);
+}
+
+function svCopyZelador(tId){
+  const t = treballadors.find(x=>x.id===tId);
+  if(!t) return;
+  _copiedZelador = {id:tId, nom:t.nom};
+  toast('📋 '+t.nom+' copiat — fes clic a "Pegar" al servei destí','ok');
+  renderServeis();
+}
+
+function svPasteToUP(upName){
+  if(!_copiedZelador) return;
+  const t = treballadors.find(x=>x.id===_copiedZelador.id);
+  if(!t) return;
+  const existing = getTrebUPs(t);
+  if(existing.some(u=>u.toLowerCase()===upName.toLowerCase())){
+    toast(t.nom+' ja pertany a '+upName,'err'); return;
+  }
+  if(!t.upsExtra) t.upsExtra=[];
+  t.upsExtra.push(upName);
+  desar();
+  toast(t.nom+' afegit a '+upName,'ok');
+  renderServeis();
+}
+
+function svRemoveExtraUP(tId, upName){
+  const t = treballadors.find(x=>x.id===tId);
+  if(!t) return;
+  if((t.ups||"").toLowerCase().trim()===upName.toLowerCase().trim()){
+    toast("El servei principal s'edita des del perfil del zelador","err"); return;
+  }
+  t.upsExtra = (t.upsExtra||[]).filter(u=>u.toLowerCase().trim()!==upName.toLowerCase().trim());
+  desar();
+  toast(t.nom+' tret de '+upName,'ok');
+  renderServeis();
 }
 
 function renderServeis(){
   const el = document.getElementById("serveisContent");
   if(!el) return;
-  el.innerHTML = "";
-  renderReciclatge();
-}
+  const serveis = getServeisData();
 
-// ─── RECICLATGE: HISTORIAL DE SERVEIS PER CELADOR ──────────────────────
-function reciAddServei(tId, servei){
-  if(!servei) return;
-  const t = treballadors.find(x=>x.id===tId);
-  if(!t) return;
-  if(!t.historialServeis) t.historialServeis=[];
-  if(t.historialServeis.some(s=>s.toLowerCase()===servei.toLowerCase())){
-    toast(t.nom+' ja té '+servei+' al seu historial','err'); return;
-  }
-  t.historialServeis.push(servei);
-  desar();
-  toast(servei+' afegit a l\'historial de '+t.nom,'ok');
-  renderReciclatge();
-}
+  const allTrebs = (unitats['mati']?.treballadors||[]).filter(t=>t.actiu!==false);
 
-function getServeisOrdenats(){
-  if(upsOrderCustom && upsOrderCustom.length){
-    const ordre = upsOrderCustom.filter(u=>UPS_LISTA.includes(u));
-    UPS_LISTA.forEach(u=>{ if(!ordre.includes(u)) ordre.push(u); });
-    return ordre;
-  }
+  const upColor = up => {
+    if(/pool hospitalitz/i.test(up))  return {bg:"#ede9fe",fg:"#5b21b6"};
+    if(/pool urgèn/i.test(up))         return {bg:"#fef3c7",fg:"#92400e"};
+    if(/pool crít/i.test(up))          return {bg:"#fee2e2",fg:"#991b1b"};
+    if(/pool quirúr/i.test(up))        return {bg:"#dcfce7",fg:"#166534"};
+    if(/pool consul/i.test(up))        return {bg:"#f0f9ff",fg:"#0369a1"};
+    if(/pool/i.test(up))               return {bg:"#f3e8ff",fg:"#6b21a8"};
+    if(/planta/i.test(up))             return {bg:"#dbeafe",fg:"#1e40af"};
+    if(/uci/i.test(up))                return {bg:"#fee2e2",fg:"#991b1b"};
+    if(/urgèn/i.test(up))              return {bg:"#fef9c3",fg:"#854d0e"};
+    if(/quirof/i.test(up))             return {bg:"#dcfce7",fg:"#166534"};
+    if(/encarreg/i.test(up))           return {bg:"#fef3c7",fg:"#92400e"};
+    return {bg:"#f1f5f9",fg:"#374151"};
+  };
+
+  // Agrupa zeladors per UP (suporta múltiples UPs via getTrebUPs)
+  const byUP = {};
+  allTrebs.forEach(t=>{
+    if(!t.actiu) return;
+    const ups = getTrebUPs(t);
+    if(!ups.length){
+      if(!byUP["Sense servei"]) byUP["Sense servei"]=[];
+      byUP["Sense servei"].push({t, isPrimary:false}); return;
+    }
+    ups.forEach(up=>{
+      if(!byUP[up]) byUP[up]=[];
+      const isPrimary = (t.ups||"").toLowerCase().trim()===up.toLowerCase();
+      byUP[up].push({t, isPrimary});
+    });
+  });
+
+  // Ordena per l'ordre d'agendaServeis; la resta al final
   const agendaOrder = agendaServeis.map(s=>s.servei.toLowerCase());
-  return [...UPS_LISTA].sort((a,b)=>{
+  const allUPs = Object.keys(byUP).sort((a,b)=>{
     const ia=agendaOrder.indexOf(a.toLowerCase());
     const ib=agendaOrder.indexOf(b.toLowerCase());
     if(ia>=0&&ib>=0) return ia-ib;
-    if(ia>=0) return -1;
-    if(ib>=0) return 1;
-    return UPS_LISTA.indexOf(a)-UPS_LISTA.indexOf(b);
+    if(ia>=0) return -1; if(ib>=0) return 1;
+    if(a==="Sense servei") return 1; if(b==="Sense servei") return -1;
+    return a.localeCompare(b);
   });
-}
 
-function reciRemoveServei(tId, servei){
-  const t = treballadors.find(x=>x.id===tId);
-  if(!t) return;
-  t.historialServeis = (t.historialServeis||[]).filter(s=>s.toLowerCase()!==servei.toLowerCase());
-  desar();
-  renderReciclatge();
-}
-
-function renderReciclatge(){
-  const el = document.getElementById("reciclatgeContent");
-  if(!el) return;
-
-  const selServei = document.getElementById("reciFiltreServei");
-  if(selServei && !selServei.dataset.filled){
-    selServei.innerHTML = '<option value="">Filtrar per servei...</option>'
-      + getServeisOrdenats().map(u=>`<option value="${u}">${u}</option>`).join("");
-    selServei.dataset.filled = "1";
-  }
-
-  const q = (document.getElementById("reciSearchCel")?.value||"").toLowerCase().trim();
-  const filtreServei = selServei ? selServei.value : "";
-
-  let allTrebs = (unitats['mati']?.treballadors||[]).filter(t=>t.actiu!==false);
-  if(q) allTrebs = allTrebs.filter(t=>t.nom.toLowerCase().includes(q));
-  if(filtreServei) allTrebs = allTrebs.filter(t=>(t.historialServeis||[]).some(s=>s.toLowerCase()===filtreServei.toLowerCase()));
-  allTrebs = [...allTrebs].sort((a,b)=>a.nom.localeCompare(b.nom));
-
-  if(!allTrebs.length){
-    el.innerHTML = '<div style="font-size:.78rem;color:var(--ink3);padding:10px 0">Cap celador coincideix amb el filtre.</div>';
-    return;
-  }
-
-  const rows = allTrebs.map(t=>{
-    const hist = t.historialServeis||[];
-    const tags = hist.map(s=>{
-      const c = upColor(s);
-      return `<span style="display:inline-flex;align-items:center;gap:4px;background:${c.bg};color:${c.fg};border-radius:10px;padding:2px 8px 2px 10px;font-size:.7rem;font-weight:600;margin:2px">${s}<button onclick="reciRemoveServei(${t.id},'${s.replace(/'/g,"\\'")}')" style="border:none;background:none;color:${c.fg};cursor:pointer;font-weight:700;font-size:.78rem;line-height:1;padding:0 1px" title="Treure de l'historial">✕</button></span>`;
-    }).join("") || '<span style="font-size:.7rem;color:var(--ink3)">Sense serveis registrats</span>';
-    const assignats = getTrebUPs(t);
-    const assignatTags = assignats.map(s=>{
-      const c = upColor(s);
-      return `<span style="display:inline-block;background:${c.bg};color:${c.fg};border-radius:10px;padding:2px 9px;font-size:.7rem;font-weight:600;margin:2px">${s}</span>`;
-    }).join("") || '<span style="font-size:.7rem;color:var(--ink3)">Sense assignar</span>';
-    return `<tr>
-      <td style="padding:7px 10px;font-weight:600;white-space:nowrap;border-bottom:1px solid var(--line)">${t.nom}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid var(--line)">${assignatTags}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap">
-        <select onchange="reciAddServei(${t.id},this.value);this.value=''" style="padding:2px 6px;border:1px solid var(--line);border-radius:5px;font-size:.7rem;font-family:var(--font)">
-          <option value="">＋ Afegir...</option>
-          ${getServeisOrdenats().map(u=>`<option value="${u}">${u}</option>`).join("")}
-        </select>
-      </td>
-      <td style="padding:7px 10px;border-bottom:1px solid var(--line)">${tags}</td>
-    </tr>`;
+  const upRows = allUPs.map(up=>{
+    const {bg,fg}=upColor(up);
+    const workers=byUP[up];
+    const upSafe=up.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const canPaste=_copiedZelador && !workers.some(({t})=>t.id===_copiedZelador.id);
+    const workerBadges=workers.map(({t,isPrimary})=>{
+      const nc=t.nom.trim().split(" ").slice(0,2).join(" ");
+      const nomSafe=nc.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      const bdr=isPrimary?'border:1.5px solid '+fg:'border:1.5px dashed '+fg+'99';
+      const prefix=isPrimary?'':'<span style="font-size:.6rem;opacity:.6">+</span>';
+      return '<span'
+        +' title="'+(isPrimary?t.nom:t.nom+' (secundari)')+' · Clic per editar · Clic dret per copiar/treure"'
+        +' onclick="editarTreb('+t.id+')"'
+        +' oncontextmenu="svCtxMenu(event,'+t.id+',\''+nomSafe+'\',\''+upSafe+'\')"'
+        +' style="display:inline-flex;align-items:center;gap:3px;background:'+bg+';color:'+fg+';border-radius:20px;padding:3px 10px;font-size:.68rem;font-weight:700;margin:2px;cursor:pointer;'+bdr+';user-select:none"'
+        +'>'+prefix+nc+'</span>';
+    }).join("");
+    const pasteBtn=canPaste
+      ? '<button onclick="svPasteToUP(\''+upSafe+'\')" style="display:inline-flex;align-items:center;gap:3px;background:#dbeafe;color:#1e40af;border:1.5px dashed #3b82f6;border-radius:20px;padding:3px 10px;font-size:.65rem;font-weight:700;margin:2px;cursor:pointer;white-space:nowrap">📋 Pegar '+(_copiedZelador.nom.split(" ")[0])+'</button>'
+      : '';
+    return '<tr style="border-bottom:1px solid #f1f5f9">'
+      +'<td style="padding:5px 12px;white-space:nowrap;vertical-align:middle">'
+      +'<span style="background:'+bg+';color:'+fg+';border-radius:5px;padding:3px 10px;font-size:.72rem;font-weight:700;display:inline-block">'+up+'</span>'
+      +'</td>'
+      +'<td style="padding:4px 8px;font-size:.65rem;color:var(--ink3);text-align:center;vertical-align:middle;white-space:nowrap">'+workers.length+'</td>'
+      +'<td style="padding:4px 8px;vertical-align:middle">'+workerBadges+pasteBtn+'</td>'
+      +'</tr>';
   }).join("");
 
-  el.innerHTML = `<table style="border-collapse:collapse;width:100%">
-    <thead><tr style="background:#f8fafc">
-      <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2);white-space:nowrap">Celador</th>
-      <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2)">Servei assignat</th>
-      <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2)"></th>
-      <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--ink2)">Serveis on ha estat</th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
+  const hasCopied = _copiedZelador
+    ? '<span style="background:#dbeafe;color:#1e40af;border-radius:6px;padding:2px 8px;font-size:.65rem;font-weight:700">📋 '+_copiedZelador.nom+'</span>'
+      +'<button onclick="_copiedZelador=null;renderServeis()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:.8rem;margin-left:2px;padding:0 4px" title="Cancel·lar còpia">✕</button>'
+    : '<span style="font-size:.63rem;color:#94a3b8">Clic dret sobre un zelador → copiar i pegar a un altre servei</span>';
+
+  el.innerHTML = '<div class="card" style="margin:0;border-radius:0;display:flex;flex-direction:column;height:calc(100vh - 130px)">'
+    +'<div class="card-hdr" style="background:#0f172a;color:#fff;flex-shrink:0">'
+    +'👥 Distribució de Zeladors per UP'
+    +'<div class="card-hdr-gap"></div>'
+    +hasCopied
+    +'<span style="font-size:.62rem;color:#94a3b8;margin-left:12px">Sòlid=principal · Puntejat=secundari</span>'
+    +'<button onclick="switchTab(\'gt\')" style="background:#3b82f6;color:#fff;border:none;border-radius:5px;padding:3px 10px;font-size:.68rem;font-weight:700;cursor:pointer;margin-left:8px">→ GT</button>'
+    +'</div>'
+    +'<div style="overflow:auto;flex:1">'
+    +'<table style="border-collapse:collapse;width:100%">'
+    +'<thead><tr style="background:#f8fafc;position:sticky;top:0;z-index:1">'
+    +'<th style="padding:6px 12px;text-align:left;font-size:.7rem;color:var(--ink2);white-space:nowrap;min-width:200px">UP / Servei</th>'
+    +'<th style="padding:6px 8px;text-align:center;font-size:.7rem;color:var(--ink2);white-space:nowrap;min-width:40px">#</th>'
+    +'<th style="padding:6px 8px;text-align:left;font-size:.7rem;color:var(--ink2)">Zeladors</th>'
+    +'</tr></thead>'
+    +'<tbody>'+upRows+'</tbody>'
+    +'</table>'
+    +'</div>'
+    +'</div>';
 }
 
 
@@ -4078,14 +3705,7 @@ function renderQuadrant(){
   }
   cobBal+=`<td colspan="${COB_COLS}" style="border-bottom:2px dashed #94a3b8"></td></tr>`;
 
-  let necRow_q=`<tr style="background:#dbeafe"><td colspan="2" style="padding:3px 8px;border-bottom:2px dashed #94a3b8;font-size:.6rem;color:#1e40af;font-weight:700;white-space:nowrap"></td>`;
-  for(let d=1;d<=nD;d++){
-    necRow_q+=`<td style="color:#1e40af;font-family:var(--mono);font-size:.76rem;font-weight:800;text-align:center;border-bottom:2px dashed #94a3b8">${necArr[d-1]}</td>`;
-  }
-  necRow_q+=`<td colspan="${COB_COLS}" style="background:#dbeafe;border-bottom:2px dashed #94a3b8"></td></tr>`;
-
   let h=`<thead>
-  ${necRow_q}
   ${cobBal}
   <tr>
     <th class="ci ci-title" colspan="2" style="text-align:left;padding:4px 10px;background:#dbeafe;border-bottom:none">
@@ -4416,20 +4036,9 @@ function confirmarRJ(codiRJ, trebId, dia){
 function renderPlantilla(){
   const filt=document.getElementById("filtPlant").value;
   const srch=document.getElementById("srchPlant").value.toLowerCase();
-
-  const filtUpsEl=document.getElementById("filtUps");
-  const prevUps=filtUpsEl?filtUpsEl.value:"";
-  if(filtUpsEl){
-    const upsVals=[...new Set(treballadors.map(t=>(t.ups||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ca"));
-    filtUpsEl.innerHTML='<option value="">Tots</option>'+
-      upsVals.map(u=>`<option value="${u}"${u===prevUps?" selected":""}>${u}</option>`).join("");
-  }
-  const filtUps=filtUpsEl?filtUpsEl.value:"";
-
   const list=treballadors.filter(t=>
     (!filt||t.cont===filt)&&
-    (!filtUps||(t.ups||"").trim()===filtUps)&&
-    (!srch||t.nom.toLowerCase().includes(srch)||(t.ups||"").toLowerCase().includes(srch))
+    (!srch||t.nom.toLowerCase().includes(srch)||t.ups.toLowerCase().includes(srch))
   );
   document.getElementById("plantInfo").textContent=`${list.length} treballadors`;
   const rot_badges=t=>{
@@ -4456,6 +4065,7 @@ function renderPlantilla(){
       <th style="min-width:180px">Nom i Cognoms</th>
       <th style="min-width:160px">Servei Assignat</th>
       <th>Contracte</th>
+      <th>Localització</th>
       <th style="min-width:180px">Estat Actual</th>
     </tr></thead>
     <tbody>${list.map((t,i)=>{
@@ -4496,6 +4106,9 @@ function renderPlantilla(){
           }
           return cont_badge(t);
         })()}
+      </td>
+      <td style="font-size:.68rem;padding:0 4px">
+        ${t.ubicacio ? `<span style="background:${t.ubicacio.toUpperCase().includes('CORRETORN')?'#fef3c7':'#dbeafe'};color:${t.ubicacio.toUpperCase().includes('CORRETORN')?'#92400e':'#1e40af'};padding:1px 7px;border-radius:9px;font-size:.63rem;font-weight:700">${t.ubicacio}</span>` : ''}
       </td>
       <td style="padding:3px 6px;min-width:230px">
         ${(()=>{
@@ -4816,11 +4429,6 @@ function canviarGrupTreballador(id, nouCodi){
   toast(`${t.nom}: ${vell} → ${t.rot}`, "ok");
 }
 
-function openRotGridModal(){
-  renderRotacio();
-  openModal("ovRotGrid");
-}
-
 function renderRotacio(){
   renderGestioGrups();
   const mes=currentMes, nD=dM(mes);
@@ -4897,14 +4505,13 @@ function renderRotacio(){
       </td>`;
     }
 
-    // Patró setmanal compacte (7 pastilles editables) — propi d'aquest mes
-    const mesPattern=getMesPattern(r,mes);
+    // Patró setmanal compacte (7 pastilles editables)
     const patroHTML=DIES_S.map((ds,i)=>{
-      const v=mesPattern[i]||"";
+      const v=r.dies[i]||"";
       const ll=LLEGENDA_CODIS[v];
       const bg=ll?ll.bg:(i>=5?"#ede9fe":"#f1f5f9");
       const fg=ll?ll.fg:(i>=5?"#6d28d9":"#64748b");
-      return `<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:3px;font-size:.58rem;font-weight:700;background:${bg};color:${fg};cursor:pointer;position:relative" title="${MESOS[mes]} · ${DIES_L[i]}: ${v||'Treballant'}" onclick="editPatroDia(${idx},${i},${mes})">
+      return `<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:3px;font-size:.58rem;font-weight:700;background:${bg};color:${fg};cursor:pointer;position:relative" title="${DIES_L[i]}: ${v||'Treballant'}" onclick="editPatroDia(${idx},${i})">
         ${v||ds}
       </span>`;
     }).join("");
@@ -4947,11 +4554,7 @@ function renderRotacio(){
 
   grid.innerHTML=`<div class="card">
     <div class="card-hdr">
-      🔄 Codis de Rotació FS —
-      <button class="btn btn-o btn-sm" style="padding:1px 7px;margin-left:6px" onclick="setMes((${mes}+11)%12)" title="Mes anterior">◀</button>
-      <strong style="margin:0 6px">${MESOS[mes]} ${YEAR}</strong>
-      <button class="btn btn-o btn-sm" style="padding:1px 7px" onclick="setMes((${mes}+1)%12)" title="Mes següent">▶</button>
-      <button class="btn btn-o btn-sm" style="padding:1px 6px;margin-left:10px" onclick="regenerarFSDesPatro()" title="Esborrar tots els conceptes manuals de tots els mesos i tornar a generar les FS segons el patró setmanal">🧹 Regenerar FS des del patró</button>
+      🔄 Codis de Rotació FS — <strong>${MESOS[mes]} ${YEAR}</strong>
       <div class="card-hdr-gap"></div>
       <span style="font-size:.66rem;color:var(--ink3)">${rotacions.length} codis · Fes clic a qualsevol dia per editar</span>
       <button class="btn btn-p btn-sm" style="margin-left:8px" onclick="openModalRotacio()">＋ Nou codi</button>
@@ -4975,40 +4578,39 @@ function renderRotacio(){
   </div>`;
 }
 
-// Edita un dia del patró setmanal d'un mes concret, directament des de la taula apaisada
-function editPatroDia(rotIdx, diaIdx, mes){
+// Edita un dia del patró setmanal directament des de la taula apaisada
+function editPatroDia(rotIdx, diaIdx){
   const r = rotacions[rotIdx];
-  const pat = getMesPattern(r,mes);
-  const actual = pat[diaIdx]||"";
+  const actual = r.dies[diaIdx]||"";
   const torn = dominantTorn(r.codi);
   const hDef = torn === "nocturn" ? HORES_DIA_NOCTURN : HORES_DIA_DIURN;
-  const nou = prompt(`${r.codi} — ${MESOS[mes]} · ${DIES_L[diaIdx]}\nPatró d'aquest mes (actual: "${actual||`Treballant ${hDef}h`}"):\nDeixa buit per treballar, o escriu: FS · FA · BE · VA · AP · 3A · o hores (ej: ${hDef})`, actual);
+  const nou = prompt(`${r.codi} — ${DIES_L[diaIdx]}\nPatró per defecte (actual: "${actual||`Treballant ${hDef}h`}"):\nDeixa buit per treballar, o escriu: FS · FA · BE · VA · AP · 3A · o hores (ej: ${hDef})`, actual);
   if(nou===null) return;
-  pat[diaIdx]=nou.trim();
+  rotacions[rotIdx].dies[diaIdx]=nou.trim();
   renderRotacio();
   desarDelay();
-  toast(`${r.codi} ${MESOS[mes]} ${DIES_S[diaIdx]} → "${nou.trim()||`Treballant ${hDef}h`}"`, "ok");
+  toast(`${r.codi} ${DIES_S[diaIdx]} → "${nou.trim()||`Treballant ${hDef}h`}"`, "ok");
 }
 
-// Canvi al patró setmanal d'un mes concret (afecta tots els dies d'aquell dia-de-setmana, només aquest mes)
-function onRotDayChange(rotIdx,diaIdx,valor,mes){
-  const r=rotacions[rotIdx];
-  getMesPattern(r,mes)[diaIdx]=valor;
+// Canvi al patró setmanal (afecta tot el mes a tots els dies d'aquell dia-de-setmana)
+function onRotDayChange(rotIdx,diaIdx,valor){
+  rotacions[rotIdx].dies[diaIdx]=valor;
   renderRotacio();
+  const r=rotacions[rotIdx];
   const torn=dominantTorn(r.codi);
   const hDef=torn==="nocturn"?HORES_DIA_NOCTURN:HORES_DIA_DIURN;
   const lbl=isNumVal(valor)?valor+"h":(valor||`treball ${hDef}h`);
   desarDelay();
-  toast(`${r.codi}: ${MESOS[mes]} ${DIES_L[diaIdx]} → ${lbl}`,"ok");
+  toast(`${r.codi}: ${DIES_L[diaIdx]} → ${lbl}`,"ok");
 }
 
 // Canvi a una cel·la concreta del calendari → guarda override per aquest dia
 function onRotCellChange(codi,mes,dia,valor){
   const k=kRO(codi,mes,dia);
-  // Si el valor torna a coincidir amb el patró setmanal d'aquest mes → eliminem l'override
+  // Si el valor torna a coincidir amb el patró setmanal → eliminem l'override
   const rot=getRot(codi);
   const dw=dow(mes,dia);
-  const patronVal=getMesPattern(rot,mes)[dw]||"";
+  const patronVal=rot.dies[dw]||"";
   if(valor===patronVal){
     delete rotOverrides[k];
   } else {
@@ -5169,6 +4771,120 @@ function horesMesTreb(treb, mes){
   return h;
 }
 
+function renderResum(){
+  const list=treballadors;
+  let totBE=0,totVA=0,totAP=0,tot3A=0,totHoresPlan=0,totHoresContr=0,totHoresPerm=0;
+
+  list.forEach(t=>{
+    const hDef = horesDiaTreb(t);
+    let hPlan=0;
+    for(let m=0;m<12;m++){
+      const nD=dM(m);
+      for(let d=1;d<=nD;d++){
+        const v=getT(m,t.id,d);
+        if(v==="BE") totBE++;
+        if(v==="VA") totVA++;
+        if(v==="AP") totAP++;
+        if(v==="3A") tot3A++;
+        hPlan += horesDeVal(v, hDef);
+      }
+    }
+    totHoresPlan  += hPlan;
+    totHoresContr += getHoresContr(t);
+    totHoresPerm  += getHoresPermisos(t);
+  });
+  const fmtH = h => h>=10000 ? `${(h/1000).toFixed(1)}k` : (h%1===0?h:h.toFixed(1));
+
+  document.getElementById("kpiResum").innerHTML=`
+    <div class="kpi bl"><div class="kpi-v">${list.length}</div><div class="kpi-l">Total zeladors actius</div><div class="kpi-s">2026</div></div>
+    <div class="kpi gn"><div class="kpi-v">${totVA}</div><div class="kpi-l">Dies VA usats</div><div class="kpi-s">vacances anuals</div></div>
+    <div class="kpi or"><div class="kpi-v">${totAP}</div><div class="kpi-l">Dies AP usats</div><div class="kpi-s">assumptes personals</div></div>
+    <div class="kpi cy"><div class="kpi-v">${tot3A}</div><div class="kpi-l">Dies 3A usats</div><div class="kpi-s">3r acord</div></div>
+    <div class="kpi rd"><div class="kpi-v">${fmtH(totHoresPlan)}</div><div class="kpi-l">Hores planificades</div><div class="kpi-s">suma plantilla · 2026</div></div>
+  `;
+
+  const mShort=MESOS.map(m=>m.slice(0,3));
+  // Header: Treballador | Calendari | Torn | 12 mesos | VA | AP | 3A | H.Planif. | H.Treball | H.Permís
+  let h=`<thead><tr style="background:#1e293b;color:#fff">
+    <th style="text-align:left;min-width:170px;padding:5px 10px" rowspan="2">Treballador</th>
+    <th style="min-width:55px;padding:5px 8px" rowspan="2">Calendari</th>
+    <th style="min-width:50px;padding:5px 8px" rowspan="2">Torn</th>
+    <th colspan="12" style="background:#1e293b;padding:5px 8px">Hores planificades / mes</th>
+    <th colspan="3" style="background:#1e293b;padding:5px 8px">Saldo permisos (usats / total)</th>
+    <th colspan="3" style="background:#1e293b;padding:5px 8px">Hores anuals</th>
+  </tr><tr style="background:#334155;color:#fff">
+    ${mShort.map(m=>`<th style="background:#334155;font-size:.62rem;padding:4px 5px">${m}</th>`).join("")}
+    <th style="background:#334155;color:#fff;padding:4px 6px" title="Vacances anuals">VA</th>
+    <th style="background:#334155;color:#fff;padding:4px 6px" title="Assumptes personals">AP</th>
+    <th style="background:#334155;color:#fff;padding:4px 6px" title="3r acord">3A</th>
+    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Suma de totes les hores planificades">H. Planif.</th>
+    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Hores de treball contractades">H. Treball</th>
+    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Hores de permisos">H. Permís</th>
+  </tr></thead><tbody>`;
+
+  let sumPlan=0,sumContr=0,sumPerm=0;
+  list.forEach(t=>{
+    const hDef = horesDiaTreb(t);
+    const mesHores=[];
+    for(let m=0;m<12;m++){
+      const nD=dM(m);
+      let hMes=0;
+      for(let d=1;d<=nD;d++){
+        const v=getT(m,t.id,d);
+        hMes+=horesDeVal(v, hDef);
+      }
+      mesHores.push(hMes);
+    }
+    const horesPlan  = mesHores.reduce((a,b)=>a+b,0);
+    const horesContr = getHoresContr(t);
+    const horesPerm  = getHoresPermisos(t);
+    sumPlan += horesPlan; sumContr += horesContr; sumPerm += horesPerm;
+
+    const saldo = getSaldoTreb(t);
+    const rot=getRot(t.rot);
+    const tornLbl = t.torn==="nocturn" ? "N" : "D";
+    const tornFg  = t.torn==="nocturn" ? "#1e293b" : "#92400e";
+
+    // Permís sense colors — blanc amb text net
+    const cellPerm = (codi) => {
+      const s = saldo[codi];
+      const overflow = s.usats > s.total;
+      const tip = overflow
+        ? `⚠️ ${codi}: ${s.usats}/${s.total} (sobre el saldo)`
+        : `${codi}: ${s.usats}/${s.total} usats · queden ${s.resta}`;
+      return `<td style="font-size:.7rem;color:${overflow?"#dc2626":"#374151"};font-weight:${overflow?"700":"500"};text-align:center" title="${tip}">${s.usats}/${s.total}${overflow?" ⚠":""}</td>`;
+    };
+
+    h+=`<tr style="border-bottom:1px solid #f1f5f9">
+      <td style="font-weight:500;padding:3px 8px">${t.nom}</td>
+      <td style="text-align:center;padding:3px 5px"><span style="background:${rot.color}22;color:${rot.color};padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:.66rem;font-weight:700">${t.rot}</span></td>
+      <td style="text-align:center;padding:3px 5px;font-size:.62rem;font-weight:600;color:${tornFg}">${tornLbl}</td>
+      ${mesHores.map(v=>{
+        const fmt = v%1===0 ? v : v.toFixed(1);
+        return `<td style="color:#374151;font-size:.66rem;text-align:center;padding:2px 3px">${v>0?fmt:""}</td>`;
+      }).join("")}
+      ${cellPerm("VA")}
+      ${cellPerm("AP")}
+      ${cellPerm("3A")}
+      <td style="font-weight:700;font-size:.75rem;text-align:center;color:#0369a1;padding:3px 8px">${horesPlan%1===0?horesPlan:horesPlan.toFixed(1)}h</td>
+      <td style="font-weight:700;font-size:.75rem;text-align:center;color:#15803d;padding:3px 8px">${horesContr}h</td>
+      <td style="font-weight:700;font-size:.74rem;text-align:center;color:#0f766e;padding:3px 8px">${horesPerm}h</td>
+    </tr>`;
+  });
+
+  // Fila totals — blanc amb text en negre
+  const mCols=mShort.length;
+  h+=`<tr style="background:#f8fafc;font-weight:700;border-top:2px solid #1e293b">
+    <td colspan="3" style="padding:4px 8px;font-size:.72rem">TOTAL PLANTILLA</td>
+    <td colspan="${mCols+3}"></td>
+    <td style="font-size:.78rem;text-align:center;color:#0369a1;padding:3px 8px">${fmtH(sumPlan)}h</td>
+    <td style="font-size:.78rem;text-align:center;color:#15803d;padding:3px 8px">${fmtH(sumContr)}h</td>
+    <td style="font-size:.74rem;text-align:center;color:#0f766e;padding:3px 8px">${fmtH(sumPerm)}h</td>
+  </tr>`;
+
+  h+="</tbody>";
+  document.getElementById("tblRA").innerHTML=h;
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DETALL PANEL
@@ -5480,13 +5196,6 @@ function eliminarRotacio(idx){
 // AUTO FS / NETEJAR / DESAR / EXPORTAR
 // ═══════════════════════════════════════════════════════════════════════════
 // ─── NETEJAR FS/FA dels rotOverrides ─────────────────────────────────────
-function regenerarFSDesPatro(){
-  if(!confirm("Eliminar tots els conceptes manuals (overrides) de tots els codis i mesos?\nLes FS es tornaran a generar només a partir del patró setmanal (dl-dg).")) return;
-  Object.keys(rotOverrides).forEach(k=>delete rotOverrides[k]);
-  renderRotacio();
-  desarDelay();
-  toast("Conceptes manuals eliminats. FS regenerades des del patró","ok");
-}
 function netejarFS(){
   if(!confirm("Eliminar totes les FS i FA dels patrons de rotació?\n(S'eliminaran els overrides manuals de tots els mesos i es reinicialitzaran els patrons setmanals)")) return;
   // Eliminar tots els rotOverrides que siguin FS o FA
@@ -5496,9 +5205,6 @@ function netejarFS(){
   // Reinicialitzar dies[] de les rotacions (treure FS/FA manuals, deixar buit ds/dg)
   rotacions.forEach(r=>{
     r.dies = r.dies.map((v,i)=> (v==="FS"||v==="FA") ? "" : v);
-    if(r.diesMes) Object.keys(r.diesMes).forEach(mes=>{
-      r.diesMes[mes] = r.diesMes[mes].map((v,i)=> (v==="FS"||v==="FA") ? "" : v);
-    });
   });
   renderRotacio();
   desarDelay();
@@ -5543,439 +5249,6 @@ function netejarMes(){
   treballadors.forEach(t=>{for(let d=1;d<=nD;d++) delete torns[kT(currentMes,t.id,d)];});
   renderAll();desarDelay();toast("Mes netejat","ok");
 }
-// ═══════════════════════════════════════════════════════════════════════════
-// PLA DE XOC (QUIRÒFANS) — plantilla preparada per activar quan calgui
-// ═══════════════════════════════════════════════════════════════════════════
-const XOC_SERVEIS_DEFAULT = [
-  "Q.1 VERD DESDE 7:30H","Q.2 VERD DESDE 7:30H","Q.3 VERD DESDE 7:30H",
-  "Q.4 VERD DESDE 7:30H","Q.5 VERD DESDE 7:30H","Q.6 VERD DESDE 7:30H",
-  "Q.1 BLANC DE 9:00 A 16:30H","Q.2 BLANC DESDE 7:30H","URPA"
-];
-// Patró per detectar si un servei/UP d'un celador correspon a quiròfan
-// (mateixa convenció usada a la resta de l'app, p.ex. getColorUPS / isQuiro)
-const XOC_RX_QUIROF = /quirof/i;
-// Festius oficials precarregats (Catalunya + festes locals de Badalona) — any 2026.
-// Font: Generalitat de Catalunya (calendari oficial de festes 2026) i Ajuntament de Badalona
-// (Sant Anastasi 11/05 i Pasqua Granada 25/05). L'usuari pot afegir-ne/treure'n més des de la UI.
-const XOC_FESTIUS_DEFAULT = [
-  {any:2026, mes:0,  dia:1,  nom:"Any Nou"},
-  {any:2026, mes:0,  dia:6,  nom:"Reis"},
-  {any:2026, mes:3,  dia:3,  nom:"Divendres Sant"},
-  {any:2026, mes:3,  dia:6,  nom:"Dilluns de Pasqua Florida"},
-  {any:2026, mes:4,  dia:1,  nom:"Festa del Treball"},
-  {any:2026, mes:4,  dia:11, nom:"Sant Anastasi (festa local Badalona)"},
-  {any:2026, mes:4,  dia:25, nom:"Pasqua Granada (festa local Badalona)"},
-  {any:2026, mes:5,  dia:24, nom:"Sant Joan"},
-  {any:2026, mes:7,  dia:15, nom:"L'Assumpció"},
-  {any:2026, mes:8,  dia:11, nom:"Diada Nacional de Catalunya"},
-  {any:2026, mes:9,  dia:12, nom:"Festa Nacional d'Espanya"},
-  {any:2026, mes:11, dia:8,  nom:"Immaculada Concepció"},
-  {any:2026, mes:11, dia:25, nom:"Nadal"},
-  {any:2026, mes:11, dia:26, nom:"Sant Esteve"}
-];
-let xocPla = { mesosOberts:[], serveis:[], suplents:[], assign:{}, festius:[] };
-// Un color viu propi per a cada mes (botó "Mesos" + capçalera de columnes a les taules).
-// bg = color fort (botó seleccionat, banda de mes a la capçalera) · lt = to clar (cel·les de dia, botó no seleccionat)
-const XOC_MES_COLORS = [
-  {bg:"#2563eb", lt:"#dbeafe"}, // Gener
-  {bg:"#7c3aed", lt:"#ede9fe"}, // Febrer
-  {bg:"#db2777", lt:"#fce7f3"}, // Març
-  {bg:"#16a34a", lt:"#dcfce7"}, // Abril
-  {bg:"#ea580c", lt:"#ffedd5"}, // Maig
-  {bg:"#0891b2", lt:"#cffafe"}, // Juny
-  {bg:"#ca8a04", lt:"#fef9c3"}, // Juliol
-  {bg:"#dc2626", lt:"#fee2e2"}, // Agost
-  {bg:"#4f46e5", lt:"#e0e7ff"}, // Setembre
-  {bg:"#059669", lt:"#d1fae5"}, // Octubre
-  {bg:"#9333ea", lt:"#f3e8ff"}, // Novembre
-  {bg:"#e11d48", lt:"#ffe4e6"}  // Desembre
-];
-// Amplada de la columna d'etiqueta (Necessitat/Pool), igualada a la suma de les columnes
-// "Codi" + "Nom" del quadrant principal (58px + 175px), perquè les columnes de dies quedin alineades
-const XOC_LBL_W = 233;
-// Capçalera de cada Pool: Matí en groc fluix, Tarda en marró fluix
-const XOC_TORN_HDR = { mati:{bg:"#fef9c3", fg:"#854d0e"}, tarda:{bg:"#e8d5bb", fg:"#78350f"} };
-// Color de la cel·la d'etiqueta d'una necessitat segons el seu nom:
-// Q.1-Q.5 VERD → verd clar · URPA → verd més intens · la resta (Q.6 VERD, Q.1/Q.2 BLANC) es queden igual
-function _xocNeedLabelStyle(nom){
-  const n = nom||"";
-  if(/urpa/i.test(n)) return "background:#16a34a;color:#fff;font-weight:800";
-  if(/^q\.?\s*[1-5]\b/i.test(n) && /verd/i.test(n)) return "background:#dcfce7;color:#166534;font-weight:700";
-  return "";
-}
-
-function _xocId(p){ return p+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
-
-function xocInitDefaults(){
-  if(!xocPla.serveis) xocPla.serveis=[];
-  if(!xocPla.suplents) xocPla.suplents=[];
-  if(!xocPla.assign) xocPla.assign={};
-  if(!xocPla.festius) xocPla.festius=[];
-  // Migració: l'antic camp "mesObert" (un sol mes) passa a "mesosOberts" (array, selecció múltiple)
-  if(!xocPla.mesosOberts){
-    xocPla.mesosOberts = (xocPla.mesObert!=null) ? [xocPla.mesObert] : [];
-  }
-  if(xocPla.serveis.length===0 && xocPla.suplents.length===0){
-    xocPla.serveis = XOC_SERVEIS_DEFAULT.map(nom=>({id:_xocId('s'), nom}));
-  }
-  if(xocPla.festius.length===0){
-    xocPla.festius = XOC_FESTIUS_DEFAULT.map(f=>({...f}));
-  }
-  // Sanejament: tots els ids de celador a "assign" han de ser numèrics (poden arribar
-  // com a string des d'un <select>), si no les comparacions d'igualtat fallen.
-  Object.keys(xocPla.assign).forEach(k=>{
-    const v = xocPla.assign[k];
-    if(typeof v==="string" && v!==""&& /^\d+$/.test(v)) xocPla.assign[k]=Number(v);
-  });
-  // Migració: esquemes antics (dates/mati/tarda manuals) ja no s'usen
-  delete xocPla.dates; delete xocPla.mati; delete xocPla.tarda; delete xocPla.mesObert;
-}
-
-function _xocEsc(s){
-  return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-}
-function _xocCellStyle(v){
-  if(!v) return "";
-  const l = (typeof LLEGENDA_CODIS!=="undefined") ? LLEGENDA_CODIS[v] : null;
-  if(l) return `background:${l.bg};color:${l.fg};font-weight:700`;
-  return "background:#ecfdf5;color:#065f46;font-weight:600";
-}
-const _XOC_DIES_CURT=["Dl","Dt","Dc","Dj","Dv","Ds","Dg"];
-
-function xocSave(){
-  localStorage.setItem("gt_b_xoc", JSON.stringify(xocPla));
-  fbSave();
-}
-
-function xocToggleMes(m){
-  const i = xocPla.mesosOberts.indexOf(m);
-  if(i>=0) xocPla.mesosOberts.splice(i,1);
-  else xocPla.mesosOberts.push(m);
-  xocPla.mesosOberts.sort((a,b)=>a-b);
-  xocSave(); renderXoc();
-}
-function xocMesBarHTML(){
-  return MESOS.map((m,i)=>{
-    const on = xocPla.mesosOberts.includes(i);
-    const c = XOC_MES_COLORS[i];
-    const style = on
-      ? `border:1.5px solid ${c.bg};background:${c.bg};color:#fff`
-      : `border:1.5px solid ${c.bg};background:${c.lt};color:${c.bg}`;
-    return `<button onclick="xocToggleMes(${i})" style="padding:5px 12px;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer;${style}">${m}</button>`;
-  }).join("");
-}
-
-// ─ Festius ─
-function xocAddFestiu(){
-  const inpD = document.getElementById('xocFestiuData');
-  const inpN = document.getElementById('xocFestiuNom');
-  if(!inpD || !inpD.value){ toast("Cal indicar una data","err"); return; }
-  const [y,m,d] = inpD.value.split("-").map(Number);
-  xocPla.festius.push({any:y, mes:m-1, dia:d, nom:(inpN?.value||"").trim()||"Festiu"});
-  xocPla.festius.sort((a,b)=> a.any-b.any || a.mes-b.mes || a.dia-b.dia);
-  if(inpD) inpD.value=""; if(inpN) inpN.value="";
-  xocSave(); renderXoc();
-}
-function xocRemoveFestiu(idx){
-  xocPla.festius.splice(idx,1);
-  xocSave(); renderXoc();
-}
-function xocFestiusListHTML(){
-  const llista = xocPla.festius.map((f,i)=>({f,i})).filter(({f})=>f.any===YEAR);
-  if(llista.length===0) return `<span style="font-size:.72rem;color:#94a3b8">Cap festiu afegit per a ${YEAR}.</span>`;
-  return llista.map(({f,i})=>`<span style="display:inline-flex;align-items:center;gap:5px;background:#fef3c7;border:1px solid #fcd34d;border-radius:14px;padding:3px 8px;font-size:.68rem;color:#92400e">${f.dia}/${f.mes+1} — ${_xocEsc(f.nom)}<button onclick="xocRemoveFestiu(${i})" title="Eliminar" style="border:none;background:none;color:#b45309;cursor:pointer;font-weight:800;line-height:1">✕</button></span>`).join("");
-}
-// Cap de setmana O festiu precarregat/manual per a aquell dia (any actiu = YEAR)
-function xocEsFestiu(mes, dia){
-  if(dow(mes,dia)>=5) return true;
-  return xocPla.festius.some(f=>f.any===YEAR && f.mes===mes && f.dia===dia);
-}
-// Només festiu (de la llista), independentment de si també cau en cap de setmana —
-// s'usa per ressaltar en vermell fluix la capçalera del dia
-function xocEsFestiuReal(mes, dia){
-  return xocPla.festius.some(f=>f.any===YEAR && f.mes===mes && f.dia===dia);
-}
-// Dies "rellevants" d'un mes: només Ds/Dg/festius (les peonades no es fan Dl-Dv normals)
-function xocDiesRellevantsMes(mes){
-  const nD=dM(mes), out=[];
-  for(let d=1;d<=nD;d++) if(xocEsFestiu(mes,d)) out.push(d);
-  return out;
-}
-// Llista combinada {mes,dia} de tots els mesos seleccionats, ordenada
-function xocDiesCombinats(){
-  const mesos = (xocPla.mesosOberts||[]).slice().sort((a,b)=>a-b);
-  const out=[];
-  mesos.forEach(mes=>{ xocDiesRellevantsMes(mes).forEach(d=>out.push({mes,dia:d})); });
-  return out;
-}
-// Capçalera de 2 files: grup de mes (colspan) + dia/dia de la setmana
-function _xocColHead(diesSel){
-  const grups=[];
-  diesSel.forEach(o=>{
-    const last=grups[grups.length-1];
-    if(last && last.mes===o.mes) last.count++;
-    else grups.push({mes:o.mes,count:1});
-  });
-  // El fons de cada grup de mes és el mateix color viu que el seu botó a "Mesos"
-  const row1 = grups.map(g=>{
-    const c = XOC_MES_COLORS[g.mes];
-    return `<th colspan="${g.count}" style="background:${c.bg};color:#fff;font-size:.62rem;padding:3px 4px;border-left:1px solid #fff">${MESOS[g.mes]}</th>`;
-  }).join("");
-  const row2 = diesSel.map(o=>{
-    const c = XOC_MES_COLORS[o.mes];
-    // Festiu real (de la llista) → vermell fluix, per diferenciar-lo d'un cap de setmana normal
-    const isFest = xocEsFestiuReal(o.mes, o.dia);
-    const bg = isFest ? "#fee2e2" : c.lt;
-    const fg = isFest ? "#b91c1c" : c.bg;
-    return `<th style="padding:5px 6px;font-size:.62rem;white-space:nowrap;background:${bg};color:${fg};font-weight:700" title="${isFest?'Festiu':''}">${o.dia}<br>${_XOC_DIES_CURT[dow(o.mes,o.dia)]}</th>`;
-  }).join("");
-  return {row1,row2};
-}
-
-// Celadors amb un servei de quiròfan assignat (Plantilla/Registre), pel torn efectiu del primer mes seleccionat
-function xocPoolCeladors(tornId){
-  const mes = xocPla.mesosOberts.length ? xocPla.mesosOberts[0] : currentMes;
-  const seen=new Set(), out=[];
-  TORNS_LIST.forEach(tid=>{
-    (unitats[tid]?.treballadors||[]).forEach(t=>{
-      if(seen.has(t.id) || !t.actiu) return;
-      if(!getTrebUPs(t).some(u=>XOC_RX_QUIROF.test(u))) return;
-      if(getEffectiveTorn(t,mes)!==tornId) return;
-      seen.add(t.id); out.push(t);
-    });
-  });
-  out.sort((a,b)=>a.nom.localeCompare(b.nom,"ca"));
-  return out;
-}
-// Codi de rotació real del celador aquell dia, dins la SEVA unitat base
-function xocAutoCode(celadorId, mes, dia){
-  for(const tid of TORNS_LIST){
-    const u=unitats[tid];
-    if(u && (u.treballadors||[]).some(w=>w.id===celadorId)){
-      return (u.torns||{})[mes+"|"+celadorId+"|"+dia] || "";
-    }
-  }
-  return "";
-}
-// "" (treballa al seu lloc, codi buit) → TR (no disponible) · qualsevol codi d'absència → disponible
-function _xocPoolCellStyle(val){
-  if(val==="TR"){ const l=LLEGENDA_CODIS.TR||{bg:"#a5f3fc",fg:"#164e63"}; return `background:${l.bg};color:${l.fg};font-weight:700`; }
-  if(!val) return "background:#ecfdf5";
-  return _xocCellStyle(val);
-}
-
-// Nom d'un celador per id, cercant a totes les unitats (coerceix a número: el id pot arribar
-// com a string des d'un <select>.value, i t.id sempre és numèric)
-function xocCeladorNom(id){
-  const idN = Number(id);
-  for(const tid of TORNS_LIST){
-    const t=(unitats[tid]?.treballadors||[]).find(w=>w.id===idN);
-    if(t) return t.nom;
-  }
-  return null;
-}
-// Retorna el nom de la necessitat per a la qual un celador té peonada assignada aquell dia (o null)
-function xocCeladorPeonadaInfo(celadorId, mes, dia){
-  const idN = Number(celadorId);
-  for(const sv of xocPla.serveis){
-    if(Number(xocPla.assign[sv.id+"|"+mes+"|"+dia])===idN) return sv.nom;
-  }
-  return null;
-}
-// Celadors (Matí+Tarda combinats) lliures aquell dia i no ja assignats a una altra necessitat
-function xocAvailableCeladorsForDay(mes, dia, excludeNeedId){
-  const all=[...xocPoolCeladors('mati'), ...xocPoolCeladors('tarda')];
-  const seen=new Set(), out=[];
-  all.forEach(t=>{
-    if(seen.has(t.id)) return; seen.add(t.id);
-    if(xocAutoCode(t.id,mes,dia)==="") return; // treballa el seu torn aquell dia → no disponible
-    out.push(t);
-  });
-  return out.filter(t=>{
-    for(const sv of xocPla.serveis){
-      if(sv.id===excludeNeedId) continue;
-      if(Number(xocPla.assign[sv.id+"|"+mes+"|"+dia])===t.id) return false;
-    }
-    return true;
-  });
-}
-function xocAssignNeed(needId, mes, dia, celadorId){
-  const key = needId+"|"+mes+"|"+dia;
-  if(!celadorId) delete xocPla.assign[key];
-  else xocPla.assign[key] = Number(celadorId);
-  xocSave(); renderXoc();
-}
-// Cel·la de Necessitat: desplegable amb els celadors disponibles (Matí+Tarda) aquell dia
-function _xocNeedCellHTML(needId, mes, dia){
-  const rawCur = xocPla.assign[needId+"|"+mes+"|"+dia];
-  const curId = (rawCur===undefined || rawCur==="") ? "" : Number(rawCur);
-  const opts = xocAvailableCeladorsForDay(mes, dia, needId);
-  let extra = "";
-  if(curId!=="" && !opts.some(o=>o.id===curId)){
-    const nomActual = xocCeladorNom(curId) || ("Celador "+curId);
-    extra = `<option value="${curId}" selected>${_xocEsc(nomActual)} ⚠</option>`;
-  }
-  const optsHtml = `<option value="">—</option>`
-    + opts.map(o=>`<option value="${o.id}" ${o.id===curId?"selected":""}>${_xocEsc(o.nom)}</option>`).join("")
-    + extra;
-  const filled = curId!=="";
-  // Seleccionat → groc fluix (a baix, al Pool, el celador assignat es marca en vermell fluix)
-  const style = filled ? "background:#fef9c3;color:#854d0e;font-weight:700" : "background:#fff;color:#334155";
-  return `<select onchange="xocAssignNeed('${needId}',${mes},${dia},this.value)" onclick="event.stopPropagation()" style="font-size:.64rem;border:1px solid #e2e8f0;border-radius:4px;width:100%;max-width:130px;text-align:center;${style}">${optsHtml}</select>`;
-}
-
-function xocAddRow(grup){
-  const txt = grup==="serveis" ? "Nom del servei/necessitat (ex: Q.7 VERD, REA...):" : "Nom del/de la suplent:";
-  const nom = prompt(txt,"");
-  if(!nom || !nom.trim()) return;
-  xocPla[grup].push({id:_xocId('r'), nom:nom.trim()});
-  xocSave(); renderXoc();
-}
-function xocRenameRow(grup, rid){
-  const r = (xocPla[grup]||[]).find(x=>x.id===rid); if(!r) return;
-  const nv = prompt("Editar nom:", r.nom);
-  if(nv===null || !nv.trim()) return;
-  r.nom = nv.trim();
-  xocSave(); renderXoc();
-}
-function xocRemoveRow(grup, rid){
-  if(!confirm("Eliminar aquesta fila i les seves assignacions?")) return;
-  xocPla[grup] = (xocPla[grup]||[]).filter(r=>r.id!==rid);
-  Object.keys(xocPla.assign).forEach(k=>{ if(k.startsWith(rid+"|")) delete xocPla.assign[k]; });
-  xocSave(); renderXoc();
-}
-function xocEditCell(id, mes, dia, autoVal){
-  const key = id+"|"+mes+"|"+dia;
-  const cur = xocPla.assign[key];
-  const hint = autoVal!==undefined ? `\n(Valor automàtic actual: "${autoVal||"disponible"}" — deixa-ho buit per tornar a l'automàtic)` : "";
-  const nv = prompt("Assignació per a aquesta cel·la:\n— Nom del celador que cobreix / fa peonada\n— O un codi (BL, VA, BE, AI...) si no està disponible"+hint, cur!==undefined?cur:"");
-  if(nv===null) return;
-  if(!nv.trim()) delete xocPla.assign[key];
-  else xocPla.assign[key] = nv.trim();
-  xocSave(); renderXoc();
-}
-function xocClearAll(){
-  if(!confirm("Buidar TOT el Pla de Xoc (necessitats, suplents i assignacions)? Els festius es mantenen. Aquesta acció no es pot desfer.")) return;
-  const festius = xocPla.festius;
-  xocPla = { mesosOberts:[], serveis:[], suplents:[], assign:{}, festius };
-  xocSave(); renderXoc();
-}
-
-function _xocTotalsRow(rows, diesSel){
-  if(diesSel.length===0) return "";
-  const cells = diesSel.map(o=>{
-    let n=0;
-    rows.forEach(r=>{ const v=xocPla.assign[r.id+"|"+o.mes+"|"+o.dia]; if(v!==undefined && v!=="") n++; });
-    return `<td style="padding:4px 6px;border:1px solid #e2e8f0;text-align:center;font-weight:800;background:#eff6ff;color:#1d4ed8">${n}</td>`;
-  }).join("");
-  return `<tr><td style="padding:5px 8px;border:1px solid #e2e8f0;font-weight:800;background:#1d4ed8;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:${XOC_LBL_W}px;max-width:${XOC_LBL_W}px">Total coberts/dia</td>${cells}<td style="border:1px solid #e2e8f0;background:#1d4ed8"></td></tr>`;
-}
-
-// Secció manual (Necessitats / Suplents): files editables. A "serveis" les cel·les són
-// desplegables de celador; a "suplents" són text lliure (clic per editar).
-function _xocManualSectionHTML(label, grup, withTotals){
-  const diesSel = xocDiesCombinats();
-  const rows = xocPla[grup]||[];
-  if(diesSel.length===0 && rows.length===0){
-    return `<div style="padding:14px;color:#94a3b8;font-size:.74rem;text-align:center">Encara no hi ha files configurades per a "${_xocEsc(label)}". Afegeix-ne amb el botó superior.</div>`;
-  }
-  if(diesSel.length===0){
-    return `<div style="padding:14px;color:#94a3b8;font-size:.74rem;text-align:center">Selecciona un o més mesos per veure els dissabtes, diumenges i festius.</div>`;
-  }
-  const {row1,row2} = _xocColHead(diesSel);
-  const head = `<tr><th rowspan="2" style="height:36px;padding:5px 8px;background:#1d4ed8;color:#fff;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.68rem;line-height:1.15;vertical-align:middle;width:${XOC_LBL_W}px;max-width:${XOC_LBL_W}px">${_xocEsc(label)}</th>${row1}<th rowspan="2" style="background:#1d4ed8;width:28px"></th></tr><tr>${row2}</tr>`;
-  let body;
-  if(rows.length===0){
-    body = `<tr><td colspan="${diesSel.length+2}" style="padding:12px;color:#94a3b8;font-size:.72rem;text-align:center;border:1px solid #e2e8f0">Sense files encara — afegeix-ne amb el botó superior</td></tr>`;
-  } else {
-    body = rows.map(r=>{
-      const cells = diesSel.map(o=>{
-        if(grup==='serveis'){
-          return `<td style="padding:2px 4px;border:1px solid #e2e8f0;text-align:center;font-size:.7rem">${_xocNeedCellHTML(r.id,o.mes,o.dia)}</td>`;
-        }
-        const v = xocPla.assign[r.id+"|"+o.mes+"|"+o.dia] || "";
-        return `<td style="padding:3px 6px;border:1px solid #e2e8f0;cursor:pointer;text-align:center;font-size:.7rem;${_xocCellStyle(v)}" onclick="xocEditCell('${r.id}',${o.mes},${o.dia})" title="Clic per assignar">${_xocEsc(v)}</td>`;
-      }).join("");
-      const lblStyle = grup==='serveis' ? _xocNeedLabelStyle(r.nom) : "";
-      return `<tr>
-        <td style="padding:5px 8px;border:1px solid #e2e8f0;font-weight:600;background:#f8fafc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.72rem;cursor:pointer;width:${XOC_LBL_W}px;max-width:${XOC_LBL_W}px;${lblStyle}" onclick="xocRenameRow('${grup}','${r.id}')" title="${_xocEsc(r.nom)} — clic per editar nom">${_xocEsc(r.nom)}</td>
-        ${cells}
-        <td style="padding:2px 6px;border:1px solid #e2e8f0;text-align:center"><button onclick="xocRemoveRow('${grup}','${r.id}')" title="Eliminar fila" style="border:none;background:none;color:#dc2626;cursor:pointer;font-size:.78rem">✕</button></td>
-      </tr>`;
-    }).join("");
-  }
-  const totals = withTotals ? _xocTotalsRow(rows, diesSel) : "";
-  return `<table style="border-collapse:collapse;font-size:.72rem;min-width:max-content;width:100%">${head}<tbody>${body}${totals}</tbody></table>`;
-}
-
-// Secció automàtica (Pool Matí / Pool Tarda): files = celadors de quiròfan, cel·les = calendari real + override opcional
-function _xocPoolSectionHTML(label, tornId){
-  const diesSel = xocDiesCombinats();
-  const rows = xocPoolCeladors(tornId);
-  if(diesSel.length===0){
-    return rows.length
-      ? `<div style="padding:10px 14px;font-size:.74rem;color:#475569">${rows.map(t=>_xocEsc(t.nom)).join(", ")}<div style="margin-top:6px;color:#94a3b8;font-size:.7rem">Selecciona un o més mesos per veure els dissabtes, diumenges i festius.</div></div>`
-      : `<div style="padding:14px;color:#94a3b8;font-size:.74rem;text-align:center">Cap celador amb servei de quiròfan assignat a aquest torn (revisa "Registre de personal i servei").</div>`;
-  }
-  if(rows.length===0){
-    return `<div style="padding:14px;color:#94a3b8;font-size:.74rem;text-align:center">Cap celador amb servei de quiròfan assignat a aquest torn (revisa "Registre de personal i servei").</div>`;
-  }
-  const {row1,row2} = _xocColHead(diesSel);
-  const hc = XOC_TORN_HDR[tornId] || {bg:"#1d4ed8", fg:"#fff"};
-  const head = `<tr><th rowspan="2" style="height:36px;padding:5px 8px;background:${hc.bg};color:${hc.fg};text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.68rem;line-height:1.15;vertical-align:middle;width:${XOC_LBL_W}px;max-width:${XOC_LBL_W}px">${_xocEsc(label)}</th>${row1}</tr><tr>${row2}</tr>`;
-  const body = rows.map(t=>{
-    const cells = diesSel.map(o=>{
-      const peonada = xocCeladorPeonadaInfo(t.id, o.mes, o.dia);
-      if(peonada){
-        // Ja assignat a una necessitat aquell dia → mostra el seu nom en vermell fluix
-        // (la cel·la de la necessitat es marca en groc fluix, veure _xocNeedCellHTML)
-        return `<td style="padding:3px 6px;border:1px solid #e2e8f0;text-align:center;font-size:.66rem;background:#fee2e2;color:#b91c1c;font-weight:800" title="Peonada quiròfan: ${_xocEsc(peonada)}">${_xocEsc(t.nom)}</td>`;
-      }
-      const auto = xocAutoCode(t.id,o.mes,o.dia)==="" ? "TR" : "";
-      const ov = xocPla.assign[t.id+"|"+o.mes+"|"+o.dia];
-      const val = ov!==undefined ? ov : auto;
-      // Disponible (sense override ni peonada) → en lloc de cel·la buida, mostra el nom en verd fluix
-      const showName = val==="";
-      const display = showName ? t.nom : val;
-      const style = showName ? "background:#dcfce7;color:#166534;font-weight:700" : _xocPoolCellStyle(val);
-      return `<td style="padding:3px 6px;border:1px solid #e2e8f0;cursor:pointer;text-align:center;font-size:.66rem;${style}" onclick="xocEditCell('${t.id}',${o.mes},${o.dia},'${auto}')" title="${ov!==undefined?"Sobreescrit manualment":"Calculat del calendari"}">${_xocEsc(display)}</td>`;
-    }).join("");
-    return `<tr>
-      <td style="padding:5px 8px;border:1px solid #e2e8f0;font-weight:600;background:#f8fafc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.72rem;width:${XOC_LBL_W}px;max-width:${XOC_LBL_W}px" title="${_xocEsc(t.nom)}">${_xocEsc(t.nom)}</td>
-      ${cells}
-    </tr>`;
-  }).join("");
-  return `<table style="border-collapse:collapse;font-size:.72rem;min-width:max-content;width:100%">${head}<tbody>${body}</tbody></table>`;
-}
-
-function renderXoc(){
-  xocInitDefaults();
-  const mesBar = document.getElementById('xocMesBar');
-  if(mesBar) mesBar.innerHTML = xocMesBarHTML();
-  const festAny = document.getElementById('xocFestiusAny');
-  if(festAny) festAny.textContent = YEAR;
-  const festList = document.getElementById('xocFestiusList');
-  if(festList) festList.innerHTML = xocFestiusListHTML();
-  const wrapNec   = document.getElementById('xocNecWrap');
-  const wrapMati  = document.getElementById('xocMatiWrap');
-  const wrapTarda = document.getElementById('xocTardaWrap');
-  const wrapSup   = document.getElementById('xocSupWrap');
-  if(wrapNec)   wrapNec.innerHTML   = _xocManualSectionHTML('NECESSITAT (servei)', 'serveis', true);
-  if(wrapMati)  wrapMati.innerHTML  = _xocPoolSectionHTML('TORN MATÍ — Pool', 'mati');
-  if(wrapTarda) wrapTarda.innerHTML = _xocPoolSectionHTML('TORN TARDA — Pool', 'tarda');
-  if(wrapSup)   wrapSup.innerHTML   = _xocManualSectionHTML('SUPLENTS', 'suplents', false);
-  const info = document.getElementById('xocDatesInfo');
-  if(info){
-    if(xocPla.mesosOberts.length){
-      const diesSel = xocDiesCombinats();
-      const nomsMesos = xocPla.mesosOberts.map(m=>MESOS[m]).join(", ");
-      info.textContent = `Mostrant ${nomsMesos} ${YEAR} (${diesSel.length} dies de cap de setmana/festiu) · ${xocPla.serveis.length} necessitat(s) · ${xocPoolCeladors('mati').length} celador(s) a Matí · ${xocPoolCeladors('tarda').length} a Tarda · ${xocPla.suplents.length} suplent(s)`;
-    } else {
-      info.textContent = 'Selecciona un o més mesos per veure els dissabtes, diumenges i festius (disponibilitat calculada automàticament a partir del calendari)';
-    }
-  }
-}
-
 function desar(){
   // Estat per torn (les variables actives ja estan vinculades a la unitat actual,
   // així que el contingut d'unitats[currentTornTreball] ja és el viu)
@@ -6534,115 +5807,6 @@ let gtPlanData = {};
 
 function kGTP(mes,sid,slot,dia){ return `${mes}|${sid}|${slot}|${dia}`; }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// BALANÇ D'HORES — Resum Anual
-// ═══════════════════════════════════════════════════════════════════════════
-function renderResum(){
-  const list=treballadors;
-  let totBE=0,totVA=0,totAP=0,tot3A=0,totHoresPlan=0,totHoresContr=0,totHoresPerm=0;
-
-  list.forEach(t=>{
-    const hDef = horesDiaTreb(t);
-    let hPlan=0;
-    for(let m=0;m<12;m++){
-      const nD=dM(m);
-      for(let d=1;d<=nD;d++){
-        const v=getT(m,t.id,d);
-        if(v==="BE") totBE++;
-        if(v==="VA") totVA++;
-        if(v==="AP") totAP++;
-        if(v==="3A") tot3A++;
-        hPlan += horesDeVal(v, hDef);
-      }
-    }
-    totHoresPlan  += hPlan;
-    totHoresContr += getHoresContr(t);
-    totHoresPerm  += getHoresPermisos(t);
-  });
-  const fmtH = h => h>=10000 ? `${(h/1000).toFixed(1)}k` : (h%1===0?h:h.toFixed(1));
-
-  // kpiResum eliminat — només es mostra la taula
-
-  const mShort=MESOS.map(m=>m.slice(0,3));
-  let h=`<thead><tr style="background:#1e293b;color:#fff">
-    <th style="text-align:left;min-width:170px;padding:5px 10px" rowspan="2">Treballador</th>
-    <th style="min-width:55px;padding:5px 8px" rowspan="2">Calendari</th>
-    <th style="min-width:50px;padding:5px 8px" rowspan="2">Torn</th>
-    <th colspan="12" style="background:#1e293b;padding:5px 8px">Hores planificades / mes</th>
-    <th colspan="3" style="background:#1e293b;padding:5px 8px">Saldo permisos (usats / total)</th>
-    <th colspan="3" style="background:#1e293b;padding:5px 8px">Hores anuals</th>
-  </tr><tr style="background:#334155;color:#fff">
-    ${mShort.map(m=>`<th style="background:#334155;font-size:.62rem;padding:4px 5px">${m}</th>`).join("")}
-    <th style="background:#334155;color:#fff;padding:4px 6px" title="Vacances anuals">VA</th>
-    <th style="background:#334155;color:#fff;padding:4px 6px" title="Assumptes personals">AP</th>
-    <th style="background:#334155;color:#fff;padding:4px 6px" title="3r acord">3A</th>
-    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Suma de totes les hores planificades">H. Planif.</th>
-    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Hores de treball contractades">H. Treball</th>
-    <th style="min-width:62px;background:#334155;color:#fff;padding:4px 6px" title="Hores de permisos">H. Permís</th>
-  </tr></thead><tbody>`;
-
-  let sumPlan=0,sumContr=0,sumPerm=0;
-  list.forEach(t=>{
-    const hDef = horesDiaTreb(t);
-    const mesHores=[];
-    for(let m=0;m<12;m++){
-      const nD=dM(m);
-      let hMes=0;
-      for(let d=1;d<=nD;d++){
-        const v=getT(m,t.id,d);
-        hMes+=horesDeVal(v, hDef);
-      }
-      mesHores.push(hMes);
-    }
-    const horesPlan  = mesHores.reduce((a,b)=>a+b,0);
-    const horesContr = getHoresContr(t);
-    const horesPerm  = getHoresPermisos(t);
-    sumPlan += horesPlan; sumContr += horesContr; sumPerm += horesPerm;
-
-    const saldo = getSaldoTreb(t);
-    const rot=getRot(t.rot);
-    const tornLbl = t.torn==="nocturn" ? "N" : "D";
-    const tornFg  = t.torn==="nocturn" ? "#1e293b" : "#92400e";
-
-    const cellPerm = (codi) => {
-      const s = saldo[codi];
-      const overflow = s.usats > s.total;
-      const tip = overflow
-        ? `⚠️ ${codi}: ${s.usats}/${s.total} (sobre el saldo)`
-        : `${codi}: ${s.usats}/${s.total} usats · queden ${s.resta}`;
-      return `<td style="font-size:.7rem;color:${overflow?"#dc2626":"#374151"};font-weight:${overflow?"700":"500"};text-align:center" title="${tip}">${s.usats}/${s.total}${overflow?" ⚠":""}</td>`;
-    };
-
-    h+=`<tr style="border-bottom:1px solid #f1f5f9">
-      <td style="font-weight:500;padding:3px 8px">${t.nom}</td>
-      <td style="text-align:center;padding:3px 5px"><span style="background:${rot.color}22;color:${rot.color};padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:.66rem;font-weight:700">${t.rot}</span></td>
-      <td style="text-align:center;padding:3px 5px;font-size:.62rem;font-weight:600;color:${tornFg}">${tornLbl}</td>
-      ${mesHores.map(v=>{
-        const fmt = v%1===0 ? v : v.toFixed(1);
-        return `<td style="color:#374151;font-size:.66rem;text-align:center;padding:2px 3px">${v>0?fmt:""}</td>`;
-      }).join("")}
-      ${cellPerm("VA")}
-      ${cellPerm("AP")}
-      ${cellPerm("3A")}
-      <td style="font-weight:700;font-size:.75rem;text-align:center;color:#0369a1;padding:3px 8px">${horesPlan%1===0?horesPlan:horesPlan.toFixed(1)}h</td>
-      <td style="font-weight:700;font-size:.75rem;text-align:center;color:#15803d;padding:3px 8px">${horesContr}h</td>
-      <td style="font-weight:700;font-size:.74rem;text-align:center;color:#0f766e;padding:3px 8px">${horesPerm}h</td>
-    </tr>`;
-  });
-
-  const mCols=mShort.length;
-  h+=`<tr style="background:#f8fafc;font-weight:700;border-top:2px solid #1e293b">
-    <td colspan="3" style="padding:4px 8px;font-size:.72rem">TOTAL PLANTILLA</td>
-    <td colspan="${mCols+3}"></td>
-    <td style="font-size:.78rem;text-align:center;color:#0369a1;padding:3px 8px">${fmtH(sumPlan)}h</td>
-    <td style="font-size:.78rem;text-align:center;color:#15803d;padding:3px 8px">${fmtH(sumContr)}h</td>
-    <td style="font-size:.74rem;text-align:center;color:#0f766e;padding:3px 8px">${fmtH(sumPerm)}h</td>
-  </tr>`;
-
-  h+="</tbody>";
-  document.getElementById("tblRA").innerHTML=h;
-}
-
 // Ampliem switchGTView per gestionar la vista 'plan'
 const _origSwitchGTView = switchGTView;
 switchGTView = function(v){
@@ -6651,14 +5815,19 @@ switchGTView = function(v){
     const el = document.getElementById(i==='plan'?"gtViewPlan":"gtView"+i);
     if(el) el.style.display = i===v ? "block" : "none";
   });
-  gtSetActiveViewBtn(v);
+  const buttons = {plan:'gtVBtnP', 0:'gtVBtn0', 1:'gtVBtn1', 2:'gtVBtn2'};
+  Object.entries(buttons).forEach(([k,bid])=>{
+    const btn=document.getElementById(bid);
+    if(!btn) return;
+    const active = String(k)===String(v);
+    btn.style.borderBottomColor = active ? "var(--blue-m)" : "transparent";
+    btn.style.color             = active ? "var(--blue-m)" : "var(--ink3)";
+    btn.style.fontWeight        = active ? "700" : "600";
+  });
   gtCurrentView = v;
-  const mesWrap = document.getElementById("gtPermisMesWrap");
-  if(mesWrap) mesWrap.style.display = v===0 ? "inline-flex" : "none";
   if(v==='plan')  { renderGTPlan(); }
-  if(v===0) { renderGT(); }
   if(v===1 && gtSelectedId) renderGTDetall(gtSelectedId);
-  if(v===2) renderResum();
+  if(v===2) renderGTBalanc();
 };
 
 // Noms curts dels mesos
@@ -6831,37 +6000,12 @@ function gtRenderView(){
   if(v === "plan")       renderGTPlan();
   else if(v === 0)       renderGT();
   else if(v === 1 && typeof gtSelectedId !== "undefined" && gtSelectedId) renderGTDetall(gtSelectedId);
+  else if(v === 2)       renderGTBalanc();
   else                   renderGTPlan();
 }
 
 // ─── Auto-assign zeladors des de Plantilla → Necessitat GT ────────────
 // Zeladors amb UP fixa (no Pool) que treballin aquell dia → slot auto
-// Alguns serveis de l'Agenda tenen un nom lleugerament diferent del nom de la UP
-// assignada al treballador a Plantilla (errors tipogràfics, abreviatures, etc).
-// Aquest mapa permet que l'aparellament de recomanacions funcioni igualment.
-const UPS_SERVEI_ALIAS = {
-  "encarregat torn": ["encarregat de torn"],
-  "hospital modular": ["moduls"],
-  "uce": ["unitat curta estada uce","unitat curta estada"],
-  "urgencies obstetricia parts": ["urgencies obstretricia parts"],
-  "urgencies pediatria": ["urgencies pediatriques"],
-};
-function _normSvName(s){
-  let out="";
-  for(const ch of (s||"").toLowerCase().normalize("NFD")){
-    const cp=ch.codePointAt(0);
-    if(cp<0x0300||cp>0x036f) out+=ch;
-  }
-  return out.replace(/\(.*?\)/g,"").replace(/[^a-z0-9]+/g," ").trim();
-}
-function upMatchesServei(upName, sveiName){
-  const a=_normSvName(upName), b=_normSvName(sveiName);
-  if(a===b) return true;
-  if((UPS_SERVEI_ALIAS[a]||[]).includes(b)) return true;
-  if((UPS_SERVEI_ALIAS[b]||[]).includes(a)) return true;
-  return false;
-}
-
 function gtAutoAssignFromUPS(mes, serveis){
   // 1. Esborra les assignacions automàtiques anteriors
   Object.keys(gtPlanData).forEach(k=>{
@@ -6876,7 +6020,7 @@ function gtAutoAssignFromUPS(mes, serveis){
     // Zeladors assignats a aquest servei (suporta múltiples UPs via getTrebUPs)
     const assignats = allTrebs.filter(t=>
       t.actiu &&
-      getTrebUPs(t).some(u => upMatchesServei(u, sv.servei))
+      getTrebUPs(t).some(u => u.toLowerCase() === sv.servei.toLowerCase().trim())
     );
     if(!assignats.length) return;
 
@@ -6897,7 +6041,7 @@ function gtAutoAssignFromUPS(mes, serveis){
         // Salta si aquest treballador ja té una assignació (manual o auto) en qualsevol slot avui
         if(jaAssignats.has(t.id)) continue;
         const codi = getT(mes, t.id, d);
-        const isWorking = codi==="" || isNumVal(codi) || isRJC(codi);
+        const isWorking = !codi || codi==="";
         if(!isWorking) continue;
 
         // Busca el primer slot buit per aquest dia
@@ -7594,35 +6738,28 @@ const GT_DIES_ANY = 365;
 let gtCurrentView = 'plan';
 let gtSelectedId  = null;
 
-function gtSetActiveViewBtn(v){
-  const buttons = {plan:'gtVBtnP', 0:'gtVBtn0', 1:'gtVBtn1', 2:'gtVBtn2'};
-  Object.entries(buttons).forEach(([k,bid])=>{
-    const btn=document.getElementById(bid);
-    if(!btn) return;
-    const active = String(k)===String(v);
-    btn.style.background  = active ? "#eff6ff" : "#fff";
-    btn.style.boxShadow   = active ? "0 0 0 2px #2563eb inset" : "none";
-    btn.style.color       = active ? "#2563eb" : "#475569";
-  });
-}
-
 function switchGTView(v){
   gtCurrentView = v;
-  [0,1].forEach(i=>{
+  [0,1,2].forEach(i=>{
     const view = document.getElementById("gtView"+i);
-    if(!view) return;
+    const btn  = document.getElementById("gtVBtn"+i);
+    if(!view||!btn) return;
     view.style.display = i===v ? "block" : "none";
+    btn.style.borderBottomColor = i===v ? "var(--blue-m)" : "transparent";
+    btn.style.color             = i===v ? "var(--blue-m)" : "var(--ink3)";
+    btn.style.fontWeight        = i===v ? "700" : "600";
   });
-  gtSetActiveViewBtn(v);
   if(v===1 && gtSelectedId) renderGTDetall(gtSelectedId);
+  if(v===2) renderGTBalanc();
 }
 
 // Retorna tots els treballadors filtrats per torn/contracte/cerca
 function getGTWorkers(){
-  const cont  = (document.getElementById("gtCont")||{}).value || "tots";
+  const torn  = "mati";
+  const cont  = (document.getElementById("gtCont")  ||{}).value || "tots";
   const cerca = ((document.getElementById("gtPoolSearch")||document.getElementById("gtSearch")||{}).value || "").toLowerCase().trim();
   let workers = [];
-  const tornIds = typeof TORNS_LIST !== "undefined" ? TORNS_LIST : ["mati","tarda","nit1","nit2"];
+  const tornIds = ["mati"];
   tornIds.forEach(tid=>{
     (unitats[tid]?.treballadors||[]).forEach(t=>{
       workers.push({...t, _torn: tid});
@@ -7669,20 +6806,16 @@ function gtHoresTeoriques(t){
 
 // ── RENDER VISTA ANUAL ────────────────────────────────────────────────────
 function renderGT(){
-  if(currentTab!=="resum") return;
+  if(currentTab!=="gt") return;
   const workers = getGTWorkers();
   renderGTKpis(workers);
-
-  const mesFiltRaw = (document.getElementById("gtPermisMesFilter")||{}).value;
-  const mesFilt = mesFiltRaw !== undefined ? parseInt(mesFiltRaw) : -1;
-  const mesosShow = mesFilt === -1 ? Array.from({length:12},(_,i)=>i) : [mesFilt];
 
   const MESOS_CURTS = ["Gen","Feb","Mar","Abr","Mai","Jun","Jul","Ago","Set","Oct","Nov","Des"];
   let h = `<thead><tr style="background:#0f172a;color:#fff;position:sticky;top:0;z-index:5">
     <th style="padding:6px 10px;text-align:left;white-space:nowrap;min-width:180px">Treballador</th>
     <th style="padding:6px 8px;text-align:center;min-width:70px">Torn</th>
     <th style="padding:6px 8px;text-align:center;min-width:90px">Contracte</th>`;
-  for(const m of mesosShow) h+=`<th style="padding:6px 8px;text-align:center;min-width:70px">${MESOS_CURTS[m]}</th>`;
+  for(let m=0;m<12;m++) h+=`<th style="padding:6px 8px;text-align:center;min-width:70px">${MESOS_CURTS[m]}</th>`;
   h+=`<th style="padding:6px 8px;text-align:center;min-width:60px">IT anual</th>
       <th style="padding:6px 8px;text-align:center;min-width:60px">VA anual</th>
       <th style="padding:6px 8px;text-align:center;min-width:60px">AP anual</th>
@@ -7708,7 +6841,7 @@ function renderGT(){
       <td style="padding:4px 8px;text-align:center;font-size:.65rem;white-space:nowrap">${tornLbl}</td>
       <td style="padding:4px 8px;text-align:center"><span style="background:${cc.bg};color:${cc.fg};border-radius:4px;padding:1px 6px;font-size:.62rem;font-weight:600">${t.cont||"—"}</span></td>`;
 
-    for(const m of mesosShow){
+    for(let m=0;m<12;m++){
       const c = gtComptaCodis(t.id, m);
       let cellParts = [];
       if(c.it>0)  cellParts.push(`<span style="background:#fee2e2;color:#991b1b;border-radius:3px;padding:0 4px;font-weight:700">IT:${c.it}</span>`);
@@ -7981,6 +7114,65 @@ function gtKpiMini(label,bg,fg,val){
     <span style="font-size:1.1rem;font-weight:800;color:${fg}">${val}</span>
     <span style="font-size:.68rem;color:${fg};font-weight:600">${label}</span>
   </div>`;
+}
+
+// ── RENDER BALANÇ D'HORES ─────────────────────────────────────────────────
+function renderGTBalanc(){
+  const workers = getGTWorkers();
+  const TORN_H  = {mati:GT_H_DIURN,tarda:GT_H_DIURN,nit1:GT_H_NOCT,nit2:GT_H_NOCT};
+  const TORN_LABELS = {mati:"Matí",tarda:"Tarda",nit1:"Nit 1",nit2:"Nit 2"};
+  let h=`<table style="border-collapse:collapse;font-size:.71rem;width:100%">
+    <thead><tr style="background:#0f172a;color:#fff;position:sticky;top:0">
+      <th style="padding:7px 12px;text-align:left">Treballador</th>
+      <th style="padding:7px 8px;text-align:center">Torn</th>
+      <th style="padding:7px 8px;text-align:center">Contracte</th>
+      <th style="padding:7px 8px;text-align:center">Dies treball</th>
+      <th style="padding:7px 8px;text-align:center">Hores treballades</th>
+      <th style="padding:7px 8px;text-align:center">Dies IT</th>
+      <th style="padding:7px 8px;text-align:center">Dies VA</th>
+      <th style="padding:7px 8px;text-align:center">Dies AP</th>
+      <th style="padding:7px 8px;text-align:center">Balanç</th>
+    </tr></thead><tbody>`;
+
+  // Hores contractuals anuals estimades per tipus
+  const HORES_CONTRACTE = {
+    "estatutari":1651, "interí":1651, "interí 28h":1456, "interí 21h":1092,
+    "programa":1651, "programa 28h":1456, "substitució directa":1651, "substitució":1651
+  };
+  workers.forEach(t=>{
+    const hDef = t.torn==="nocturn" ? GT_H_NOCT : GT_H_DIURN;
+    const hContracte = HORES_CONTRACTE[t.cont] || 1651;
+    let diesTreball=0, hTreball=0, diesIT=0, diesVA=0, diesAP=0;
+    for(let m=0;m<12;m++){
+      const nD=dM(m);
+      for(let d=1;d<=nD;d++){
+        const v=getT(m,t.id,d);
+        if(v===""){diesTreball++;hTreball+=hDef;}
+        else if(isNumVal(v)){diesTreball++;hTreball+=parseFloat(v);}
+        else if(isRJC(v)){const dw=dow(m,d);diesTreball++;hTreball+=horesPerValorDia(v,m,d,hDef);}
+        else if(["IT","IG","AT"].includes(v)) diesIT++;
+        else if(["VA","PA","PV"].includes(v)) diesVA++;
+        else if(v==="AP") diesAP++;
+      }
+    }
+    const balanc = hTreball - hContracte;
+    const balColor = balanc>=0?"#16a34a":"#dc2626";
+    const balBg    = balanc>=0?"#dcfce7":"#fee2e2";
+    h+=`<tr style="border-bottom:1px solid #e2e8f0">
+      <td style="padding:5px 10px;font-weight:600;white-space:nowrap">${t.nom}</td>
+      <td style="padding:5px 8px;text-align:center"><span style="font-size:.62rem;background:${t.torn==="nocturn"?"#1e293b":"#fef3c7"};color:${t.torn==="nocturn"?"#fff":"#92400e"};padding:1px 6px;border-radius:9px;font-weight:700">${t.torn==="nocturn"?"N":"D"}</span></td>
+      <td style="padding:5px 8px;text-align:center;font-size:.68rem;color:#64748b">${t.cont||"—"}</td>
+      <td style="padding:5px 8px;text-align:center;font-weight:700">${diesTreball}</td>
+      <td style="padding:5px 8px;text-align:center;font-weight:700">${Math.round(hTreball)}h</td>
+      <td style="padding:5px 8px;text-align:center;color:#64748b">${diesIT||"—"}</td>
+      <td style="padding:5px 8px;text-align:center;color:#64748b">${diesVA||"—"}</td>
+      <td style="padding:5px 8px;text-align:center;color:#64748b">${diesAP||"—"}</td>
+      <td style="padding:5px 8px;text-align:center;background:${balBg};color:${balColor};font-weight:800">${balanc>=0?"+":""}${Math.round(balanc)}h</td>
+    </tr>`;
+  });
+  h+=`</tbody></table>`;
+  const el=document.getElementById("gtBalancWrap");
+  if(el) el.innerHTML=h;
 }
 
 function gtExportCSV(){
@@ -8410,185 +7602,6 @@ function qaAsk(){
   inp.value="";
 }
 
-// ══ SELECCIÓ MÚLTIPLE PLANIFICADOR D'UNITAT (estil Excel) ══════════════════
-(function(){
-  // Afegir CSS per a la selecció
-  const _selStyle = document.createElement('style');
-  _selStyle.textContent =
-    '#tblGTPlan td.gt-sel{outline:2px solid #2563eb !important;outline-offset:-2px;' +
-    'background:rgba(37,99,235,.13) !important;position:relative;z-index:1}' +
-    '#tblGTPlan td.gt-sel-copy{outline:2px dashed #16a34a !important;outline-offset:-2px}';
-  document.head.appendChild(_selStyle);
-
-  let _anchor    = null;    // td on s'inicia el drag
-  let _dragging  = false;
-  let _selSet    = new Set(); // keys de les td seleccionades
-  let _clipCode  = null;    // codi copiat (string; '' = disponible; null = buit)
-
-  function cellKey(td){
-    return td.dataset.gtPool || td.dataset.gtNeed || null;
-  }
-
-  function applyHighlight(){
-    document.querySelectorAll('#tblGTPlan .gt-sel').forEach(td=>td.classList.remove('gt-sel'));
-    _selSet.forEach(k=>{
-      if(!k) return;
-      const td = document.querySelector(`#tblGTPlan [data-gt-pool="${k}"]`) ||
-                 document.querySelector(`#tblGTPlan [data-gt-need="${k}"]`);
-      if(td) td.classList.add('gt-sel');
-    });
-  }
-
-  function cellsInRange(a, b){
-    const tbl = document.getElementById('tblGTPlan');
-    if(!tbl || !a || !b) return a ? [a] : [];
-    const rows = Array.from(tbl.querySelectorAll('tr'));
-    const grid = [];
-    rows.forEach((tr, ri)=>{
-      Array.from(tr.querySelectorAll('td[data-gt-pool], td[data-gt-need]')).forEach((td, ci)=>{
-        grid.push({td, ri, ci});
-      });
-    });
-    let ar=-1,ac=-1,br=-1,bc=-1;
-    grid.forEach(({td,ri,ci})=>{
-      if(td===a){ar=ri;ac=ci;}
-      if(td===b){br=ri;bc=ci;}
-    });
-    if(ar<0||br<0) return [a];
-    const r1=Math.min(ar,br), r2=Math.max(ar,br);
-    const c1=Math.min(ac,bc), c2=Math.max(ac,bc);
-    return grid.filter(({ri,ci})=>ri>=r1&&ri<=r2&&ci>=c1&&ci<=c2).map(x=>x.td);
-  }
-
-  function initSelListeners(){
-    const tbl = document.getElementById('tblGTPlan');
-    if(!tbl || tbl._gtSelInited) return;
-    tbl._gtSelInited = true;
-
-    tbl.addEventListener('mousedown', e=>{
-      const td = e.target.closest('td[data-gt-pool], td[data-gt-need]');
-      if(!td || e.button!==0) return;
-      _dragging = true;
-      _anchor   = td;
-      _selSet   = new Set([cellKey(td)].filter(Boolean));
-      applyHighlight();
-      e.preventDefault();
-    });
-
-    tbl.addEventListener('mouseover', e=>{
-      if(!_dragging || !_anchor) return;
-      const td = e.target.closest('td[data-gt-pool], td[data-gt-need]');
-      if(!td) return;
-      const range = cellsInRange(_anchor, td);
-      _selSet = new Set(range.map(cellKey).filter(Boolean));
-      applyHighlight();
-    });
-
-    document.addEventListener('mouseup', ()=>{ _dragging = false; });
-  }
-
-  // Teclat: Ctrl+C, Ctrl+V, Delete/Backspace, Escape
-  document.addEventListener('keydown', e=>{
-    const tbl = document.getElementById('tblGTPlan');
-    if(!tbl) return;
-    // Comprova que el Planificador és visible
-    const viewPlan = document.getElementById('gtViewPlan');
-    if(!viewPlan || viewPlan.style.display==='none') return;
-    if(_selSet.size===0) return;
-
-    const ctrl = e.ctrlKey || e.metaKey;
-
-    // ── Ctrl+C: copia el codi de la primera cel·la pool seleccionada
-    if(ctrl && e.key==='c'){
-      const firstPoolKey = [..._selSet].find(k=>k && document.querySelector(`#tblGTPlan [data-gt-pool="${k}"]`));
-      if(!firstPoolKey){ e.preventDefault(); return; }
-      const [trebId, mes, dia] = firstPoolKey.split('-').map(Number);
-      _clipCode = getT(mes, trebId, dia);
-      const td = document.querySelector(`#tblGTPlan [data-gt-pool="${firstPoolKey}"]`);
-      if(td){
-        td.classList.add('gt-sel-copy');
-        setTimeout(()=>{ if(td) td.classList.remove('gt-sel-copy'); applyHighlight(); }, 600);
-      }
-      const codiText = _clipCode || '(disponible)';
-      if(typeof toast==='function') toast(`📋 Copiat: ${codiText}`,'ok');
-      e.preventDefault();
-    }
-
-    // ── Ctrl+V: enganxa el codi a totes les cel·les pool seleccionades
-    if(ctrl && e.key==='v'){
-      if(_clipCode===null) return;
-      let changed = false;
-      _selSet.forEach(k=>{
-        if(!k) return;
-        const td = document.querySelector(`#tblGTPlan [data-gt-pool="${k}"]`);
-        if(!td) return;
-        const [trebId, mes, dia] = k.split('-').map(Number);
-        const current = getT(mes, trebId, dia);
-        if(current === _clipCode) return;
-        if(_clipCode==='') delete torns[kT(mes, trebId, dia)];
-        else torns[kT(mes, trebId, dia)] = _clipCode;
-        changed = true;
-      });
-      if(changed){
-        renderGTPlan(true);
-        setTimeout(applyHighlight, 50);
-        desarDelay();
-      }
-      e.preventDefault();
-    }
-
-    // ── Delete / Backspace: esborra codis de les cel·les pool seleccionades
-    if((e.key==='Delete' || e.key==='Backspace') && !ctrl && !e.target.matches('input,textarea,select')){
-      let changed = false;
-      _selSet.forEach(k=>{
-        if(!k) return;
-        const td = document.querySelector(`#tblGTPlan [data-gt-pool="${k}"]`);
-        if(!td) return;
-        const [trebId, mes, dia] = k.split('-').map(Number);
-        if(getT(mes, trebId, dia) !== ''){
-          delete torns[kT(mes, trebId, dia)];
-          changed = true;
-        }
-      });
-      if(changed){
-        renderGTPlan(true);
-        setTimeout(applyHighlight, 50);
-        desarDelay();
-      }
-      e.preventDefault();
-    }
-
-    // ── Escape: deselecciona
-    if(e.key==='Escape'){
-      _selSet.clear();
-      applyHighlight();
-      _clipCode = null;
-    }
-  });
-
-  // Deselecciona si es fa clic fora del tblGTPlan
-  document.addEventListener('mousedown', e=>{
-    if(!e.target.closest('#tblGTPlan') && !e.target.closest('#gtViewPlan')){
-      if(_selSet.size>0){ _selSet.clear(); applyHighlight(); }
-    }
-  }, true);
-
-  // Arrenca els listeners quan el Planificador es renderitza
-  const _origRGTPlan = typeof renderGTPlan !== 'undefined'
-    ? renderGTPlan : null;
-  if(_origRGTPlan){
-    renderGTPlan = function(force){
-      _origRGTPlan.call(this, force);
-      if(_selSet.size>0) setTimeout(applyHighlight, 20);
-      initSelListeners();
-    };
-  }
-
-  // Primer init (per si renderGTPlan ja ha corregut)
-  setTimeout(initSelListeners, 500);
-})();
-// ── FI SELECCIO MULTIPLE ─────────────────────────────────────────────────
-
 </script>
 
 
@@ -8632,4 +7645,3 @@ function qaAsk(){
 </div>
 </body>
 </html>
-px;padding

@@ -1,0 +1,1697 @@
+```html
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Registre de Certificats de Defunció</title>
+
+<style>
+
+/* =========================
+   ESTILS GENERALS
+========================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #eef2f7;
+    margin: 0;
+    padding: 20px;
+    color: #1f2937;
+}
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+}
+
+
+/* =========================
+   TARGETES
+========================= */
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+}
+
+.card h1,
+.card h2 {
+    margin-top: 0;
+}
+
+
+/* =========================
+   DISTRIBUCIÓ
+========================= */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+
+/* =========================
+   FORMULARIS
+========================= */
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+
+/* =========================
+   BOTONS
+========================= */
+
+button {
+    padding: 9px 13px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 2px;
+}
+
+button:hover {
+    opacity: 0.88;
+}
+
+.primari {
+    background: #2563eb;
+    color: white;
+}
+
+.verd {
+    background: #16a34a;
+    color: white;
+}
+
+.taronja {
+    background: #ea580c;
+    color: white;
+}
+
+.vermell {
+    background: #dc2626;
+    color: white;
+}
+
+.gris {
+    background: #64748b;
+    color: white;
+}
+
+
+/* =========================
+   ESTADÍSTIQUES
+========================= */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+}
+
+.stat .num {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat .txt {
+    font-size: 14px;
+    font-weight: bold;
+    color: #475569;
+}
+
+.total-bg {
+    background: #e0e7ff;
+}
+
+.pendent-bg {
+    background: #fed7aa;
+}
+
+.lliurat-bg {
+    background: #bbf7d0;
+}
+
+
+/* =========================
+   TAULA
+========================= */
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: center;
+    vertical-align: middle;
+}
+
+th {
+    background: #f1f5f9;
+    font-size: 14px;
+}
+
+td {
+    font-size: 14px;
+}
+
+.esquerra {
+    text-align: left;
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================
+   ESTATS
+========================= */
+
+.badge {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 20px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.pendent {
+    background: #ea580c;
+}
+
+.entregat {
+    background: #16a34a;
+}
+
+
+/* =========================
+   CAPÇALERA
+========================= */
+
+.subtitol {
+    color: #64748b;
+    margin-top: 5px;
+}
+
+
+/* =========================
+   MODALS
+========================= */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.50);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.finestra {
+    background: white;
+    width: 100%;
+    max-width: 550px;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+.finestra h2 {
+    margin-top: 0;
+}
+
+.botons-modal {
+    margin-top: 20px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+
+/* =========================
+   MÒBIL
+========================= */
+
+@media (max-width: 900px) {
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    body {
+        padding: 10px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- =========================
+     CAPÇALERA
+========================= -->
+
+<div class="card">
+
+    <h1>
+        Registre de Certificats de Defunció
+    </h1>
+
+    <div class="subtitol">
+        Gestió del registre, lliurament i seguiment dels certificats de defunció.
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     NOVA FITXA + ESTADÍSTIQUES
+========================= -->
+
+<div class="grid">
+
+
+<!-- =========================
+     NOVA FITXA
+========================= -->
+
+<div class="card">
+
+    <h2>
+        Nova fitxa
+    </h2>
+
+
+    <label for="nom">
+        Nom del difunt
+    </label>
+
+    <input
+        type="text"
+        id="nom"
+        placeholder="Introduïu el nom del difunt"
+    >
+
+
+    <label for="descripcio">
+        Anotacions
+    </label>
+
+    <textarea
+        id="descripcio"
+        placeholder="Introduïu les anotacions"
+    ></textarea>
+
+
+    <div class="grid">
+
+        <div>
+
+            <label for="dataEntrada">
+                Data d'entrada
+            </label>
+
+            <input
+                type="date"
+                id="dataEntrada"
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="horaEntrada">
+                Hora d'entrada
+            </label>
+
+            <input
+                type="time"
+                id="horaEntrada"
+            >
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <button
+        class="primari"
+        onclick="crearFitxa()"
+    >
+        Crear fitxa
+    </button>
+
+</div>
+
+
+
+<!-- =========================
+     ESTADÍSTIQUES + FILTRES
+========================= -->
+
+<div class="card">
+
+
+    <div class="stats">
+
+
+        <div class="stat total-bg">
+
+            <div
+                class="num"
+                id="total"
+            >
+                0
+            </div>
+
+            <div class="txt">
+                Total
+            </div>
+
+        </div>
+
+
+        <div class="stat pendent-bg">
+
+            <div
+                class="num"
+                id="pendents"
+            >
+                0
+            </div>
+
+            <div class="txt">
+                Pendents
+            </div>
+
+        </div>
+
+
+        <div class="stat lliurat-bg">
+
+            <div
+                class="num"
+                id="lliurats"
+            >
+                0
+            </div>
+
+            <div class="txt">
+                Lliurats
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <label for="filtre">
+        Estat
+    </label>
+
+    <select
+        id="filtre"
+        onchange="mostrar()"
+    >
+
+        <option value="tots">
+            Tots
+        </option>
+
+        <option value="pendent">
+            Pendents
+        </option>
+
+        <option value="entregat">
+            Lliurats
+        </option>
+
+    </select>
+
+
+
+    <label for="ordre">
+        Ordenació
+    </label>
+
+    <select
+        id="ordre"
+        onchange="mostrar()"
+    >
+
+        <option value="desc">
+            Més recents
+        </option>
+
+        <option value="asc">
+            Més antics
+        </option>
+
+    </select>
+
+</div>
+
+</div>
+
+
+
+<!-- =========================
+     REGISTRE
+========================= -->
+
+<div class="card">
+
+    <h2>
+        Registre de certificats
+    </h2>
+
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th class="esquerra">
+                        Fitxa
+                    </th>
+
+                    <th>
+                        Entrada
+                    </th>
+
+                    <th>
+                        Lliurament
+                    </th>
+
+                    <th>
+                        Estat
+                    </th>
+
+                    <th>
+                        Accions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="taula">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+
+<!-- =========================
+     MODAL LLIURAMENT
+========================= -->
+
+<div
+    class="modal"
+    id="modalEntrega"
+>
+
+    <div class="finestra">
+
+        <h2>
+            Registrar lliurament
+        </h2>
+
+
+        <p>
+            Indiqueu a qui s'ha lliurat el certificat.
+        </p>
+
+
+        <label for="destinatari">
+            Persona o institució destinatària
+        </label>
+
+        <input
+            type="text"
+            id="destinatari"
+            placeholder="Ex. Hospital Clínic / Joan Pérez"
+        >
+
+
+        <div class="botons-modal">
+
+            <button
+                class="gris"
+                onclick="tancarEntrega()"
+            >
+                Cancel·lar
+            </button>
+
+
+            <button
+                class="verd"
+                onclick="confirmarEntrega()"
+            >
+                Confirmar lliurament
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     MODAL MODIFICAR
+========================= -->
+
+<div
+    class="modal"
+    id="modalEditar"
+>
+
+    <div class="finestra">
+
+        <h2>
+            Modificar fitxa
+        </h2>
+
+
+        <input
+            type="hidden"
+            id="editId"
+        >
+
+
+        <label for="editNom">
+            Nom del difunt
+        </label>
+
+        <input
+            type="text"
+            id="editNom"
+        >
+
+
+        <label for="editDescripcio">
+            Anotacions
+        </label>
+
+        <textarea
+            id="editDescripcio"
+        ></textarea>
+
+
+        <label for="editData">
+            Data d'entrada
+        </label>
+
+        <input
+            type="date"
+            id="editData"
+        >
+
+
+        <label for="editHora">
+            Hora d'entrada
+        </label>
+
+        <input
+            type="time"
+            id="editHora"
+        >
+
+
+        <div class="botons-modal">
+
+            <button
+                class="gris"
+                onclick="tancarEditar()"
+            >
+                Cancel·lar
+            </button>
+
+
+            <button
+                class="primari"
+                onclick="desarEdicio()"
+            >
+                Desar canvis
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =========================
+   VARIABLES
+========================= */
+
+let registres =
+    JSON.parse(
+        localStorage.getItem(
+            "registres_certificats"
+        )
+    ) || [];
+
+
+let entregaID = null;
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const nom =
+    document.getElementById("nom");
+
+const descripcio =
+    document.getElementById("descripcio");
+
+const dataEntrada =
+    document.getElementById("dataEntrada");
+
+const horaEntrada =
+    document.getElementById("horaEntrada");
+
+const taula =
+    document.getElementById("taula");
+
+const filtre =
+    document.getElementById("filtre");
+
+const ordre =
+    document.getElementById("ordre");
+
+
+/* =========================
+   DATA I HORA ACTUAL
+========================= */
+
+function posarDataHoraActual() {
+
+    const ara = new Date();
+
+    const any =
+        ara.getFullYear();
+
+    const mes =
+        String(
+            ara.getMonth() + 1
+        ).padStart(2, "0");
+
+    const dia =
+        String(
+            ara.getDate()
+        ).padStart(2, "0");
+
+    const hora =
+        String(
+            ara.getHours()
+        ).padStart(2, "0");
+
+    const minuts =
+        String(
+            ara.getMinutes()
+        ).padStart(2, "0");
+
+
+    dataEntrada.value =
+        `${any}-${mes}-${dia}`;
+
+    horaEntrada.value =
+        `${hora}:${minuts}`;
+
+}
+
+
+posarDataHoraActual();
+
+
+/* =========================
+   GUARDAR
+========================= */
+
+function guardar() {
+
+    localStorage.setItem(
+        "registres_certificats",
+        JSON.stringify(registres)
+    );
+
+}
+
+
+/* =========================
+   CREAR FITXA
+========================= */
+
+function crearFitxa() {
+
+    const nomValor =
+        nom.value.trim();
+
+
+    if (nomValor === "") {
+
+        alert(
+            "Introduïu el nom del difunt."
+        );
+
+        nom.focus();
+
+        return;
+    }
+
+
+    if (dataEntrada.value === "") {
+
+        alert(
+            "Introduïu la data d'entrada."
+        );
+
+        return;
+    }
+
+
+    if (horaEntrada.value === "") {
+
+        alert(
+            "Introduïu l'hora d'entrada."
+        );
+
+        return;
+    }
+
+
+    const novaFitxa = {
+
+        id: Date.now(),
+
+        nom: nomValor,
+
+        descripcio:
+            descripcio.value.trim(),
+
+        dataEntrada:
+            dataEntrada.value,
+
+        horaEntrada:
+            horaEntrada.value,
+
+        dataSortida: "",
+
+        horaSortida: "",
+
+        destinatari: "",
+
+        estat: "pendent"
+
+    };
+
+
+    registres.push(novaFitxa);
+
+
+    guardar();
+
+
+    nom.value = "";
+
+    descripcio.value = "";
+
+
+    posarDataHoraActual();
+
+
+    mostrar();
+
+}
+
+
+/* =========================
+   OBRIR LLIURAMENT
+========================= */
+
+function obrirEntrega(id) {
+
+    entregaID = id;
+
+
+    document.getElementById(
+        "destinatari"
+    ).value = "";
+
+
+    document.getElementById(
+        "modalEntrega"
+    ).style.display = "flex";
+
+
+    setTimeout(function () {
+
+        document.getElementById(
+            "destinatari"
+        ).focus();
+
+    }, 100);
+
+}
+
+
+/* =========================
+   TANCAR LLIURAMENT
+========================= */
+
+function tancarEntrega() {
+
+    document.getElementById(
+        "modalEntrega"
+    ).style.display = "none";
+
+
+    entregaID = null;
+
+}
+
+
+/* =========================
+   CONFIRMAR LLIURAMENT
+========================= */
+
+function confirmarEntrega() {
+
+    const destinatari =
+        document.getElementById(
+            "destinatari"
+        ).value.trim();
+
+
+    if (destinatari === "") {
+
+        alert(
+            "Indiqueu la persona o institució destinatària."
+        );
+
+        return;
+    }
+
+
+    const fitxa =
+        registres.find(
+            x => x.id === entregaID
+        );
+
+
+    if (!fitxa) {
+
+        alert(
+            "No s'ha trobat la fitxa."
+        );
+
+        return;
+    }
+
+
+    const ara =
+        new Date();
+
+
+    const any =
+        ara.getFullYear();
+
+    const mes =
+        String(
+            ara.getMonth() + 1
+        ).padStart(2, "0");
+
+    const dia =
+        String(
+            ara.getDate()
+        ).padStart(2, "0");
+
+    const hora =
+        String(
+            ara.getHours()
+        ).padStart(2, "0");
+
+    const minuts =
+        String(
+            ara.getMinutes()
+        ).padStart(2, "0");
+
+
+    fitxa.dataSortida =
+        `${any}-${mes}-${dia}`;
+
+    fitxa.horaSortida =
+        `${hora}:${minuts}`;
+
+    fitxa.destinatari =
+        destinatari;
+
+    fitxa.estat =
+        "entregat";
+
+
+    guardar();
+
+    tancarEntrega();
+
+    mostrar();
+
+}
+
+
+/* =========================
+   MODIFICAR FITXA
+========================= */
+
+function editar(id) {
+
+    const fitxa =
+        registres.find(
+            x => x.id === id
+        );
+
+
+    if (!fitxa) {
+
+        alert(
+            "No s'ha trobat la fitxa."
+        );
+
+        return;
+    }
+
+
+    document.getElementById(
+        "editId"
+    ).value =
+        fitxa.id;
+
+
+    document.getElementById(
+        "editNom"
+    ).value =
+        fitxa.nom;
+
+
+    document.getElementById(
+        "editDescripcio"
+    ).value =
+        fitxa.descripcio;
+
+
+    document.getElementById(
+        "editData"
+    ).value =
+        fitxa.dataEntrada;
+
+
+    document.getElementById(
+        "editHora"
+    ).value =
+        fitxa.horaEntrada;
+
+
+    document.getElementById(
+        "modalEditar"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =========================
+   DESAR EDICIÓ
+========================= */
+
+function desarEdicio() {
+
+    const id =
+        Number(
+            document.getElementById(
+                "editId"
+            ).value
+        );
+
+
+    const fitxa =
+        registres.find(
+            x => x.id === id
+        );
+
+
+    if (!fitxa) {
+
+        alert(
+            "No s'ha trobat la fitxa."
+        );
+
+        return;
+    }
+
+
+    const nouNom =
+        document.getElementById(
+            "editNom"
+        ).value.trim();
+
+
+    if (nouNom === "") {
+
+        alert(
+            "El nom del difunt no pot estar buit."
+        );
+
+        return;
+    }
+
+
+    fitxa.nom =
+        nouNom;
+
+
+    fitxa.descripcio =
+        document.getElementById(
+            "editDescripcio"
+        ).value.trim();
+
+
+    fitxa.dataEntrada =
+        document.getElementById(
+            "editData"
+        ).value;
+
+
+    fitxa.horaEntrada =
+        document.getElementById(
+            "editHora"
+        ).value;
+
+
+    guardar();
+
+    tancarEditar();
+
+    mostrar();
+
+}
+
+
+/* =========================
+   TANCAR EDICIÓ
+========================= */
+
+function tancarEditar() {
+
+    document.getElementById(
+        "modalEditar"
+    ).style.display =
+        "none";
+
+}
+
+
+/* =========================
+   REOBRIR
+========================= */
+
+function reobrir(id) {
+
+    const fitxa =
+        registres.find(
+            x => x.id === id
+        );
+
+
+    if (!fitxa) {
+
+        return;
+    }
+
+
+    const confirmar =
+        confirm(
+            "Voleu tornar aquesta fitxa a l'estat pendent?"
+        );
+
+
+    if (!confirmar) {
+
+        return;
+    }
+
+
+    fitxa.estat =
+        "pendent";
+
+    fitxa.dataSortida =
+        "";
+
+    fitxa.horaSortida =
+        "";
+
+    fitxa.destinatari =
+        "";
+
+
+    guardar();
+
+    mostrar();
+
+}
+
+
+/* =========================
+   ELIMINAR
+========================= */
+
+function eliminar(id) {
+
+    const fitxa =
+        registres.find(
+            x => x.id === id
+        );
+
+
+    if (!fitxa) {
+
+        return;
+    }
+
+
+    const confirmar =
+        confirm(
+            `Voleu eliminar la fitxa "${fitxa.nom}"?`
+        );
+
+
+    if (!confirmar) {
+
+        return;
+    }
+
+
+    registres =
+        registres.filter(
+            x => x.id !== id
+        );
+
+
+    guardar();
+
+    mostrar();
+
+}
+
+
+/* =========================
+   MOSTRAR REGISTRES
+========================= */
+
+function mostrar() {
+
+    let dades =
+        [...registres];
+
+
+    /* FILTRE */
+
+    if (filtre.value !== "tots") {
+
+        dades =
+            dades.filter(
+                x =>
+                    x.estat === filtre.value
+            );
+
+    }
+
+
+    /* ORDRE */
+
+    dades.sort(
+        (a, b) => {
+
+            const A =
+                new Date(
+                    `${a.dataEntrada}T${a.horaEntrada}`
+                );
+
+            const B =
+                new Date(
+                    `${b.dataEntrada}T${b.horaEntrada}`
+                );
+
+
+            return ordre.value === "asc"
+                ? A - B
+                : B - A;
+
+        }
+    );
+
+
+    taula.innerHTML = "";
+
+
+    /* NO HI HA REGISTRES */
+
+    if (dades.length === 0) {
+
+        taula.innerHTML = `
+
+            <tr>
+
+                <td colspan="5">
+
+                    <div style="
+                        padding:30px;
+                        color:#64748b;
+                    ">
+
+                        No hi ha registres per mostrar.
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    /* CREAR FILES */
+
+    dades.forEach(
+        fitxa => {
+
+
+            let lliurament = "-";
+
+
+            if (
+                fitxa.estat === "entregat"
+            ) {
+
+                lliurament = `
+
+                    <strong>
+                        ${escaparHTML(
+                            fitxa.destinatari
+                        )}
+                    </strong>
+
+                    <br>
+
+                    <small>
+                        ${fitxa.dataSortida}
+                        ${fitxa.horaSortida}
+                    </small>
+
+                `;
+
+            }
+
+
+            let botons = `
+
+                <button
+                    class="primari"
+                    onclick="editar(${fitxa.id})"
+                    title="Modificar fitxa"
+                >
+                    ✏️
+                </button>
+
+            `;
+
+
+            if (
+                fitxa.estat === "pendent"
+            ) {
+
+                botons += `
+
+                    <button
+                        class="verd"
+                        onclick="obrirEntrega(${fitxa.id})"
+                        title="Registrar lliurament"
+                    >
+                        Lliurar
+                    </button>
+
+                `;
+
+            } else {
+
+                botons += `
+
+                    <button
+                        class="taronja"
+                        onclick="reobrir(${fitxa.id})"
+                        title="Tornar a pendent"
+                    >
+                        Reobrir
+                    </button>
+
+                `;
+
+            }
+
+
+            botons += `
+
+                <button
+                    class="vermell"
+                    onclick="eliminar(${fitxa.id})"
+                    title="Eliminar fitxa"
+                >
+                    🗑️
+                </button>
+
+            `;
+
+
+            taula.innerHTML += `
+
+                <tr>
+
+                    <td class="esquerra">
+
+                        <strong>
+                            ${escaparHTML(
+                                fitxa.nom
+                            )}
+                        </strong>
+
+                        ${
+                            fitxa.descripcio
+                            ?
+                            `
+                            <br>
+
+                            <small>
+                                ${escaparHTML(
+                                    fitxa.descripcio
+                                )}
+                            </small>
+                            `
+                            :
+                            ""
+                        }
+
+                    </td>
+
+
+                    <td>
+
+                        ${fitxa.dataEntrada}
+
+                        <br>
+
+                        ${fitxa.horaEntrada}
+
+                    </td>
+
+
+                    <td>
+
+                        ${lliurament}
+
+                    </td>
+
+
+                    <td>
+
+                        <span
+                            class="badge ${fitxa.estat}"
+                        >
+
+                            ${
+                                fitxa.estat === "pendent"
+                                ?
+                                "Pendent"
+                                :
+                                "Lliurat"
+                            }
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        ${botons}
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    /* =========================
+       ACTUALITZAR COMPTADORS
+    ========================= */
+
+    const total =
+        registres.length;
+
+
+    const pendents =
+        registres.filter(
+            x =>
+                x.estat === "pendent"
+        ).length;
+
+
+    const lliurats =
+        registres.filter(
+            x =>
+                x.estat === "entregat"
+        ).length;
+
+
+    document.getElementById(
+        "total"
+    ).innerText =
+        total;
+
+
+    document.getElementById(
+        "pendents"
+    ).innerText =
+        pendents;
+
+
+    document.getElementById(
+        "lliurats"
+    ).innerText =
+        lliurats;
+
+}
+
+
+/* =========================
+   ESCAPAR HTML
+========================= */
+
+function escaparHTML(text) {
+
+    if (!text) {
+
+        return "";
+
+    }
+
+
+    return String(text)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================
+   TANCAR MODALS
+========================= */
+
+window.addEventListener(
+    "click",
+    function(event) {
+
+        const modalEntrega =
+            document.getElementById(
+                "modalEntrega"
+            );
+
+        const modalEditar =
+            document.getElementById(
+                "modalEditar"
+            );
+
+
+        if (
+            event.target === modalEntrega
+        ) {
+
+            tancarEntrega();
+
+        }
+
+
+        if (
+            event.target === modalEditar
+        ) {
+
+            tancarEditar();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   INICIAR APLICACIÓ
+========================= */
+
+mostrar();
+
+</script>
+
+</body>
+
+</html>
+```
